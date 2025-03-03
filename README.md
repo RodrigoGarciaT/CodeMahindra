@@ -1,6 +1,6 @@
 # 🚀 CodeMahindra – Plataforma de Gamificación para Desarrolladores  
 
-![CodeMahindra Banner](https://via.placeholder.com/1200x400?text=CodeMahindra)  
+![CodeMahindra Banner](https://media.licdn.com/dms/image/v2/D4E3DAQEnbk3KOuXi4Q/image-scale_191_1128/image-scale_191_1128/0/1688665599083/digitalonus_cover?e=2147483647&v=beta&t=C0RjvG7C6NgTEUlDN0zWv_1mGG-z8-WDkdBDUunmobs)  
 
 ## 🎯 ¿Qué es CodeMahindra?  
 **CodeMahindra** es una plataforma de **gamificación impulsada por IA** que motiva y mejora la productividad de los desarrolladores en **Tech Mahindra**.  
