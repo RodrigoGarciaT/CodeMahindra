@@ -11,9 +11,7 @@ def root():
 def get_items():
     items = ["Edsel", "De", "Jesus", "perez", "rodrigo"]
     
-    # Create a list of dictionaries with each item having 'name' as the key
+    # Return a proper JSON response (list of dictionaries)
     result = [{"name": item} for item in items]
-    
-    # Convert the list of dictionaries to a JSON-like format
-    json_result = json.dumps(result)
-    return json_result
+
+    return result  # ✅ FastAPI automatically converts it to JSON
