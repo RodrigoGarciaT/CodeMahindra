@@ -6,6 +6,7 @@ import Code from './pages/Code';
 import Ranking from './pages/Ranking';
 import Store from './pages/Store';
 import Cart from './pages/Cart';
+import CreateProblem from './pages/CreateProblem';
 import { CartProvider } from './contexts/CartContext';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Problems />} />
             <Route path="/problems" element={<Problems />} />
+            <Route path="/problems/create" element={<CreateProblem />} />
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/code" element={<Code />} />
             <Route path="/ranking" element={<Ranking />} />

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Home, Code2, BookOpen, Trophy, ShoppingBag, Bell, ShoppingCart } from 'lucide-react';
+import { Home, Code2, BookOpen, Trophy, ShoppingBag, Bell, ShoppingCart, PlusCircle } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 
 const Navbar = () => {
@@ -27,6 +27,13 @@ const Navbar = () => {
               >
                 <BookOpen className="h-4 w-4 mr-2" />
                 Problemas
+              </Link>
+              <Link
+                to="/problems/create"
+                className="flex items-center px-4 py-2 rounded-md hover:bg-gray-100"
+              >
+                <PlusCircle className="h-4 w-4 mr-2" />
+                Create Problem
               </Link>
               <Link
                 to="/tasks"
