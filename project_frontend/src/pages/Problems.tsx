@@ -4,10 +4,17 @@ import Sidebar from '../components/Sidebar';
 import ProblemStatement from '../components/ProblemStatement';
 import CodeEditor from '../components/CodeEditor';
 import ActionButtons from '../components/ActionButtons';
+import Submissions from '../components/Submissions';
+import Leaderboard from '../components/Leaderboard';
+import Discussions from '../components/Discussions';
 
 const Problems = () => {
   const [code, setCode] = useState('// Your code here');
   const [activeTab, setActiveTab] = useState('problem');
+
+  const handleSubmissionSelect = (submissionCode: string) => {
+    setCode(submissionCode);
+  };
 
   return (
     <div className="h-screen bg-[#363B41] flex items-center justify-center">
@@ -26,9 +33,9 @@ const Problems = () => {
           >
             <div className="h-full overflow-auto pr-1">
               {activeTab === 'problem' && <ProblemStatement />}
-              {activeTab === 'submissions' && <div>Submissions</div>}
-              {activeTab === 'leaderboard' && <div>Leaderboard</div>}
-              {activeTab === 'discussions' && <div>Discussions</div>}
+              {activeTab === 'submissions' && <Submissions onSelectSubmission={handleSubmissionSelect} />}
+              {activeTab === 'leaderboard' && <Leaderboard />}
+              {activeTab === 'discussions' && <Discussions />}
             </div>
           </Resizable>
           <div className="flex-1 flex flex-col">
