@@ -14,7 +14,7 @@ const Sidebar = ({ onTabChange }: SidebarProps) => {
 
   const sidebarTabs = [
     { id: 'problem', label: 'Problem' },
-    { id: 'submissllons', label: 'Submissions' },
+    { id: 'submissions', label: 'Submissions' },
     { id: 'leaderboard', label: 'Leaderboard' },
     { id: 'discussions', label: 'Discussions' }
   ];
