@@ -79,7 +79,7 @@ const Navbar = () => {
             </button>
             <div className="flex items-center space-x-2">
               <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
-              <span>Digital Creative</span>
+              <span>Digital Creatives</span>
             </div>
           </div>
         </div>
