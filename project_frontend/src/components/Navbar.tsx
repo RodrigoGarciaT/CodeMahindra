@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
-import { Home, Code2, BookOpen, Trophy, ShoppingBag, Bell } from 'lucide-react';
+import { Home, Code2, BookOpen, Trophy, ShoppingBag, Bell, ShoppingCart } from 'lucide-react';
+import { useCart } from '../contexts/CartContext';
 
 const Navbar = () => {
+  const { itemCount } = useCart();
+
   return (
     <nav className="bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4">
@@ -56,6 +59,14 @@ const Navbar = () => {
             </div>
           </div>
           <div className="flex items-center space-x-4">
+            <Link to="/cart" className="p-2 rounded-full hover:bg-gray-100 relative">
+              <ShoppingCart className="h-5 w-5" />
+              {itemCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {itemCount}
+                </span>
+              )}
+            </Link>
             <button className="p-2 rounded-full hover:bg-gray-100">
               <Bell className="h-5 w-5" />
             </button>
