@@ -11,7 +11,9 @@ import ProblemList from './pages/ProblemList';
 import { CartProvider } from './contexts/CartContext';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-
+import ProfilePage from './components/ProfilePage';
+import TeamPage from './components/TeamPage';
+import Dashboard from './components/Dashboard';
 function App() {
   return (
     <CartProvider>
@@ -19,7 +21,7 @@ function App() {
         <div className="min-h-screen bg-[#1e1e1e]">
           <Navbar />
           <Routes>
-            <Route path="/" element={<ProblemList />} />
+            <Route path="/" element={<Dashboard />} />
             <Route path="/problemList" element={<ProblemList />} /> {/* Ensure this route exists for the ProblemList */}
             <Route path="/problemList/problem/:problemId" element={<Problems />} /> {/* Problem route for individual problems */}
             <Route path="/problems" element={<ProblemList />} />
@@ -31,6 +33,9 @@ function App() {
             <Route path="/cart" element={<Cart />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/team" element={<TeamPage />} />
           </Routes>
         </div>
       </Router>
