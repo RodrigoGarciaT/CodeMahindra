@@ -12,7 +12,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import LandingPage from './pages/Landing'; // <-- Tu nueva página
 import { CartProvider } from './contexts/CartContext';
-
+import PullRequest from './pages/PullRequest';
 // 1. Layout que incluye la Navbar
 function LayoutConNavbar() {
   return (
@@ -41,6 +41,7 @@ function App() {
             <Route path="/problems/create" element={<CreateProblem />} />
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/code" element={<Code />} />
+            <Route path="/code/detail/:id" element={<PullRequest />} /> {/* Add route for PullRequest */}
             <Route path="/ranking" element={<Ranking />} />
             <Route path="/store" element={<Store />} />
             <Route path="/cart" element={<Cart />} />
