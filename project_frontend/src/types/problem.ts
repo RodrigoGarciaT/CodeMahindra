@@ -17,6 +17,10 @@ export interface TestCase {
     expiration_date: string | null;
     acceptance_rate: number;
     testcases: TestCase[];
+    // No need to include 'solution' and 'language' here
   }
   
-  export type ProblemFormData = Omit<Problem, 'id' | 'acceptance_rate'>;
+  export type ProblemFormData = Omit<Problem, 'id' | 'acceptance_rate'> & {
+    solution: string;  // New attribute for the solution code
+    language: string;  // New attribute for the language of the solution
+  };
