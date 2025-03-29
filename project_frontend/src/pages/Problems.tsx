@@ -1,18 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Resizable } from "re-resizable";
 import Sidebar from '../components/Sidebar';
-import ProblemStatement from '../components/ProblemStatement';  // Import ProblemStatement
+import ProblemStatement from '../components/ProblemStatement';
 import CodeEditor from '../components/CodeEditor';
 import ActionButtons from '../components/ActionButtons';
 import Submissions from '../components/Submissions';
 import Leaderboard from '../components/Leaderboard';
 import Discussions from '../components/Discussions';
-import { useLocation } from 'react-router-dom';  // Import useLocation to get problemId
+import { useLocation } from 'react-router-dom';
 
 const Problems = () => {
   const [code, setCode] = useState('// Your code here');
   const [activeTab, setActiveTab] = useState('problem');
-  const location = useLocation(); // Get location to access the problemId prop passed through the route
+  const location = useLocation();  // Get location to access the problemId prop passed through the route
 
   const handleSubmissionSelect = (submissionCode: string) => {
     setCode(submissionCode);
@@ -23,7 +23,6 @@ const Problems = () => {
 
   return (
     <div className="h-screen bg-[#363B41] flex items-center justify-center">
-      {/* Main Container with White Background */}
       <div className="w-[95%] h-[calc(100vh-64px)] bg-white shadow-lg rounded-lg flex overflow-hidden border border-gray-300">
         <Sidebar onTabChange={setActiveTab} />
         <div className="flex-1 flex">
@@ -37,7 +36,7 @@ const Problems = () => {
             }}
           >
             <div className="h-full overflow-auto pr-1">
-              {activeTab === 'problem' && <ProblemStatement />} {/* Pass problemId as prop */}
+              {activeTab === 'problem' && <ProblemStatement problemId={problemId} />}  {/* Pass problemId as prop */}
               {activeTab === 'submissions' && <Submissions onSelectSubmission={handleSubmissionSelect} />}
               {activeTab === 'leaderboard' && <Leaderboard />}
               {activeTab === 'discussions' && <Discussions />}

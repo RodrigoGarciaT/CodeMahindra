@@ -5,7 +5,7 @@ import { PlusCircle, Trash2, Save, Edit2 } from 'lucide-react';
 
 const CreateProblem = () => {
   const [problem, setProblem] = useState<ProblemFormData>({
-    title: '',
+    name: '',
     description: '',
     input_format: '',
     output_format: '',
@@ -66,7 +66,7 @@ const CreateProblem = () => {
     e.preventDefault();
 
     const problemData = {
-      name: problem.title,
+      name: problem.name,
       description: problem.description,
       input_format: problem.input_format,
       output_format: problem.output_format,
@@ -94,7 +94,7 @@ const CreateProblem = () => {
 
       // Reset the form fields
       setProblem({
-        title: '',
+        name: '',
         description: '',
         input_format: '',
         output_format: '',
@@ -131,12 +131,12 @@ const CreateProblem = () => {
           <div className="grid grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Title
+                name
               </label>
               <input
                 type="text"
-                value={problem.title}
-                onChange={(e) => handleProblemChange('title', e.target.value)}
+                value={problem.name}
+                onChange={(e) => handleProblemChange('name', e.target.value)}
                 className="w-full p-2 border rounded-md"
                 required
               />

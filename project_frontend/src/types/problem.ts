@@ -6,7 +6,7 @@ export interface TestCase {
   
   export interface Problem {
     id: string;
-    title: string;
+    name: string;
     description: string;
     input_format: string;
     output_format: string;
@@ -35,3 +35,4 @@ export interface ProblemListData {
   title: string;  // The title of the problem
   expiration_date: string; // when it expires
 }
+
