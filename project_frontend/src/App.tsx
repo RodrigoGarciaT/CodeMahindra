@@ -9,6 +9,8 @@ import Cart from './pages/Cart';
 import CreateProblem from './pages/CreateProblem';
 import ProblemList from './pages/ProblemList';
 import { CartProvider } from './contexts/CartContext';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
             <Route path="/ranking" element={<Ranking />} />
             <Route path="/store" element={<Store />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
           </Routes>
         </div>
       </Router>
@@ -35,3 +39,5 @@ function App() {
 }
 
 export default App;
+
+         
