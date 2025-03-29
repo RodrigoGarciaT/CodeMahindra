@@ -40,7 +40,7 @@ const Problems = () => {
           </Resizable>
           <div className="flex-1 flex flex-col">
             <CodeEditor code={code} onChange={setCode} />
-            <ActionButtons />
+            <ActionButtons code = ""/>
           </div>
         </div>
       </div>
