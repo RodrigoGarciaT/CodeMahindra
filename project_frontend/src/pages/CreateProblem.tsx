@@ -12,8 +12,10 @@ const CreateProblem = () => {
     sample_output: '',
     difficulty: 'Easy',
     creation_date: new Date().toISOString(),
-    expiration_date: null,
-    testcases: []
+    expiration_date: new Date().toISOString(),
+    testcases: [],
+    solution: '', // New field for the solution code
+    language: 'C++', // New field for the language of the solution
   });
 
   const handleProblemChange = (field: keyof ProblemFormData, value: string | null) => {
@@ -65,6 +67,7 @@ const CreateProblem = () => {
         <h1 className="text-2xl font-bold mb-6">Create New Problem</h1>
         
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Basic Problem Information */}
           <div className="grid grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -95,6 +98,7 @@ const CreateProblem = () => {
             </div>
           </div>
 
+          {/* Dates */}
           <div className="grid grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -105,6 +109,7 @@ const CreateProblem = () => {
                 value={problem.creation_date.split('T')[0]}
                 className="w-full p-2 border rounded-md"
                 required
+                readOnly
               />
             </div>
             
@@ -122,6 +127,7 @@ const CreateProblem = () => {
             </div>
           </div>
 
+          {/* Description and Formats */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Description
@@ -160,6 +166,7 @@ const CreateProblem = () => {
             </div>
           </div>
 
+          {/* Sample Input and Output */}
           <div className="grid grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -186,6 +193,39 @@ const CreateProblem = () => {
             </div>
           </div>
 
+          {/* Solution and Language */}
+          <div className="grid grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Solution (Code)
+              </label>
+              <textarea
+                value={problem.solution}
+                onChange={(e) => handleProblemChange('solution', e.target.value)}
+                className="w-full p-2 border rounded-md h-32"
+                placeholder="Enter the solution code here..."
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Language
+              </label>
+              <select
+                value={problem.language}
+                onChange={(e) => handleProblemChange('language', e.target.value)}
+                className="w-full p-2 border rounded-md"
+              >
+                <option value="C++">C++</option>
+                <option value="Python">Python</option>
+                <option value="JavaScript">JavaScript</option>
+                <option value="Java">Java</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Test Cases */}
           <div className="border-t pt-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold">Test Cases</h2>
