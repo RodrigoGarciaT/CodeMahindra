@@ -16,13 +16,13 @@ import Dashboard from './components/Dashboard';
 import LandingPage from './pages/Landing'; // <-- Tu nueva página
 import { CartProvider } from './contexts/CartContext';
 import PullRequest from './pages/PullRequest';
+
 // 1. Layout que incluye la Navbar
 function LayoutConNavbar() {
   return (
     <div className="min-h-screen bg-[#1e1e1e]">
       <Navbar />
-      {/* <Outlet /> renderiza la ruta hija */}
-      <Outlet />
+      <Outlet /> {/* This will render the nested routes */}
     </div>
   );
 }
@@ -31,26 +31,20 @@ function App() {
   return (
     <CartProvider>
       <Router>
-        <div className="min-h-screen bg-[#1e1e1e]">
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/problemList" element={<ProblemList />} /> {/* Ensure this route exists for the ProblemList */}
-            <Route path="/problemList/problem/:problemId" element={<Problems />} /> {/* Problem route for individual problems */}
         <Routes>
           {/* 2. Ruta que NO muestra la Navbar (LandingPage) */}
           <Route path="/landing" element={<LandingPage />} />
 
-          {/* 3. Rutas que SÍ muestran la Navbar */}
+          {/* 3. Ruta con Navbar */}
           <Route element={<LayoutConNavbar />}>
-            <Route path="/" element={<ProblemList />} />
+            <Route path="/" element={<Dashboard />} /> {/* Dashboard as default */}
             <Route path="/problemList" element={<ProblemList />} />
             <Route path="/problemList/problem/:problemId" element={<Problems />} />
             <Route path="/problems" element={<ProblemList />} />
             <Route path="/problems/create" element={<CreateProblem />} />
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/code" element={<Code />} />
-            <Route path="/code/detail/:id" element={<PullRequest />} /> {/* Add route for PullRequest */}
+            <Route path="/code/detail/:id" element={<PullRequest />} />
             <Route path="/ranking" element={<Ranking />} />
             <Route path="/store" element={<Store />} />
             <Route path="/cart" element={<Cart />} />
@@ -59,8 +53,6 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/team" element={<TeamPage />} />
-          </Routes>
-        </div>
           </Route>
         </Routes>
       </Router>
