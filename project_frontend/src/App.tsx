@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation} from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Problems from './pages/Problems';
 import Tasks from './pages/Tasks';
@@ -8,14 +8,28 @@ import Store from './pages/Store';
 import Cart from './pages/Cart';
 import CreateProblem from './pages/CreateProblem';
 import { CartProvider } from './contexts/CartContext';
+import LandingPage from "./pages/Landing";
 
 function App() {
   return (
     <CartProvider>
       <Router>
-        <div className="min-h-screen bg-[#1e1e1e]">
-          <Navbar />
-          <Routes>
+        <AppContent />
+      </Router>
+    </CartProvider>
+  );
+}
+
+function AppContent() {
+  const location = useLocation();
+  const isLandingPage = location.pathname === "/landingpage";  // Detecta la landing
+
+  return (
+    <div className="min-h-screen bg-[#1e1e1e]">
+      {/* Renderiza la Navbar solo si no estás en la landing */}
+      {!isLandingPage && <Navbar />}
+
+      <Routes>
             <Route path="/" element={<Problems />} />
             <Route path="/problems" element={<Problems />} />
             <Route path="/problems/create" element={<CreateProblem />} />
@@ -24,10 +38,9 @@ function App() {
             <Route path="/ranking" element={<Ranking />} />
             <Route path="/store" element={<Store />} />
             <Route path="/cart" element={<Cart />} />
-          </Routes>
-        </div>
-      </Router>
-    </CartProvider>
+            <Route path="/landingpage" element={<LandingPage />} />
+            </Routes>
+    </div>
   );
 }
 
