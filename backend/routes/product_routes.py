@@ -1,0 +1,34 @@
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from typing import List
+from controllers.product_controller import (
+    get_all_products,
+    get_product_by_id,
+    create_product,
+    update_product,
+    delete_product
+)
+from schemas.product import ProductCreate, ProductUpdate, ProductOut
+from database import get_db
+
+router = APIRouter(prefix="/products", tags=["Products"])
+
+@router.get("/", response_model=List[ProductOut])
+def list_products(db: Session = Depends(get_db)):
+    return get_all_products(db)
+
+@router.get("/{product_id}", response_model=ProductOut)
+def retrieve_product(product_id: int, db: Session = Depends(get_db)):
+    return get_product_by_id(product_id, db)
+
+@router.post("/", response_model=ProductOut, status_code=201)
+def create_new_product(data: ProductCreate, db: Session = Depends(get_db)):
+    return create_product(data, db)
+
+@router.put("/{product_id}", response_model=ProductOut)
+def update_existing_product(product_id: int, data: ProductUpdate, db: Session = Depends(get_db)):
+    return update_product(product_id, data, db)
+
+@router.delete("/{product_id}", status_code=204)
+def delete_existing_product(product_id: int, db: Session = Depends(get_db)):
+    delete_product(product_id, db)
