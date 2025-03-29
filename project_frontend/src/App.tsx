@@ -20,7 +20,7 @@ function App() {
             <Route path="/" element={<ProblemList />} />
             <Route path="/problemList" element={<ProblemList />} /> {/* Ensure this route exists for the ProblemList */}
             <Route path="/problemList/problem/:problemId" element={<Problems />} /> {/* Problem route for individual problems */}
-            <Route path="/problems" element={<Problems />} />
+            <Route path="/problems" element={<ProblemList />} />
             <Route path="/problems/create" element={<CreateProblem />} />
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/code" element={<Code />} />
