@@ -4,17 +4,17 @@ import { ArrowLeft } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, ResponsiveContainer } from 'recharts';
 
 const lineChartData = [
-  { name: 'Jan 2023', value: 1200 },
-  { name: 'Apr 2023', value: 1600 },
-  { name: 'Jul 2023', value: 1550 },
-  { name: 'Oct 2023', value: 1700 },
-  { name: 'Jan 2024', value: 1800 },
-  { name: 'Apr 2024', value: 2000 },
-  { name: 'Jul 2024', value: 2200 },
-  { name: 'Oct 2024', value: 2400 },
+  { name: 'Jan 2024', value: 1200 },
+  { name: 'Apr 2024', value: 1600 },
+  { name: 'Jul 2024', value: 1550 },
+  { name: 'Oct 2024', value: 1700 },
+  { name: 'Jan 2025', value: 1800 },
+  { name: 'Apr 2025', value: 2000 },
+  { name: 'Jul 2025', value: 2200 },
+  { name: 'Oct 2025', value: 2400 },
 ];
 
-// Datos para las tres barras en una sola gráfica
+// Datos para las tres gráficas separadas, una por dificultad
 const barChartData = [
   { name: 'Easy', value: 45, color: '#28a745' },  // Verde para dificultad baja
   { name: 'Medium', value: 30, color: '#fd7e14' },  // Naranja para dificultad media
@@ -103,23 +103,51 @@ function ProfileAndTeamPage() {
             </ResponsiveContainer>
           </div>
 
-          {/* Recuadro para la única gráfica de barras con las tres dificultades */}
+          {/* Recuadro para las tres gráficas de barras alineadas horizontalmente */}
           <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
             <h2 className="text-xl font-semibold mb-4">Clasificación por dificultad</h2>
 
-            {/* Una sola gráfica con tres barras, una para cada dificultad */}
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={barChartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis domain={[0, 100]} /> {/* Configura la escala del eje Y de 0 a 100 */}
-                <Tooltip />
-                {/* Tres barras, una para cada dificultad */}
-                <Bar dataKey="value" fill={barChartData[0].color} />
-                <Bar dataKey="value" fill={barChartData[1].color} />
-                <Bar dataKey="value" fill={barChartData[2].color} />
-              </BarChart>
-            </ResponsiveContainer>
+            {/* Contenedor para las tres gráficas en el mismo nivel */}
+            <div className="flex justify-between">
+              {/* Gráfica para Easy */}
+              <div className="flex-1">
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={[barChartData[0]]}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="value" fill={barChartData[0].color} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Gráfica para Medium */}
+              <div className="flex-1">
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={[barChartData[1]]}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="value" fill={barChartData[1].color} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Gráfica para High */}
+              <div className="flex-1">
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={[barChartData[2]]}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="value" fill={barChartData[2].color} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
           </div>
 
         </div>

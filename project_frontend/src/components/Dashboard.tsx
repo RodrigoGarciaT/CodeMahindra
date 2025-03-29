@@ -6,7 +6,7 @@ function Dashboard() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-[#363B41] text-black p-6"> {/* Cambié el texto a negro */}
+    <div className="min-h-screen bg-[#363B41] text-black p-6">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Profile Section */}
         <div className="bg-white rounded-lg p-6 shadow-sm">
@@ -54,15 +54,17 @@ function Dashboard() {
         <div className="bg-white rounded-lg p-6 shadow-sm">
           <h2 className="text-xl font-bold mb-4">Desafíos Semanales</h2>
           <div className="space-y-4">
-            <button className="w-full bg-red-500 hover:bg-red-600 text-white p-4 rounded-lg flex justify-between items-center">
+            <button 
+              className="w-full bg-red-500 hover:bg-red-600 text-white p-4 rounded-lg flex justify-between items-center"
+              onClick={() => navigate('/tasks')}
+            >
               <span>Completar tareas</span>
               <ChevronRight />
             </button>
-            <button className="w-full bg-red-500 hover:bg-red-600 text-white p-4 rounded-lg flex justify-between items-center">
-              <span>Solucionar bug</span>
-              <ChevronRight />
-            </button>
-            <button className="w-full bg-red-500 hover:bg-red-600 text-white p-4 rounded-lg flex justify-between items-center">
+            <button 
+              className="w-full bg-red-500 hover:bg-red-600 text-white p-4 rounded-lg flex justify-between items-center"
+              onClick={() => navigate('/problems')}
+            >
               <span>Resolver problema</span>
               <ChevronRight />
             </button>
