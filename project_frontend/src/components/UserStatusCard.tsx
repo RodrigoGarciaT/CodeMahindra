@@ -11,34 +11,33 @@ type UserStatusCardProps = {
 const UserStatusCard: React.FC<UserStatusCardProps> = ({ rank, percentile }) => {
   return (
     <motion.div
-      className="bg-gradient-to-r from-orange-400 to-orange-300 rounded-xl p-5 flex items-center gap-4"
-      style={{
-        boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2), 0 0 20px rgba(251, 146, 60, 0.3)",
-      }}
+      className="bg-gradient-to-br from-orange-400 to-amber-500 rounded-xl p-5 relative overflow-hidden"
+      style={{ boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)" }}
       whileHover={{
         scale: 1.02,
-        boxShadow: "0 15px 30px rgba(0, 0, 0, 0.3), 0 0 30px rgba(251, 146, 60, 0.4)",
-        transition: { duration: 0.2 },
+        boxShadow: "0 15px 30px rgba(0, 0, 0, 0.3), 0 0 15px rgba(255, 165, 0, 0.2)",
       }}
+      transition={{ duration: 0.2 }}
     >
-      <div
-        className="bg-white rounded-full w-16 h-16 flex items-center justify-center text-orange-500 font-bold text-2xl shadow-md"
-        style={{
-          boxShadow: "inset 0 2px 5px rgba(0, 0, 0, 0.1), 0 5px 10px rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        #{rank}
+      <div className="flex items-start gap-4 relative z-10">
+        <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg flex-shrink-0 mt-1">
+          <span className="text-orange-500 text-xl font-bold">#{rank}</span>
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <p className="text-white font-bold text-lg">You are doing better than</p>
+          <p className="text-white text-2xl font-extrabold">{percentile}% of other players!</p>
+        </div>
       </div>
-      <div className="text-white">
-        <p className="font-medium">You are doing better than</p>
-        <p
-          className="text-2xl font-bold"
-          style={{
-            textShadow: "1px 1px 2px rgba(0, 0, 0, 0.2)",
-          }}
-        >
-          {percentile}% of other players!
-        </p>
+
+      {/* Progress bar */}
+      <div className="mt-4 bg-white bg-opacity-30 h-2 rounded-full overflow-hidden">
+        <motion.div
+          className="h-full bg-white rounded-full"
+          initial={{ width: 0 }}
+          animate={{ width: `${percentile}%` }}
+          transition={{ duration: 1, delay: 0.5 }}
+        />
       </div>
     </motion.div>
   )
