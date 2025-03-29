@@ -14,7 +14,7 @@ export interface TestCase {
     sample_output: string;
     difficulty: 'Easy' | 'Medium' | 'Hard';
     creation_date: string;
-    expiration_date: string | null;
+    expiration_date: string;
     acceptance_rate: number;
     testcases: TestCase[];
     // No need to include 'solution' and 'language' here
@@ -24,3 +24,14 @@ export interface TestCase {
     solution: string;  // New attribute for the solution code
     language: string;  // New attribute for the language of the solution
   };
+
+
+  // New interface for problem list data
+export interface ProblemListData {
+  id: string;
+  status: string;  // The problem's solved status solved or not_solved
+  difficulty: string;  // The problem's difficulty Easy, Medium or Hard
+  acceptance_rate: number;  // The acceptance rate for the problem
+  title: string;  // The title of the problem
+  expiration_date: string; // when it expires
+}
