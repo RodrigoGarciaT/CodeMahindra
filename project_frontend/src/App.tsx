@@ -10,6 +10,9 @@ import CreateProblem from './pages/CreateProblem';
 import ProblemList from './pages/ProblemList';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import ProfilePage from './components/ProfilePage';
+import TeamPage from './components/TeamPage';
+import Dashboard from './components/Dashboard';
 import LandingPage from './pages/Landing'; // <-- Tu nueva página
 import { CartProvider } from './contexts/CartContext';
 import PullRequest from './pages/PullRequest';
@@ -28,6 +31,12 @@ function App() {
   return (
     <CartProvider>
       <Router>
+        <div className="min-h-screen bg-[#1e1e1e]">
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/problemList" element={<ProblemList />} /> {/* Ensure this route exists for the ProblemList */}
+            <Route path="/problemList/problem/:problemId" element={<Problems />} /> {/* Problem route for individual problems */}
         <Routes>
           {/* 2. Ruta que NO muestra la Navbar (LandingPage) */}
           <Route path="/landing" element={<LandingPage />} />
@@ -47,6 +56,11 @@ function App() {
             <Route path="/cart" element={<Cart />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/team" element={<TeamPage />} />
+          </Routes>
+        </div>
           </Route>
         </Routes>
       </Router>
