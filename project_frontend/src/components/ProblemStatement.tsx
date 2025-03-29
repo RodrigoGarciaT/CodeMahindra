@@ -10,7 +10,7 @@ const ProblemStatement: React.FC = () => {
     sample_output: "Sample output goes here...",
     difficulty: "Easy",
     creation_date: "2025-03-28",
-    expiration_date: null,
+    expiration_date: "2025-03-28",
     acceptance_rate: 85.5,
     testcases: []
   };
