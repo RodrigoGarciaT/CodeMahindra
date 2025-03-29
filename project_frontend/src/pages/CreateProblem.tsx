@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import axios from 'axios'; // Import Axios
 import { Problem, TestCase, ProblemFormData } from '../types/problem';
 import { PlusCircle, Trash2, Save, Edit2 } from 'lucide-react';
 
@@ -14,9 +15,15 @@ const CreateProblem = () => {
     creation_date: new Date().toISOString(),
     expiration_date: new Date().toISOString(),
     testcases: [],
-    solution: '', // New field for the solution code
-    language: 'C++', // New field for the language of the solution
+    solution: '',
+    language: 'C++',
   });
+  
+  // State for confirmation message
+  const [confirmationMessage, setConfirmationMessage] = useState<string | null>(null);
+
+  // State for showing the modal
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const handleProblemChange = (field: keyof ProblemFormData, value: string | null) => {
     setProblem(prev => ({
@@ -55,10 +62,63 @@ const CreateProblem = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Problem data:', problem);
-    // Here you would typically send the data to a backend
+
+    const problemData = {
+      name: problem.title,
+      description: problem.description,
+      input_format: problem.input_format,
+      output_format: problem.output_format,
+      sample_input: problem.sample_input,
+      sample_output: problem.sample_output,
+      difficulty: problem.difficulty,
+      creationDate: problem.creation_date,
+      expirationDate: problem.expiration_date,
+      solution: problem.solution,
+      testcases: problem.testcases.map(tc => ({
+        input: tc.input,
+        output: tc.output,
+      })),
+    };
+
+    try {
+      // Send the problem data to the API (using the correct API URL)
+      const response = await axios.post('http://127.0.0.1:8000/problems/with_testcases', problemData);
+
+      // Handle success
+      setConfirmationMessage('Problem created successfully!');
+      
+      // Show the modal
+      setIsModalVisible(true);
+
+      // Reset the form fields
+      setProblem({
+        title: '',
+        description: '',
+        input_format: '',
+        output_format: '',
+        sample_input: '',
+        sample_output: '',
+        difficulty: 'Easy',
+        creation_date: new Date().toISOString(),
+        expiration_date: new Date().toISOString(),
+        testcases: [],
+        solution: '',
+        language: 'C++',
+      });
+    } catch (error) {
+      // Handle error
+      console.error('Error creating problem:', error);
+      setConfirmationMessage('Failed to create problem. Please try again.');
+      setIsModalVisible(true);
+    }
+  };
+
+  // Close the confirmation modal
+  const closeModal = () => {
+    setIsModalVisible(false);
+    setConfirmationMessage(null);
   };
 
   return (
@@ -291,6 +351,25 @@ const CreateProblem = () => {
             </button>
           </div>
         </form>
+
+        {/* Confirmation Popup */}
+        {isModalVisible && (
+          <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+            <div className={`bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto ${confirmationMessage?.includes('successfully') ? 'bg-green-100' : 'bg-red-100'}`}>
+              <h2 className={`text-xl font-semibold ${confirmationMessage?.includes('successfully') ? 'text-green-700' : 'text-red-700'}`}>
+                {confirmationMessage}
+              </h2>
+              <div className="flex justify-center mt-4">
+                <button
+                  onClick={closeModal}
+                  className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
