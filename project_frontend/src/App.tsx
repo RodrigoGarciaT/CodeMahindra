@@ -10,6 +10,9 @@ import CreateProblem from './pages/CreateProblem';
 import ProblemList from './pages/ProblemList';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+
+import PullRequest from './pages/PullRequest'
+
 import LandingPage from './pages/Landing'; // <-- Tu nueva página
 import { CartProvider } from './contexts/CartContext';
 import PullRequest from './pages/PullRequest';
