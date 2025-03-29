@@ -22,4 +22,4 @@ Thumbs.db
 backend/.env
 
 # Ignorar entorno virtual (si está en backend o en la raíz)
-cm-env/
+backend/cm-env/
