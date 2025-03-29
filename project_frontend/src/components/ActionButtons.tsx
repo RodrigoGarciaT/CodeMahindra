@@ -8,10 +8,9 @@ interface ActionButtonsProps {
 
 interface TestResult {
   id: string;
-  result: 'passed' | 'failed' | 'processing'; // Add "processing" here
+  result: 'passed' | 'failed' | 'processing';
   status?: string;
 }
-
 
 const mockTestCases: TestCase[] = [
   { id: '1', input: '5\n1 2 3 4 5', output: '15' },
@@ -32,10 +31,8 @@ const ActionButtons = ({ code }: ActionButtonsProps) => {
     setIsProcessing(true);
     setRunResult(null);
 
-    // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    // Randomly simulate different outcomes
     const outcomes = [
       { status: 'Compilation error :(', message: 'Check the compiler output, fix the error and try again.\n\nError: missing return statement' },
       { status: 'Time Limit Exceeded', message: 'Your code took too long to execute.' },
@@ -52,18 +49,16 @@ const ActionButtons = ({ code }: ActionButtonsProps) => {
     setIsSubmitting(true);
     setTestResults([]);
 
-    // Add initial "processing" state for all test cases
     const processingResults = mockTestCases.map(test => ({
       id: test.id,
-      result: 'processing' as 'passed' | 'failed',
+      result: 'processing' as 'passed' | 'failed' | 'processing',
       status: 'Processing...'
     }));
     setTestResults(processingResults);
 
-    // Simulate API calls for each test case
     for (let i = 0; i < mockTestCases.length; i++) {
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       const result: TestResult = {
         id: mockTestCases[i].id,
         result: Math.random() > 0.5 ? 'passed' : 'failed',
@@ -77,6 +72,11 @@ const ActionButtons = ({ code }: ActionButtonsProps) => {
     }
 
     setIsSubmitting(false);
+  };
+
+  const clearResults = () => {
+    setRunResult(null);
+    setTestResults([]);
   };
 
   return (
@@ -110,6 +110,12 @@ const ActionButtons = ({ code }: ActionButtonsProps) => {
             {isSubmitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
             Submit Code
           </button>
+          <button
+            className="px-4 py-1.5 bg-red-500 text-white text-sm rounded hover:bg-red-600 flex items-center"
+            onClick={clearResults}
+          >
+            Clear Results
+          </button>
         </div>
       </div>
 
@@ -121,14 +127,6 @@ const ActionButtons = ({ code }: ActionButtonsProps) => {
             className="w-full h-32 p-2 border rounded-md font-mono text-sm"
             placeholder="Enter your custom input here..."
           />
-        </div>
-      )}
-
-      {isProcessing && (
-        <div className="mt-4 max-w-7xl mx-auto">
-          <div className="bg-white p-4 rounded-md">
-            <p className="text-gray-700">Processing...</p>
-          </div>
         </div>
       )}
 
