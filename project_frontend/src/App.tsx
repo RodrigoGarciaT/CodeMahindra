@@ -11,7 +11,7 @@ import ProblemList from './pages/ProblemList';
 import { CartProvider } from './contexts/CartContext';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-
+import PullRequest from './pages/PullRequest'
 function App() {
   return (
     <CartProvider>
@@ -26,6 +26,7 @@ function App() {
             <Route path="/problems/create" element={<CreateProblem />} />
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/code" element={<Code />} />
+            <Route path="/code/detail/:id" element={<PullRequest />} /> {/* Add route for PullRequest */}
             <Route path="/ranking" element={<Ranking />} />
             <Route path="/store" element={<Store />} />
             <Route path="/cart" element={<Cart />} />
