@@ -7,6 +7,7 @@ import Ranking from './pages/Ranking';
 import Store from './pages/Store';
 import Cart from './pages/Cart';
 import CreateProblem from './pages/CreateProblem';
+import ProblemList from './pages/ProblemList';
 import { CartProvider } from './contexts/CartContext';
 
 function App() {
@@ -16,7 +17,9 @@ function App() {
         <div className="min-h-screen bg-[#1e1e1e]">
           <Navbar />
           <Routes>
-            <Route path="/" element={<Problems />} />
+            <Route path="/" element={<ProblemList />} />
+            <Route path="/problemList" element={<ProblemList />} /> {/* Ensure this route exists for the ProblemList */}
+            <Route path="/problemList/problem/:problemId" element={<Problems />} /> {/* Problem route for individual problems */}
             <Route path="/problems" element={<Problems />} />
             <Route path="/problems/create" element={<CreateProblem />} />
             <Route path="/tasks" element={<Tasks />} />

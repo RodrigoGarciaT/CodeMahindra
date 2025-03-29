@@ -12,7 +12,7 @@ const CreateProblem = () => {
     sample_output: '',
     difficulty: 'Easy',
     creation_date: new Date().toISOString(),
-    expiration_date: null,
+    expiration_date: new Date().toISOString(),
     testcases: [],
     solution: '', // New field for the solution code
     language: 'C++', // New field for the language of the solution
