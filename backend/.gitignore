@@ -17,3 +17,9 @@ cm-env/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Ignorar archivo de entorno
+backend/.env
+
+# Ignorar entorno virtual (si está en backend o en la raíz)
+cm-env/
