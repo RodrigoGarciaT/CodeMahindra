@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { Comment } from '../types/submission';
+import NewCommentModal from './NewCommentModal';
 
 const mockComments: Comment[] = [
   {
@@ -32,16 +34,55 @@ const mockComments: Comment[] = [
 ];
 
 const Discussions = () => {
+  const [showNewComment, setShowNewComment] = useState(false);
+  const [comments, setComments] = useState(mockComments);
+
+  const handleAddNewComment = () => {
+    setShowNewComment(true);
+  };
+
+  const handleCloseNewComment = () => {
+    setShowNewComment(false);
+  };
+
+  const handlePublishComment = (newCommentDescription: string) => {
+    const newComment = {
+      id: (comments.length + 1).toString(), // Simulating ID generation
+      userName: 'New User', // You can replace this with actual user data once implemented
+      profilePic: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop',
+      comment: newCommentDescription,
+      postDate: new Date().toISOString(),
+    };
+
+    // Simulate the API call
+    setComments((prevComments) => [...prevComments, newComment]);
+
+    // Close the modal after publishing the comment
+    handleCloseNewComment();
+  };
+
   return (
     <div className="bg-white p-6 rounded-lg shadow h-full overflow-y-auto">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Discussions</h2>
-        <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors">
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+          onClick={handleAddNewComment}
+        >
           New Comment
         </button>
       </div>
+
+      {/* Render New Comment Modal */}
+      {showNewComment && (
+        <NewCommentModal
+          onClose={handleCloseNewComment}
+          onPublish={handlePublishComment}
+        />
+      )}
+
       <div className="space-y-6">
-        {mockComments.map((comment) => (
+        {comments.map((comment) => (
           <div key={comment.id} className="flex space-x-4">
             <img
               src={comment.profilePic}
