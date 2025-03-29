@@ -1,20 +1,25 @@
 import { useState } from 'react';
 import { Resizable } from "re-resizable";
 import Sidebar from '../components/Sidebar';
-import ProblemStatement from '../components/ProblemStatement';
+import ProblemStatement from '../components/ProblemStatement';  // Import ProblemStatement
 import CodeEditor from '../components/CodeEditor';
 import ActionButtons from '../components/ActionButtons';
 import Submissions from '../components/Submissions';
 import Leaderboard from '../components/Leaderboard';
 import Discussions from '../components/Discussions';
+import { useLocation } from 'react-router-dom';  // Import useLocation to get problemId
 
 const Problems = () => {
   const [code, setCode] = useState('// Your code here');
   const [activeTab, setActiveTab] = useState('problem');
+  const location = useLocation(); // Get location to access the problemId prop passed through the route
 
   const handleSubmissionSelect = (submissionCode: string) => {
     setCode(submissionCode);
   };
+
+  // Access the problemId passed from the route
+  const problemId = location.state?.problemId || '';  // Default to empty string if no problemId
 
   return (
     <div className="h-screen bg-[#363B41] flex items-center justify-center">
@@ -32,7 +37,7 @@ const Problems = () => {
             }}
           >
             <div className="h-full overflow-auto pr-1">
-              {activeTab === 'problem' && <ProblemStatement />}
+              {activeTab === 'problem' && <ProblemStatement />} {/* Pass problemId as prop */}
               {activeTab === 'submissions' && <Submissions onSelectSubmission={handleSubmissionSelect} />}
               {activeTab === 'leaderboard' && <Leaderboard />}
               {activeTab === 'discussions' && <Discussions />}
@@ -40,7 +45,7 @@ const Problems = () => {
           </Resizable>
           <div className="flex-1 flex flex-col">
             <CodeEditor code={code} onChange={setCode} />
-            <ActionButtons code = ""/>
+            <ActionButtons code={code} />
           </div>
         </div>
       </div>
