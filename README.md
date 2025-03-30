@@ -142,7 +142,7 @@ docker-compose up -d  # Levantar PostgreSQL/MongoDB con Docker
 | 👤 **Edsel De Jesús Cisneros Bautista** | - |
 | 👤 **Rodrigo García Torres** | A00835513 |
 | 👤 **David Enrique García Cruz** | A0083850 |
-| 👤 **Reyli Cruz** | - |
+| 👤 **Reyli Cruz** | A00835807 |
 
 ---
 
