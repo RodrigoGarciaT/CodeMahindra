@@ -15,7 +15,8 @@ const ProblemStatement: React.FC<ProblemStatementProps> = ({ problemId }) => {
     const fetchProblem = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://127.0.0.1:8000/problems/${problemId}`);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/problems/${problemId}`);
+
         setProblem(response.data);
       } catch (err) {
         setError('Error fetching problem data');
