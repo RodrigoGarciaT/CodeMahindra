@@ -84,7 +84,7 @@ const CreateProblem = () => {
 
     try {
       // Send the problem data to the API (using the correct API URL)
-      const response = await axios.post('http://127.0.0.1:8000/problems/with_testcases', problemData);
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/problems/with_testcases`, problemData);
 
       // Handle success
       setConfirmationMessage('Problem created successfully!');
