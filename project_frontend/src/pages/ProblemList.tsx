@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
 import axios from 'axios'; // Import Axios
 import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ProblemListData } from '../types/problem';
+import { isAfter } from 'date-fns';
+
 
 // Constants
 const PROBLEMS_PER_PAGE = 5;
@@ -12,44 +14,46 @@ const ProblemList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'solved' | 'not_solved' | ''>(''); // State for status filter
   const [difficultyFilter, setDifficultyFilter] = useState<'Easy' | 'Medium' | 'Hard' | ''>(''); // State for difficulty filter
-  const [filteredProblems, setFilteredProblems] = useState<any[]>([]); // To store problems from API
+  const [problems, setProblems] = useState<ProblemListData[]>([]); // Store original problems
+  const [filteredProblems, setFilteredProblems] = useState<ProblemListData[]>([]); // To store problems from API
   const [currentPage, setCurrentPage] = useState(1);
   const [totalProblems, setTotalProblems] = useState(0); // Total number of problems in the API
-
+  const [activeProblems, setActiveProblems] = useState<ProblemListData[]>([]); // active challenge problems
+  const [currentSlide, setCurrentSlide] = useState(0);
   // Fetch problems from API when the component mounts
   useEffect(() => {
     const fetchProblems = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/problems/`);
-        const problems = response.data;
-        console.log("these are the problems");
-        console.log(problems);
-        // Set status to 'not_solved' for all problems
-        const updatedProblems = problems.map((problem: any) => ({
+        const problems = response.data.map((problem: ProblemListData) => ({
           ...problem,
-          status: 'not_solved', // Setting status to 'not_solved'
+          status: 'not_solved',
         }));
-
-        setFilteredProblems(updatedProblems);
-        setTotalProblems(updatedProblems.length); // Set total problems count
+  
+        setProblems(problems);
+        setFilteredProblems(problems);
+        setTotalProblems(problems.length);
+        setActiveProblems(problems.filter((problem: ProblemListData) => 
+          problem.expirationDate && problem.expirationDate !== null && isAfter(new Date(problem.expirationDate), new Date())
+        ))
       } catch (error) {
         console.error('Error fetching problems:', error);
       }
     };
-
+  
     fetchProblems();
   }, []);
-
-  // Apply filters when search term, status, or difficulty change
+  
   useEffect(() => {
-    const filtered = filteredProblems.filter(problem =>
+    const filtered = problems.filter(problem =>
       problem.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
       (statusFilter ? problem.status === statusFilter : true) &&
       (difficultyFilter ? problem.difficulty === difficultyFilter : true)
     );
+  
     setFilteredProblems(filtered);
-    setCurrentPage(1); // Reset to first page when filters change
-  }, [searchTerm, statusFilter, difficultyFilter]);
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter, difficultyFilter, problems]);
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
@@ -72,13 +76,73 @@ const ProblemList: React.FC = () => {
     navigate(`/problemList/problem/${problemId}`, { state: { problemId } });
   };
 
+  const slideTransition = {
+    transform: `translateX(-${currentSlide * 33.33}%)`,
+    transition: 'transform 0.5s ease-in-out'
+  };
+  const goToRoadMap = () => {
+    navigate('/roadmap');
+  };
+
+  console.log(problems);
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex gap-8">
         {/* Main Content */}
+        
         <div className="flex-1">
+          {/* Active Problems Carousel */}
+          {/* Active Problems Carousel */}
+          <section className="my-0">
+            <h2 className="text-2xl font-bold text-white mb-6">Desafíos de código activos</h2>
+            <div className="relative">
+              <div className="overflow-hidden">
+                <div className="flex gap-6" style={slideTransition}>
+                  {activeProblems.map((problem) => (
+                    <div 
+                      key={problem.id} 
+                      className="flex-none w-1/3 cursor-pointer"
+                      onClick={() => handleProblemClick(problem.id)} 
+                    >
+                      <div 
+                          className="h-48 rounded-lg bg-cover bg-center relative"
+                          style={{
+                            backgroundImage: `url("https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80")`
+                          }}
+                        >
+                        <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex flex-col justify-between p-6">
+                          <h3 className="text-white text-xl font-semibold">{problem.name}</h3>
+                          <button className="bg-gray-200 text-gray-800 px-6 py-2 rounded-md w-fit hover:bg-gray-300 transition-colors">
+                            Resolver
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <button 
+                onClick={() => setCurrentSlide(Math.max(0, currentSlide - 1))}
+                className="absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-lg disabled:opacity-50"
+                disabled={currentSlide === 0}
+              >
+                <ChevronLeft className="h-6 w-6" />
+              </button>
+              <button 
+                onClick={() => setCurrentSlide(Math.min(activeProblems.length - 3, currentSlide + 1))}
+                className="absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-lg disabled:opacity-50"
+                disabled={currentSlide >= activeProblems.length - 3}
+              >
+                <ChevronRight className="h-6 w-6" />
+              </button>
+            </div>
+          </section>
+
+
+
           {/* Problems Table */}
-          <section className="bg-white rounded-lg shadow-lg overflow-hidden min-h-[300px]">
+          <section className="bg-white rounded-lg shadow-lg overflow-hidden min-h-[300px] mt-6">
             <div className="p-6 flex flex-col h-full">
               <div className="flex gap-4 mb-6">
                 <div className="flex-1 relative">
@@ -141,7 +205,7 @@ const ProblemList: React.FC = () => {
                       <td className={`py-4 px-4 ${getDifficultyColor(problem.difficulty)}`}>
                         {problem.difficulty}
                       </td>
-                      <td className="py-4 px-4">{problem.acceptance_rate ? `${problem.acceptance_rate}%` : 'N/A'}</td>
+                      <td className="py-4 px-4">{problem.acceptance ? `${problem.acceptance}%` : 'N/A'}</td>
                     </tr>
                   ))}
                 </tbody>
