@@ -6,7 +6,7 @@ export interface TestCase {
   
   export interface Problem {
     id: string;
-    title: string;
+    name: string;
     description: string;
     input_format: string;
     output_format: string;
@@ -31,7 +31,8 @@ export interface ProblemListData {
   id: string;
   status: string;  // The problem's solved status solved or not_solved
   difficulty: string;  // The problem's difficulty Easy, Medium or Hard
-  acceptance_rate: number;  // The acceptance rate for the problem
-  title: string;  // The title of the problem
-  expiration_date: string; // when it expires
+  acceptance: number;  // The acceptance rate for the problem
+  name: string;  // The title of the problem
+  expirationDate: string; // when it expires
 }
+

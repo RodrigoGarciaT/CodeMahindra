@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from typing import List
 from sqlalchemy.orm import Session
 from database import get_db
@@ -10,6 +10,9 @@ from controllers.problem_controller import (
     delete_problem
 )
 from schemas.problem import ProblemCreate, ProblemUpdate, ProblemOut
+from controllers.problem_controller import create_problem_with_testcases
+from schemas.problem_with_testcases import ProblemCreateWithTestCases, ProblemOutWithTestCases
+
 
 router = APIRouter(prefix="/problems", tags=["Problems"])
 
@@ -32,3 +35,12 @@ def update_existing_problem(problem_id: int, data: ProblemUpdate, db: Session = 
 @router.delete("/{problem_id}", status_code=204)
 def delete_existing_problem(problem_id: int, db: Session = Depends(get_db)):
     delete_problem(problem_id, db)
+
+@router.post("/with_testcases", response_model=ProblemOutWithTestCases, status_code=201)
+def create_problem_with_testcases_endpoint(
+    data: ProblemCreateWithTestCases, db: Session = Depends(get_db)
+):
+    try:
+        return create_problem_with_testcases(data, db)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
