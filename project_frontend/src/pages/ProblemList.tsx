@@ -120,13 +120,17 @@ const ProblemList: React.FC = () => {
     navigate(`/problemList/problem/${problemId}`, { state: { problemId } });
   };
 
+  const goToRoadMap = () => {
+    navigate('/roadmap');
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex gap-8">
         {/* Main Content */}
         <div className="flex-1">
           {/* Active Problems Carousel */}
-          <section className="mb-12">
+          <section className="my-0">
             <h2 className="text-2xl font-bold text-white mb-6">Desafíos de código activos</h2>
             <div className="relative">
               <div className="overflow-hidden">
@@ -170,6 +174,25 @@ const ProblemList: React.FC = () => {
               </button>
             </div>
           </section>
+
+          <div className="flex justify-between items-center p-4 rounded-xl bg-gradient-to-r from-red-600 to-red-400 text-white shadow-md max-w-5xl my-6">
+            <div className='px-12 py-2'>
+              <p className="font-semibold text-2xl">¿Quieres mejorar y no sabes qué estudiar?</p>
+              <p className="mt-1 text-2xl">Checa el siguiente roadmap</p>
+            </div>
+            <button onClick={goToRoadMap} className="bg-red-500 hover:bg-red-600 transition-colors p-3 rounded-xl">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
 
           {/* Problems Table */}
           <section className="bg-white rounded-lg shadow-lg overflow-hidden min-h-[300px]">
