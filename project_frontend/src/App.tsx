@@ -13,6 +13,9 @@ import RegisterPage from './pages/RegisterPage';
 import LandingPage from './pages/Landing'; // <-- Tu nueva página
 import { CartProvider } from './contexts/CartContext';
 import PullRequest from './pages/PullRequest';
+import Roadmap from './pages/Roadmap';
+import SpaceBackground from './components/SpaceBackground';
+
 // 1. Layout que incluye la Navbar
 function LayoutConNavbar() {
   return (
@@ -35,7 +38,9 @@ function App() {
           {/* 3. Rutas que SÍ muestran la Navbar */}
           <Route element={<LayoutConNavbar />}>
             <Route path="/" element={<ProblemList />} />
+            <Route path="/space" element={<SpaceBackground />} />
             <Route path="/problemList" element={<ProblemList />} />
+            <Route path="/roadmap" element={<Roadmap/>} />
             <Route path="/problemList/problem/:problemId" element={<Problems />} />
             <Route path="/problems" element={<ProblemList />} />
             <Route path="/problems/create" element={<CreateProblem />} />
