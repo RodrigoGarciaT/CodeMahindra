@@ -10,9 +10,13 @@ import CreateProblem from './pages/CreateProblem';
 import ProblemList from './pages/ProblemList';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import ProfilePage from './components/ProfilePage';
+import TeamPage from './components/TeamPage';
+import Dashboard from './components/Dashboard';
 import LandingPage from './pages/Landing'; // <-- Tu nueva página
 import { CartProvider } from './contexts/CartContext';
 import PullRequest from './pages/PullRequest';
+
 import Roadmap from './pages/Roadmap';
 import SpaceBackground from './components/SpaceBackground';
 
@@ -21,8 +25,7 @@ function LayoutConNavbar() {
   return (
     <div className="min-h-screen bg-[#1e1e1e]">
       <Navbar />
-      {/* <Outlet /> renderiza la ruta hija */}
-      <Outlet />
+      <Outlet /> {/* This will render the nested routes */}
     </div>
   );
 }
@@ -35,10 +38,11 @@ function App() {
           {/* 2. Ruta que NO muestra la Navbar (LandingPage) */}
           <Route path="/landing" element={<LandingPage />} />
 
-          {/* 3. Rutas que SÍ muestran la Navbar */}
+          {/* 3. Ruta con Navbar */}
           <Route element={<LayoutConNavbar />}>
-            <Route path="/" element={<ProblemList />} />
+            <Route path="/test" element={<ProblemList />} />
             <Route path="/space" element={<SpaceBackground />} />
+            <Route path="/" element={<Dashboard />} /> {/* Dashboard as default */}
             <Route path="/problemList" element={<ProblemList />} />
             <Route path="/roadmap" element={<Roadmap/>} />
             <Route path="/problemList/problem/:problemId" element={<Problems />} />
@@ -46,12 +50,15 @@ function App() {
             <Route path="/problems/create" element={<CreateProblem />} />
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/code" element={<Code />} />
-            <Route path="/code/detail/:id" element={<PullRequest />} /> {/* Add route for PullRequest */}
+            <Route path="/code/detail/:id" element={<PullRequest />} />
             <Route path="/ranking" element={<Ranking />} />
             <Route path="/store" element={<Store />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/team" element={<TeamPage />} />
           </Route>
         </Routes>
       </Router>

@@ -1,62 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
-import { format, isAfter, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay } from 'date-fns';
+import axios from 'axios'; // Import Axios
 import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ProblemListData } from '../types/problem';
+import { isAfter } from 'date-fns';
 
-// Mock data for problems
-const mockProblems: ProblemListData[] = [
-  {
-    id: '1',
-    status: 'not_solved',
-    difficulty: 'Hard',
-    acceptance_rate: 9.8,
-    title: 'Zero Array Transformation II',
-    expiration_date: '2025-04-28'
-  },
-  {
-    id: '2',
-    status: 'solved',
-    difficulty: 'Easy',
-    acceptance_rate: 67.2,
-    title: 'Median of Two Sorted Arrays',
-    expiration_date: '2025-04-29'
-  },
-  {
-    id: '3',
-    status: 'not_solved',
-    difficulty: 'Medium',
-    acceptance_rate: 45.4,
-    title: 'Regular Expression Matching',
-    expiration_date: '2025-04-30'
-  },
-  {
-    id: '4',
-    status: 'not_solved',
-    difficulty: 'Hard',
-    acceptance_rate: 35.6,
-    title: 'Two Sum',
-    expiration_date: '2025-04-30'
-  },
-  {
-    id: '5',
-    status: 'not_solved',
-    difficulty: 'Medium',
-    acceptance_rate: 52.1,
-    title: 'Add Two Numbers',
-    expiration_date: '2025-04-30'
-  },
-  // Add more mock problems to test pagination
-  ...Array.from({ length: 15 }, (_, i) => ({
-    id: `${i + 6}`,
-    status: 'not_solved',
-    difficulty: 'Medium',
-    acceptance_rate: 45.4,
-    title: `Problem ${i + 6}`,
-    expiration_date: '2025-04-30'
-  }))
-];
 
+// Constants
 const PROBLEMS_PER_PAGE = 5;
 
 const ProblemList: React.FC = () => {
@@ -64,35 +14,46 @@ const ProblemList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'solved' | 'not_solved' | ''>(''); // State for status filter
   const [difficultyFilter, setDifficultyFilter] = useState<'Easy' | 'Medium' | 'Hard' | ''>(''); // State for difficulty filter
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [filteredProblems, setFilteredProblems] = useState(mockProblems);
+  const [problems, setProblems] = useState<ProblemListData[]>([]); // Store original problems
+  const [filteredProblems, setFilteredProblems] = useState<ProblemListData[]>([]); // To store problems from API
   const [currentPage, setCurrentPage] = useState(1);
-
-  // Filter active problems (not expired)
-  const activeProblems = mockProblems.filter(problem => 
-    problem.expiration_date && problem.expiration_date !== null && isAfter(new Date(problem.expiration_date), new Date())
-  );
-
-  // Calendar calculations
-  const monthStart = startOfMonth(currentDate);
-  const monthEnd = endOfMonth(currentDate);
-  const daysInMonth: Date[] = eachDayOfInterval({ start: monthStart, end: monthEnd });
-
-  const expirationDates: Date[] = mockProblems
-    .filter(problem => problem.expiration_date)
-    .map(problem => new Date(problem.expiration_date));
-
-  // Apply filters when search term, status, or difficulty change
+  const [totalProblems, setTotalProblems] = useState(0); // Total number of problems in the API
+  const [activeProblems, setActiveProblems] = useState<ProblemListData[]>([]); // active challenge problems
+  const [currentSlide, setCurrentSlide] = useState(0);
+  // Fetch problems from API when the component mounts
   useEffect(() => {
-    const filtered = mockProblems.filter(problem =>
-      problem.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
+    const fetchProblems = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/problems/`);
+        const problems = response.data.map((problem: ProblemListData) => ({
+          ...problem,
+          status: 'not_solved',
+        }));
+  
+        setProblems(problems);
+        setFilteredProblems(problems);
+        setTotalProblems(problems.length);
+        setActiveProblems(problems.filter((problem: ProblemListData) => 
+          problem.expirationDate && problem.expirationDate !== null && isAfter(new Date(problem.expirationDate), new Date())
+        ))
+      } catch (error) {
+        console.error('Error fetching problems:', error);
+      }
+    };
+  
+    fetchProblems();
+  }, []);
+  
+  useEffect(() => {
+    const filtered = problems.filter(problem =>
+      problem.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
       (statusFilter ? problem.status === statusFilter : true) &&
       (difficultyFilter ? problem.difficulty === difficultyFilter : true)
     );
+  
     setFilteredProblems(filtered);
-    setCurrentPage(1); // Reset to first page when filters change
-  }, [searchTerm, statusFilter, difficultyFilter]);
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter, difficultyFilter, problems]);
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
@@ -111,23 +72,24 @@ const ProblemList: React.FC = () => {
   const startIndex = (currentPage - 1) * PROBLEMS_PER_PAGE;
   const paginatedProblems = filteredProblems.slice(startIndex, startIndex + PROBLEMS_PER_PAGE);
 
-  const slideTransition = {
-    transform: `translateX(-${currentSlide * 33.33}%)`,
-    transition: 'transform 0.5s ease-in-out'
-  };
-
   const handleProblemClick = (problemId: string) => {
     navigate(`/problemList/problem/${problemId}`, { state: { problemId } });
   };
 
+  const slideTransition = {
+    transform: `translateX(-${currentSlide * 33.33}%)`,
+    transition: 'transform 0.5s ease-in-out'
+  };
   const goToRoadMap = () => {
     navigate('/roadmap');
   };
+  console.log(problems);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex gap-8">
         {/* Main Content */}
+        
         <div className="flex-1">
           {/* Active Problems Carousel */}
           <section className="my-0">
@@ -142,13 +104,13 @@ const ProblemList: React.FC = () => {
                       onClick={() => handleProblemClick(problem.id)} 
                     >
                       <div 
-                        className="h-48 rounded-lg bg-cover bg-center relative"
-                        style={{
-                          backgroundImage: `url(https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80)`
-                        }}
-                      >
+                          className="h-48 rounded-lg bg-cover bg-center relative"
+                          style={{
+                            backgroundImage: `url("https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80")`
+                          }}
+                        >
                         <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex flex-col justify-between p-6">
-                          <h3 className="text-white text-xl font-semibold">{problem.title}</h3>
+                          <h3 className="text-white text-xl font-semibold">{problem.name}</h3>
                           <button className="bg-gray-200 text-gray-800 px-6 py-2 rounded-md w-fit hover:bg-gray-300 transition-colors">
                             Resolver
                           </button>
@@ -194,8 +156,9 @@ const ProblemList: React.FC = () => {
             </button>
           </div>
 
+
           {/* Problems Table */}
-          <section className="bg-white rounded-lg shadow-lg overflow-hidden min-h-[300px]">
+          <section className="bg-white rounded-lg shadow-lg overflow-hidden min-h-[300px] mt-6">
             <div className="p-6 flex flex-col h-full">
               <div className="flex gap-4 mb-6">
                 <div className="flex-1 relative">
@@ -254,11 +217,11 @@ const ProblemList: React.FC = () => {
                           </div>
                         ) : null}
                       </td>
-                      <td className="py-4 px-4">{problem.title}</td>
+                      <td className="py-4 px-4">{problem.name}</td>
                       <td className={`py-4 px-4 ${getDifficultyColor(problem.difficulty)}`}>
                         {problem.difficulty}
                       </td>
-                      <td className="py-4 px-4">{problem.acceptance_rate}%</td>
+                      <td className="py-4 px-4">{problem.acceptance ? `${problem.acceptance}%` : 'N/A'}</td>
                     </tr>
                   ))}
                 </tbody>
