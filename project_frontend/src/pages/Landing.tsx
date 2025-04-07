@@ -223,7 +223,7 @@ export default function LandingPage() {
                   <span className="ml-2 inline-block w-16 h-0.5 bg-red-600"></span>
                 </h2>
                 <p className="text-gray-700 max-w-lg">
-                  CodeMahindra es una plataforma de gamificación impulsada por IA que ayuda a desarrolladores a mejorar
+                  CodeMahindra es una plataforma de gamificación impulsada por AI que ayuda a desarrolladores a mejorar
                   sus códigos, utilizar buenas prácticas y mantener un formato de código consistente.
                 </p>
               </div>
