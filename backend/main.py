@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import Base, engine
-from mangum import Mangum
 
 # Import all routers
 from routes.position_routes import router as position_router
@@ -76,5 +75,3 @@ app.include_router(suggestion_resource_router)
 @app.get("/")
 def read_root():
     return {"message": "🚀 API is running successfully!"}
-
-handler = Mangum(app)
