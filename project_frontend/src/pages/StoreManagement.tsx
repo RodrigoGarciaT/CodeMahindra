@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Plus, Pencil, Save, Package, Upload, Trash2 } from 'lucide-react';
-import { products as initialProducts } from './Store';
 import axios from 'axios';
 
 interface Product {
@@ -14,7 +13,22 @@ interface Product {
 }
 
 const StoreManagement: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [products, setProducts] = useState<Product[]>([]);
+
+  // Fetch products from API when the component mounts
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get<Product[]>(`${import.meta.env.VITE_BACKEND_URL}/products/`);
+        setProducts(response.data);
+      } catch (error) {
+        console.error('Error fetching problems:', error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+  
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [isAddingStock, setIsAddingStock] = useState<number | null>(null);
@@ -40,23 +54,46 @@ const StoreManagement: React.FC = () => {
     setEditingProduct(null);
   };
 
-  const handleCreate = (product: Product) => {
+  const handleCreate = async (product: Product) => {
+    // Create a new product object with a generated id and publish date.
     const newId = products.length ? Math.max(...products.map(p => p.id)) + 1 : 1;
     const createdProduct = {
       ...product,
       id: newId,
       publishDate: new Date().toISOString().split('T')[0],
     };
-    setProducts(currentProducts => [...currentProducts, createdProduct]);
-    // Reset newProduct state if needed
-    setNewProduct({
-      image: '',
-      name: '',
-      price: 0,
-      description: '',
-      quantity: 0,
-    });
-    setIsCreating(false);
+  
+    try {
+      // Post the new product data to the backend
+      console.log("this is the created product: ", createdProduct)
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/products/`,
+        {
+          image: createdProduct.image,
+          name: createdProduct.name,
+          price: createdProduct.price,
+          description: createdProduct.description,
+          quantity: createdProduct.quantity,
+        }
+      );
+  
+      // Optionally update the state with the response from the backend.
+      // Here we're assuming the backend returns the created product as response.data.
+      setProducts(currentProducts => [...currentProducts, response.data]);
+    } catch (error) {
+      console.error("Error creating product", error);
+      alert("Failed to create product.");
+    } finally {
+      // Reset the form for creating a new product and exit creation mode.
+      setNewProduct({
+        image: '',
+        name: '',
+        price: 0,
+        description: '',
+        quantity: 0,
+      });
+      setIsCreating(false);
+    }
   };
 
   const handleAddStock = (productId: number) => {
@@ -73,19 +110,30 @@ const StoreManagement: React.FC = () => {
     setIsAddingStock(null);
   };
 
-  // New function to handle discontinuing a product.
-  const handleDiscontinue = (productId: number) => {
+  const handleDiscontinue = async (productId: number) => {
     const confirmed = window.confirm("Are you sure you want to discontinue this product?");
+    
     if (confirmed) {
-      setProducts(currentProducts =>
-        currentProducts.filter(p => p.id !== productId)
-      );
-      if(editingProduct?.id === productId) {
-        setEditingProduct(null);
+      try {
+        // Send DELETE request to backend to delete the product
+        await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/products/${productId}`);
+  
+        // If successful, update the state to remove the product
+        setProducts(currentProducts =>
+          currentProducts.filter(p => p.id !== productId)
+        );
+  
+        // Optionally reset editingProduct if the discontinued product is currently being edited
+        if (editingProduct?.id === productId) {
+          setEditingProduct(null);
+        }
+      } catch (error) {
+        console.error('Error discontinuing product:', error);
+        alert('Failed to discontinue the product. Please try again.');
       }
     }
   };
-
+  
   const ProductForm = ({ product, onSave, onCancel }: {
     product: Product;
     onSave: (product: Product) => void;
@@ -182,13 +230,13 @@ const StoreManagement: React.FC = () => {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Price</label>
             <input
-              type="number"
-              value={editedProduct.price}
-              onChange={e => setEditedProduct({ ...editedProduct, price: parseFloat(e.target.value) })}
-              className="w-full p-2 border rounded-lg"
-              step="0.01"
-              min="0"
-            />
+                type="number"
+                value={editedProduct.price}
+                onChange={e => setEditedProduct({ ...editedProduct, price: Math.floor(parseFloat(e.target.value)) })}
+                className="w-full p-2 border rounded-lg"
+                step="1"  // Step size of 1 for integer increment/decrement
+                min="0"   // Minimum value of 0
+                />
           </div>
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>

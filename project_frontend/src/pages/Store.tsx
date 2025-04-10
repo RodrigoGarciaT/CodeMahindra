@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Star, ShoppingCart, AlertCircle } from 'lucide-react';
 import {useCart} from '../contexts/CartContext'
+import axios from 'axios';
 interface Product {
   id: number;
   image: string;
@@ -10,36 +11,6 @@ interface Product {
   quantity: number;
   publishDate: string;
 }
-
-const products: Product[] = [
-  {
-    id: 1,
-    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
-    name: "Premium Running Shoes",
-    price: 129.99,
-    publishDate: "2024-03-15",
-    description: "High-performance running shoes with advanced cushioning technology.",
-    quantity: 5
-  },
-  {
-    id: 2,
-    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
-    name: "Smart Watch Pro",
-    price: 299.99,
-    publishDate: "2024-03-14",
-    description: "Advanced smartwatch with health monitoring and GPS features.",
-    quantity: 3
-  },
-  {
-    id: 3,
-    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e",
-    name: "Wireless Headphones",
-    price: 199.99,
-    publishDate: "2024-03-13",
-    description: "Premium wireless headphones with noise cancellation.",
-    quantity: 8
-  }
-];
 
 const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   const { items, addToCart } = useCart();
@@ -112,6 +83,21 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
 };
 
 const Store: React.FC = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+  // Fetch products from API when the component mounts
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get<Product[]>(`${import.meta.env.VITE_BACKEND_URL}/products/`);
+        setProducts(response.data);
+      } catch (error) {
+        console.error('Error fetching problems:', error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+  
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-white mb-8">Store</h1>
@@ -125,5 +111,3 @@ const Store: React.FC = () => {
 };
 
 export default Store;
-
-export { products }
