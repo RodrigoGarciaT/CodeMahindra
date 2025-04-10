@@ -6,9 +6,9 @@ interface Product {
   image: string;
   name: string;
   price: number;
-  published_date: string;
   description: string;
   quantity: number;
+  publishDate: string;
 }
 
 const products: Product[] = [
@@ -17,7 +17,7 @@ const products: Product[] = [
     image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
     name: "Premium Running Shoes",
     price: 129.99,
-    published_date: "2024-03-15",
+    publishDate: "2024-03-15",
     description: "High-performance running shoes with advanced cushioning technology.",
     quantity: 5
   },
@@ -26,7 +26,7 @@ const products: Product[] = [
     image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
     name: "Smart Watch Pro",
     price: 299.99,
-    published_date: "2024-03-14",
+    publishDate: "2024-03-14",
     description: "Advanced smartwatch with health monitoring and GPS features.",
     quantity: 3
   },
@@ -35,7 +35,7 @@ const products: Product[] = [
     image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e",
     name: "Wireless Headphones",
     price: 199.99,
-    published_date: "2024-03-13",
+    publishDate: "2024-03-13",
     description: "Premium wireless headphones with noise cancellation.",
     quantity: 8
   }
@@ -74,7 +74,7 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
         <div className="flex items-center justify-between mb-2">
           <span className="text-2xl font-bold text-red-500">${product.price}</span>
           <span className="text-sm text-gray-500">
-            Published: {new Date(product.published_date).toLocaleDateString()}
+            Published: {new Date(product.publishDate).toLocaleDateString()}
           </span>
         </div>
         <div className="text-sm text-gray-600 mb-3">
