@@ -36,3 +36,15 @@ def delete_product(product_id: int, db: Session):
         raise HTTPException(status_code=404, detail="Product not found")
     db.delete(product)
     db.commit()
+
+def add_stock(product_id: int, quantity_to_add: int, db: Session) -> Product:
+    # Lock the row for update
+    product = db.query(Product).filter(Product.id == product_id).with_for_update().first()
+    
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    product.quantity += quantity_to_add
+    db.commit()
+    db.refresh(product)
+    return product
