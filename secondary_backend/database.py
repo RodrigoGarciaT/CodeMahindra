@@ -16,15 +16,7 @@ if not DATABASE_URL:
     sys.exit(1)
 
 # Create engine
-engine = create_engine(
-    DATABASE_URL,
-    pool_size=20,             # Pool size
-    max_overflow=20,          # Max overflow connections
-    pool_timeout=30,          # Timeout after 30 seconds
-    pool_recycle=3600,        # Recycle connections every hour
-    pool_pre_ping=True        # Enable connection pre-ping to avoid stale connections
-)
-
+engine = create_engine(DATABASE_URL)
 
 # Create session
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

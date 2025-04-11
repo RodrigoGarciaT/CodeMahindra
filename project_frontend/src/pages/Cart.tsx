@@ -1,15 +1,39 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useCart } from '../contexts/CartContext';
 import { Minus, Plus, Trash2, Check, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
-// Import products to check quantities
-import { products } from './Store';
+interface Product {
+  id: number;
+  image: string;
+  name: string;
+  price: number;
+  description: string;
+  quantity: number;
+  publishDate: string;
+}
+
 
 const Cart: React.FC = () => {
   const { items, removeFromCart, updateQuantity, clearCart, total } = useCart();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [checkoutComplete, setCheckoutComplete] = useState(false);
+
+  const [products, setProducts] = useState<Product[]>([]);
+  // Fetch products from API when the component mounts
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get<Product[]>(`${import.meta.env.VITE_BACKEND_URL}/products/`);
+        setProducts(response.data);
+      } catch (error) {
+        console.error('Error fetching problems:', error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const handleCheckout = () => {
     setIsCheckingOut(true);
