@@ -74,5 +74,5 @@ app.include_router(auth_router, prefix="/auth", tags=["auth"])
 # Health check route
 @app.get("/")
 def read_root():
-    return {"message": "🚀 API is running successfully!"}
 
+    return {"message": "🚀 API is running successfully!"}

@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Code2, BookOpen, Trophy, ShoppingBag, Bell, ShoppingCart, PlusCircle } from 'lucide-react';
+import { Home, Code2, BookOpen, Trophy, ShoppingBag, Bell, ShoppingCart, PlusCircle, Settings } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 
 const Navbar = () => {
@@ -47,7 +47,11 @@ const Navbar = () => {
               </Link>
               <Link to="/store" className={getLinkClass('/store')}>
                 <ShoppingBag className="h-4 w-4 mr-2" />
-                Tienda
+                Store
+              </Link>
+              <Link to="/store/manage" className={getLinkClass('/store/manage')}>
+                <Settings className="h-4 w-4 mr-2" />
+                Manage Store
               </Link>
             </div>
           </div>
