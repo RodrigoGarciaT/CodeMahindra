@@ -6,6 +6,13 @@ import { Eye, EyeOff, ArrowRight, Mail, Lock, User, CheckCircle } from "lucide-r
 import { Link } from "react-router-dom"
 import logo from "../images/logo-codemahindra.png"
 
+const countryList = [
+  "Afganistán", "Alemania", "Argentina", "Australia", "Brasil", "Canadá", "Chile", "China", "Colombia", "Corea del Sur", "Cuba",
+  "Dinamarca", "Ecuador", "Egipto", "El Salvador", "España", "Estados Unidos", "Francia", "Grecia", "Guatemala", "Honduras",
+  "India", "Indonesia", "Irlanda", "Italia", "Japón", "México", "Nicaragua", "Noruega", "Panamá", "Paraguay", "Perú", "Polonia",
+  "Portugal", "Reino Unido", "República Dominicana", "Rusia", "Suecia", "Suiza", "Tailandia", "Turquía", "Uruguay", "Venezuela", "Vietnam"
+]
+
 const RegisterPage: React.FC = () => {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
@@ -18,6 +25,10 @@ const RegisterPage: React.FC = () => {
   const [animateForm, setAnimateForm] = useState(false)
   const [passwordStrength, setPasswordStrength] = useState(0)
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [nationality, setNationality] = useState("")
+  const [phone, setPhone] = useState("")
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
+
 
   useEffect(() => {
     setAnimateForm(true)
@@ -119,10 +130,40 @@ const RegisterPage: React.FC = () => {
 
     setIsLoading(true)
     try {
-      await new Promise((r) => setTimeout(r, 1500))
-      console.log("Registrando usuario:", { name, email, password })
-    } catch {
-      setError("Ocurrió un error al registrarte. Inténtalo de nuevo.")
+      const response = await fetch("http://localhost:8000/employees/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          firstName: name,
+          nationality,
+          phoneNumber: phone
+          // otros opcionales si quieres: experience, team_id, etc.
+        }),
+      })
+  
+      if (!response.ok) {
+        const errorData = await response.json()
+        console.error("❌ Error del backend:", errorData)
+        throw new Error(
+          typeof errorData.detail === "string"
+            ? errorData.detail
+            : JSON.stringify(errorData.detail)
+        )
+      }
+  
+      const data = await response.json()
+      console.log(data);
+      console.log("Usuario registrado:", JSON.stringify(data, null, 2))
+      setSuccessMessage("Usuario registrado exitosamente ✅")
+      setTimeout(() => setSuccessMessage(null), 4000) // desaparece después de 4s
+
+  
+    } catch (err: any) {
+      setError(err.message || "Ocurrió un error al registrarte.")
     } finally {
       setIsLoading(false)
     }
@@ -173,10 +214,16 @@ const RegisterPage: React.FC = () => {
               {error && <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6 text-sm animate-fadeIn">{error}</div>}
 
               <form onSubmit={handleSubmit} className="space-y-4">
+               {successMessage && (
+                  <div className="bg-green-50 text-green-700 p-4 rounded-lg mb-6 text-sm animate-fadeIn">
+                    {successMessage}
+                  </div>
+                )}
+
                 <InputField label="Nombre completo" icon={<User />} value={name} onChange={setName} placeholder="Tu nombre" />
                 <InputField label="Correo electrónico" icon={<Mail />} value={email} onChange={setEmail} placeholder="tu@correo.com" type="email" />
                 <PasswordField label="Contraseña" value={password} onChange={setPassword} show={showPassword} setShow={setShowPassword} placeholder="Crea tu contraseña" />
-
+                <PasswordField label="Confirmar contraseña" value={confirm} onChange={setConfirm} show={showConfirmPassword} setShow={setShowConfirmPassword} placeholder="Repite tu contraseña"/>
                 {password && (
                   <div className="mt-2">
                     <div className="flex justify-between items-center mb-1">
@@ -187,17 +234,17 @@ const RegisterPage: React.FC = () => {
                     </div>
                   </div>
                 )}
+                <DropdownField label="Nacionalidad" value={nationality} onChange={setNationality} options={countryList} placeholder="Selecciona tu país"/>
+                <InputField label="Teléfono" icon={<CheckCircle />} value={phone} onChange={setPhone} placeholder="+34 612 345 678" type="tel"/>
 
-                <PasswordField label="Confirmar contraseña" value={confirm} onChange={setConfirm} show={showConfirmPassword} setShow={setShowConfirmPassword} placeholder="Repite tu contraseña" />
 
-                <div className="flex items-center mt-4">
-                  <input id="terms" name="terms" type="checkbox" className="h-4 w-4 text-[#E63946] focus:ring-[#E63946] border-gray-300 rounded" required />
-                  <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
-                    Acepto los <a href="#" className="text-[#E63946] hover:underline">términos y condiciones</a>
-                  </label>
-                </div>
-
-                <button type="submit" disabled={isLoading} className="w-full bg-[#E63946] text-white py-3 px-4 rounded-lg hover:bg-[#d32836] transition-all duration-300 flex items-center justify-center gap-2 font-medium shadow-md mt-4">
+                <button
+                  type="submit"
+                  disabled={isLoading || successMessage !== null}
+                  className={`w-full bg-[#E63946] text-white py-3 px-4 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 font-medium shadow-md mt-4 ${
+                    (isLoading || successMessage !== null) ? "opacity-50 cursor-not-allowed" : "hover:bg-[#d32836]"
+                  }`}
+                >
                   {isLoading ? (
                     <span className="flex items-center gap-2">
                       <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -255,6 +302,22 @@ const PasswordField = ({ label, value, onChange, show, setShow, placeholder }: a
         {show ? <EyeOff size={20} /> : <Eye size={20} />}
       </button>
     </div>
+  </div>
+)
+const DropdownField = ({ label, value, onChange, options, placeholder }: any) => (
+  <div className="space-y-2">
+    <label className="block text-sm font-medium text-gray-700">{label}</label>
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="w-full pl-4 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E63946] bg-[#FFF5F5]"
+      required
+    >
+      <option value="">{placeholder}</option>
+      {options.map((option: string) => (
+        <option key={option} value={option}>{option}</option>
+      ))}
+    </select>
   </div>
 )
 

@@ -6,7 +6,7 @@ from database import Base, engine
 from routes.position_routes import router as position_router
 from routes.team_routes import router as team_router
 from routes.bot_routes import router as bot_router
-from routes.employee_routes import router as employee_router
+from routes.employee_routes import router as employee_routes
 from routes.employee_bot_routes import router as employee_bot_router
 from routes.achievement_routes import router as achievement_router
 from routes.employee_achievement_routes import router as employee_achievement_router
@@ -26,9 +26,9 @@ from routes.task_routes import router as task_router
 from routes.suggestion_routes import router as suggestion_router
 from routes.resource_routes import router as resource_router
 from routes.suggestion_resource_routes import router as suggestion_resource_router
+from routes.auth import router as auth_router
 
-# Create database tables (if they don't exist)
-Base.metadata.create_all(bind=engine)
+
 
 # Initialize the FastAPI app
 app = FastAPI(
@@ -40,8 +40,8 @@ app = FastAPI(
 # Set up CORS (customize this for your frontend)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Change this to your frontend URL in production
-    allow_credentials=False,
+    allow_origins=["http://localhost:5173"],  # Change this to your frontend URL in production
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -50,7 +50,7 @@ app.add_middleware(
 app.include_router(position_router)
 app.include_router(team_router)
 app.include_router(bot_router)
-app.include_router(employee_router)
+app.include_router(employee_routes)
 app.include_router(employee_bot_router)
 app.include_router(achievement_router)
 app.include_router(employee_achievement_router)
@@ -67,11 +67,12 @@ app.include_router(employee_comment_router)
 app.include_router(product_router)
 app.include_router(employee_product_router)
 app.include_router(task_router)
-app.include_router(suggestion_router)
-app.include_router(resource_router)
 app.include_router(suggestion_resource_router)
+app.include_router(auth_router, prefix="/auth", tags=["auth"])
+
 
 # Health check route
 @app.get("/")
 def read_root():
     return {"message": "🚀 API is running successfully!"}
+

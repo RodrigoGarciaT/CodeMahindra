@@ -94,12 +94,39 @@ const LoginPage: React.FC = () => {
     e.preventDefault()
     setIsLoading(true)
     setError(null)
-
+  
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-      console.log("Iniciando sesión con:", { email, password })
+      // Realizar la solicitud al backend para autenticar al usuario
+      const response = await fetch("http://localhost:8000/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password
+        }),
+      })
+      
+
+      if (!response.ok) {
+        throw new Error("Credenciales incorrectas. Por favor, verifica tu correo y contraseña.")
+      }
+  
+      const data = await response.json()
+      const token = data.access_token // Token recibido del backend
+  
+      // Guardar el token en el almacenamiento local o en un estado global
+      localStorage.setItem("auth_token", token)
+  
+      // Redirigir a la página principal o a donde desees
+      window.location.href = "/dashboard" // Cambia esto según tu flujo de navegación
     } catch (error) {
-      setError("Credenciales incorrectas. Por favor, verifica tu correo y contraseña.")
+      if (error instanceof Error) {
+        setError(error.message)
+      } else {
+        setError("Mi bombo")
+      }
     } finally {
       setIsLoading(false)
     }
