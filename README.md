@@ -66,6 +66,7 @@ cd CodeMahindra
 cd backend
 pip install -r requirements.txt  # Instalar dependencias (Python)
 uvicorn main:app --reload  # Iniciar backend
+python -m uvicorn main:app --reload --port 8000 # A Saul unicamente le funciono de esta manera
 ```
 
 ### 🎨 **3. Configura el Frontend**  

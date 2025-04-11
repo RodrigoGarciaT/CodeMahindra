@@ -11,7 +11,7 @@ class Employee(Base):
     nationality = Column(String(255))
     experience = Column(Integer)
     level = Column(Integer)
-    firstName = Column(String(255))
+    firstName = Column('firstName',String(255))
     lastName = Column(String(255))
     birthDate = Column(Date)
     profilePicture = Column(String(255))
