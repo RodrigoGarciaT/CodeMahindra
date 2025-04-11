@@ -14,6 +14,8 @@ class ProductCreate(ProductBase):
 
 class ProductUpdate(ProductBase):
     pass
+class ProductAddStockRequest(BaseModel):
+    quantity: int
 
 class ProductOut(ProductBase):
     id: int

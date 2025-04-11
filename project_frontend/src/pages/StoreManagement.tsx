@@ -46,13 +46,46 @@ const StoreManagement: React.FC = () => {
     setIsCreating(false);
     setIsAddingStock(null);
   };
-
+  /*
   const handleSave = (product: Product) => {
     setProducts(currentProducts =>
       currentProducts.map(p => (p.id === product.id ? { ...product, quantity: p.quantity } : p))
     );
     setEditingProduct(null);
+  };*/
+
+  const handleSave = async (product: Product) => {
+    try {
+      const response = await axios.put<Product>(
+        `${import.meta.env.VITE_BACKEND_URL}/products/${product.id}`,
+        {
+          image: product.image,
+          name: product.name,
+          price: product.price,
+          description: product.description,
+          quantity: product.quantity,
+        }
+      );
+  
+      const savedProduct = response.data;
+  
+      setProducts(currentProducts =>
+        currentProducts.map(p =>
+          p.id === product.id
+            ? {
+                ...savedProduct,
+                quantity: product.quantity, // if you still want to override quantity
+              }
+            : p
+        )
+      );
+    } catch (error) {
+      console.error('Failed to save product:', error);
+    }
+  
+    setEditingProduct(null);
   };
+  
 
   const handleCreate = async (product: Product) => {
     // Create a new product object with a generated id and publish date.
@@ -96,20 +129,30 @@ const StoreManagement: React.FC = () => {
     }
   };
 
-  const handleAddStock = (productId: number) => {
+  const handleAddStock = async (productId: number) => {
     if (stockAmount <= 0) return;
-
-    setProducts(currentProducts =>
-      currentProducts.map(p =>
-        p.id === productId
-          ? { ...p, quantity: p.quantity + stockAmount }
-          : p
-      )
-    );
+  
+    try {
+      const response = await axios.post<Product>(
+        `${import.meta.env.VITE_BACKEND_URL}/products/${productId}/add_stock`,
+        { quantity: stockAmount }
+      );
+  
+      const updatedProduct = response.data;
+  
+      setProducts(currentProducts =>
+        currentProducts.map(p =>
+          p.id === productId ? { ...p, quantity: updatedProduct.quantity } : p
+        )
+      );
+    } catch (error) {
+      console.error('Failed to add stock:', error);
+    }
+  
     setStockAmount(0);
     setIsAddingStock(null);
   };
-
+  
   const handleDiscontinue = async (productId: number) => {
     const confirmed = window.confirm("Are you sure you want to discontinue this product?");
     
