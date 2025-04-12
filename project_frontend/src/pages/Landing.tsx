@@ -6,6 +6,9 @@ import { Link } from "react-router-dom"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useEffect, useState, useRef } from "react"
 
+const getImage = (name: string) =>
+  new URL(`../images/${name}`, import.meta.url).href;
+
 // Custom hook for scroll animations
 function useElementOnScreen(options: IntersectionObserverInit) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -68,9 +71,9 @@ export default function LandingPage() {
 
   // Array of images for the carousel
   const carouselImages = [
-      "../src/images/Laptop.png",
-      "../src/images/Laptop2.png",
-      "../src/images/Laptop3.png",
+      "Laptop.png",
+      "Laptop2.png",
+      "Laptop3.png",
   ]
 
   const goToNextImage = () => {
@@ -202,7 +205,7 @@ export default function LandingPage() {
             <div className="md:w-1/2 flex justify-center animate-fadeIn animation-delay-500">
               <div className="relative w-64 h-64 animate-float">
                 <img
-                  src="../src/images/CodeBox.png"
+                  src={getImage("CodeBox.png")}
                   alt="Code editor illustration"
                   className="object-contain w-full h-full"
                 />
@@ -230,7 +233,7 @@ export default function LandingPage() {
               <div className="md:w-1/2 flex justify-center">
                 <div className="relative w-64 h-64 animate-float animation-delay-300">
                   <img
-                    src="../src/images/robot_male_1.svg"
+                    src={getImage("robot_male_1.svg")}
                     alt="Programming illustration"
                     className="object-contain w-full h-full"
                   />
@@ -249,7 +252,7 @@ export default function LandingPage() {
               <div className="md:w-1/2 flex justify-center mb-8 md:mb-0">
                 <div className="relative w-64 h-64 animate-float animation-delay-300">
                   <img
-                    src="../src/images/exito.png"
+                    src={getImage("exito.png")}
                     alt="Benefits illustration"
                     className="object-contain w-full h-full"
                   />
@@ -299,7 +302,7 @@ export default function LandingPage() {
               <div className="md:w-1/2 mb-8 md:mb-0">
                 <div className="relative w-full h-64 overflow-hidden">
                   <img
-                    src={carouselImages[displayedImageIndex] || "/placeholder.svg"}
+                    src={getImage(carouselImages[displayedImageIndex] || "/placeholder.svg")}
                     alt={`Platform screenshot ${displayedImageIndex + 1}`}
                     className={`object-contain w-full h-full transition-opacity duration-600 ${isTransitioning ? "opacity-0" : "opacity-100"}`}
                   />
