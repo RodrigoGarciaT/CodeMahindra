@@ -130,7 +130,7 @@ const RegisterPage: React.FC = () => {
 
     setIsLoading(true)
     try {
-      const response = await fetch("http://localhost:8000/employees/", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/employees/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -97,7 +97,7 @@ const LoginPage: React.FC = () => {
   
     try {
       // Realizar la solicitud al backend para autenticar al usuario
-      const response = await fetch("http://localhost:8000/auth/login", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
