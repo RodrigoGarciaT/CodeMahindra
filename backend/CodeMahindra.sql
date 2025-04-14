@@ -174,9 +174,9 @@ CREATE TABLE IF NOT EXISTS Task (
     affectedModule VARCHAR(255),
     tag VARCHAR(255),
     reward INTEGER,
-    employee_id UUID REFERENCES Employee(id)
+    employee_id UUID REFERENCES Employee(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
 CREATE TABLE IF NOT EXISTS Suggestion (
     id SERIAL PRIMARY KEY,
     code TEXT,

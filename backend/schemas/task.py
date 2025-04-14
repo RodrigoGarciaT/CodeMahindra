@@ -31,4 +31,4 @@ class TaskOut(TaskBase):
     id: int
 
     class Config:
-        from_attributes = True
+        from_attributes = True  # ✅ Reemplaza orm_mode en Pydantic v2
