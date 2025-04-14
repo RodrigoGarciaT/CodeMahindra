@@ -1,17 +1,19 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.sql import func
 from database import Base
 
 class Task(Base):
-    __tablename__ = "Task"
+    __tablename__ = "task"
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(255), nullable=False)
-    taskType = Column(String(255))
+    tasktype = Column(String(255))
     priority = Column(String(50))
     status = Column(String(50))
-    estimatedTime = Column(Integer)
-    affectedModule = Column(String(255))
+    estimatedtime = Column(Integer)
+    affectedmodule = Column(String(255))
     tag = Column(String(255))
     reward = Column(Integer)
-    employee_id = Column(UUID(as_uuid=True), ForeignKey("Employee.id"))
+    employee_id = Column(UUID(as_uuid=True), ForeignKey("employees.id"))
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
