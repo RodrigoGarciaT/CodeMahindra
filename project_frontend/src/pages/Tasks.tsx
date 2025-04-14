@@ -1,14 +1,28 @@
 "use client"
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { Dialog } from "@headlessui/react";
+import {
+  Search,
+  Filter,
+  RefreshCw,
+  ArrowUp,
+  ArrowDown,
+  CheckCircle,
+  Clock,
+  AlertCircle,
+} from "lucide-react";
 
-import { useEffect, useState } from "react"
-import axios from "axios"
-import { Dialog } from "@headlessui/react"
-import { Search, Filter, RefreshCw, ArrowUp, ArrowDown, CheckCircle, Clock, AlertCircle } from "lucide-react"
-import { Avatar } from "../components/avatar"
-import { Badge } from "../components/badge"
-import { Button } from "../components/button"
-import { Input } from "../components/input"
-import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "../components/tooltip"
+import { Avatar } from "@/components/avatar";
+import { Badge } from "@/components/badge";
+import { Button } from "@/components/button";
+import { Input } from "@/components/Input";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from "@/components/tooltip";
 
 interface Task { 
   id: number
