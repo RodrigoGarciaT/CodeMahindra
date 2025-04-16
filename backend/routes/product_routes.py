@@ -7,9 +7,10 @@ from controllers.product_controller import (
     create_product,
     update_product,
     delete_product,
-    add_stock
+    add_stock,
+    buy_items
 )
-from schemas.product import ProductAddStockRequest, ProductCreate, ProductUpdate, ProductOut
+from schemas.product import ProductAddStockRequest, ProductCreate, ProductUpdate, ProductOut, BuyItemsRequest
 from database import get_db
 
 router = APIRouter(prefix="/products", tags=["Products"])
@@ -37,3 +38,7 @@ def delete_existing_product(product_id: int, db: Session = Depends(get_db)):
 @router.post("/{product_id}/add_stock", response_model=ProductOut)
 def add_product_stock(product_id: int, request: ProductAddStockRequest, db: Session = Depends(get_db)):
     return add_stock(product_id, request.quantity, db)
+
+@router.post("/buy", response_model=List[ProductOut], status_code=200)
+def buy_products(request: BuyItemsRequest, db: Session = Depends(get_db)):
+    return buy_items(request.employee_id, request.products_to_buy, db)
