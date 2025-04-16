@@ -35,15 +35,27 @@ const Cart: React.FC = () => {
     fetchProducts();
   }, []);
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     setIsCheckingOut(true);
-    // Simulate a checkout process
-    setTimeout(() => {
+    try {
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/products/buy`, {
+        employee_id: '3a1e74c9-8f2a-4ccd-83f4-6e4121672f69',
+        products_to_buy: items.map(item => ({
+          product_id: item.id,
+          quantity_to_buy: item.quantity,
+        })),
+      });
+  
       clearCart();
-      setIsCheckingOut(false);
       setCheckoutComplete(true);
-    }, 2000);
+    } catch (error) {
+      console.error('Checkout failed:', error);
+      alert('There was an error processing your order. Please try again.');
+    } finally {
+      setIsCheckingOut(false);
+    }
   };
+  
 
   if (checkoutComplete) {
     return (

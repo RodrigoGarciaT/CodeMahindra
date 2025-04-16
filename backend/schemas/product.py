@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
+from typing import List
 
 class ProductBase(BaseModel):
     image: Optional[str] = None
@@ -16,6 +17,14 @@ class ProductUpdate(ProductBase):
     pass
 class ProductAddStockRequest(BaseModel):
     quantity: int
+    
+class ProductPurchase(BaseModel):
+    product_id: int
+    quantity_to_buy: int
+
+class BuyItemsRequest(BaseModel):
+    employee_id: str
+    products_to_buy: List[ProductPurchase]
 
 class ProductOut(ProductBase):
     id: int
@@ -23,3 +32,4 @@ class ProductOut(ProductBase):
 
     class Config:
         from_attributes = True
+
