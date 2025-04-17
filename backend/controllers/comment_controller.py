@@ -18,6 +18,7 @@ def create_comment(data: CommentCreate, db: Session) -> Comment:
     db.add(new_comment)
     db.commit()
     db.refresh(new_comment)
+    print("this was the comment", new_comment)
     return new_comment
 
 def update_comment(comment_id: int, data: CommentUpdate, db: Session) -> Comment:

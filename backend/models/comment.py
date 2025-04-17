@@ -9,5 +9,5 @@ class Comment(Base):
     id = Column(Integer, primary_key=True, index=True)
     description = Column(Text)
     messageDate = Column(DateTime, server_default=func.now())
-    employee_id = Column(UUID(as_uuid=True), ForeignKey("Employee.id"))
+    employee_id = Column(UUID(as_uuid=True), ForeignKey("employees.id"))
     problem_id = Column(Integer, ForeignKey("Problem.id"))

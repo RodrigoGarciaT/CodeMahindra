@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Comment } from '../types/submission';
 import NewCommentModal from './NewCommentModal';
+import axios from 'axios';
+import { Description } from '@headlessui/react';
 
 const mockComments: Comment[] = [
   {
@@ -33,7 +35,10 @@ const mockComments: Comment[] = [
   }
 ];
 
-const Discussions = () => {
+interface DiscussionsProps {
+  problemId: number;
+}
+const Discussions: React.FC<DiscussionsProps> = ({ problemId }) => {
   const [showNewComment, setShowNewComment] = useState(false);
   const [comments, setComments] = useState(mockComments);
 
@@ -45,21 +50,33 @@ const Discussions = () => {
     setShowNewComment(false);
   };
 
-  const handlePublishComment = (newCommentDescription: string) => {
-    const newComment = {
-      id: (comments.length + 1).toString(), // Simulating ID generation
-      userName: 'New User', // You can replace this with actual user data once implemented
-      profilePic: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop',
-      comment: newCommentDescription,
-      postDate: new Date().toISOString(),
-    };
+  const handlePublishComment = async(newCommentDescription: string) => {
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/comments`, {
+        employee_id: '3a1e74c9-8f2a-4ccd-83f4-6e4121672f69',
+        Description: newCommentDescription,
+        problem_id: problemId
+      });
 
-    // Simulate the API call
-    setComments((prevComments) => [...prevComments, newComment]);
-
-    // Close the modal after publishing the comment
-    handleCloseNewComment();
+      const newComment = {
+        id: response.data.id,
+        userName: response.data.firstName + ' ' + response.data.lastName,
+        profilePic: response.data.profilePicture,
+        comment: response.data.description,
+        postDate: response.data.messageDate,
+      };
+  
+      // Simulate the API call
+      setComments((prevComments) => [...prevComments, newComment]);
+  
+    } catch (error) {
+      console.error('Checkout failed:', error);
+      alert('There was an error publishing your comment. Please try again.');
+    } finally {
+      handleCloseNewComment();
+    }
   };
+
 
   return (
     <div className="bg-white p-6 rounded-lg shadow h-full overflow-y-auto">
