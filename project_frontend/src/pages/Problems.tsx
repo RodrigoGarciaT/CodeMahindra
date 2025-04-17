@@ -39,7 +39,7 @@ const Problems = () => {
               {activeTab === 'problem' && <ProblemStatement problemId={problemId} />}  {/* Pass problemId as prop */}
               {activeTab === 'submissions' && <Submissions onSelectSubmission={handleSubmissionSelect} />}
               {activeTab === 'leaderboard' && <Leaderboard />}
-              {activeTab === 'discussions' && <Discussions />}
+              {activeTab === 'discussions' && <Discussions problemId={problemId} />}
             </div>
           </Resizable>
           <div className="flex-1 flex flex-col">
