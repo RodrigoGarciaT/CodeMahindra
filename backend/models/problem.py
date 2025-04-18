@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, Float, DateTime
+from sqlalchemy import Column, Integer, String, Text, Float, DateTime, Boolean
 from sqlalchemy.sql import func
 from database import Base
 
@@ -18,3 +18,4 @@ class Problem(Base):
     creationDate = Column(DateTime, server_default=func.now())
     expirationDate = Column(DateTime)
     solution = Column(Text)
+    was_graded = Column(Boolean, nullable=False, server_default='false')
