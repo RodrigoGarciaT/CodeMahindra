@@ -10,6 +10,7 @@ class SolutionBase(BaseModel):
     memory: Optional[float] = None
     inTeam: Optional[bool] = None
     language: Optional[str] = None
+    testCasesPassed: int = 0
 
 class SolutionCreate(SolutionBase):
     employee_id: UUID
