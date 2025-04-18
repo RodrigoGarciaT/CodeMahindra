@@ -4,44 +4,13 @@ import NewCommentModal from './NewCommentModal';
 import axios from 'axios';
 import { Description } from '@headlessui/react';
 
-const mockComments: Comment[] = [
-  {
-    id: '1',
-    userName: 'Alice Johnson',
-    profilePic: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop',
-    comment: 'Great problem! I learned a lot about dynamic programming while solving it.',
-    postDate: '2025-03-28T10:30:00Z'
-  },
-  {
-    id: '2',
-    userName: 'Bob Smith',
-    profilePic: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&h=100&fit=crop',
-    comment: 'I found a more efficient solution using a priority queue. Would anyone like to discuss different approaches?',
-    postDate: '2025-03-28T09:45:00Z'
-  },
-  {
-    id: '3',
-    userName: 'Carol Williams',
-    profilePic: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop',
-    comment: 'The time complexity of my solution is O(n log n). Is there a way to optimize it further?',
-    postDate: '2025-03-28T09:15:00Z'
-  },
-  {
-    id: '4',
-    userName: 'David Brown',
-    profilePic: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop',
-    comment: 'Has anyone tried solving this using a different programming language? I\'d be interested in seeing other implementations.',
-    postDate: '2025-03-28T08:30:00Z'
-  }
-];
-
 interface DiscussionsProps {
   problemId: number;
+  comments: Comment[];
+  setComments: React.Dispatch<React.SetStateAction<Comment[]>>;
 }
-const Discussions: React.FC<DiscussionsProps> = ({ problemId }) => {
+const Discussions: React.FC<DiscussionsProps> = ({ problemId, comments, setComments }) => {
   const [showNewComment, setShowNewComment] = useState(false);
-  const [comments, setComments] = useState(mockComments);
-
   const handleAddNewComment = () => {
     setShowNewComment(true);
   };
@@ -53,8 +22,8 @@ const Discussions: React.FC<DiscussionsProps> = ({ problemId }) => {
   const handlePublishComment = async(newCommentDescription: string) => {
     try {
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/comments`, {
-        employee_id: '3a1e74c9-8f2a-4ccd-83f4-6e4121672f69',
-        Description: newCommentDescription,
+        employee_id: 'f683124d-6fc7-4586-8590-86573f5aa66e',
+        description: newCommentDescription,
         problem_id: problemId
       });
 

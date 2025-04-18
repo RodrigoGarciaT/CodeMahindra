@@ -4,7 +4,7 @@ import uuid
 from database import Base
 
 class Employee(Base):
-    __tablename__ = "employees"
+    __tablename__ = "Employee"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
     profileEpic = Column(String(255))
@@ -21,4 +21,4 @@ class Employee(Base):
     coins = Column(Integer, default=0)
     phoneNumber = Column(String(20))
     position_id = Column(Integer, ForeignKey("Position.id"))  # Coincide con __tablename__ en Position
-    team_id = Column(Integer, ForeignKey("teams.id"))         # Coincide con __tablename__ en Team
+    team_id = Column(Integer, ForeignKey("Team.id"))         # Coincide con __tablename__ en Team
