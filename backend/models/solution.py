@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, String, Text, Float, Boolean, DateTime
+from sqlalchemy import Column, ForeignKey, String, Text, Float, Boolean, DateTime, Integer
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 from database import Base
@@ -15,3 +15,5 @@ class Solution(Base):
     memory = Column(Float)
     inTeam = Column(Boolean)
     language = Column(String(50))
+    testCasesPassed = Column(Integer, nullable=False, server_default="0")
+
