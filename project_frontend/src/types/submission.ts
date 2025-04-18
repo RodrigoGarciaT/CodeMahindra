@@ -11,6 +11,7 @@ export interface Submission {
   
   export interface Comment {
     id: string;
+    employeeId: string
     userName: string;
     profilePic: string;
     comment: string;

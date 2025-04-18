@@ -12,6 +12,7 @@ import axios from 'axios';
 import { Comment } from '../types/submission';
 
 const Problems = () => {
+  const employeeId = 'f683124d-6fc7-4586-8590-86573f5aa66e'
   const [code, setCode] = useState('// Your code here');
   const [activeTab, setActiveTab] = useState('problem');
   const location = useLocation();  // Get location to access the problemId prop passed through the route
@@ -31,7 +32,8 @@ const Problems = () => {
         userName: comment.firstName + ' ' + comment.lastName,
         profilePic: comment.profilePicture,
         comment: comment.description,
-        postDate: comment.messageDate
+        postDate: comment.messageDate,
+        employeeId: comment.employee_id
       }));
 
       setComments(comments);
@@ -70,6 +72,7 @@ const Problems = () => {
                   problemId={problemId} 
                   comments={comments}
                   setComments={setComments}
+                  employeeId={employeeId}
                 />
                 )}
             </div>

@@ -2,15 +2,17 @@ import { useState } from 'react';
 import { Comment } from '../types/submission';
 import NewCommentModal from './NewCommentModal';
 import axios from 'axios';
-import { Description } from '@headlessui/react';
 
 interface DiscussionsProps {
   problemId: number;
+  employeeId: string;
   comments: Comment[];
   setComments: React.Dispatch<React.SetStateAction<Comment[]>>;
 }
-const Discussions: React.FC<DiscussionsProps> = ({ problemId, comments, setComments }) => {
+
+const Discussions: React.FC<DiscussionsProps> = ({ problemId, comments, setComments, employeeId }) => {
   const [showNewComment, setShowNewComment] = useState(false);
+
   const handleAddNewComment = () => {
     setShowNewComment(true);
   };
@@ -19,10 +21,10 @@ const Discussions: React.FC<DiscussionsProps> = ({ problemId, comments, setComme
     setShowNewComment(false);
   };
 
-  const handlePublishComment = async(newCommentDescription: string) => {
+  const handlePublishComment = async (newCommentDescription: string) => {
     try {
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/comments`, {
-        employee_id: 'f683124d-6fc7-4586-8590-86573f5aa66e',
+        employee_id: employeeId,
         description: newCommentDescription,
         problem_id: problemId
       });
@@ -33,11 +35,10 @@ const Discussions: React.FC<DiscussionsProps> = ({ problemId, comments, setComme
         profilePic: response.data.profilePicture,
         comment: response.data.description,
         postDate: response.data.messageDate,
+        employeeId: response.data.employee_id
       };
-  
-      // Simulate the API call
+
       setComments((prevComments) => [...prevComments, newComment]);
-  
     } catch (error) {
       console.error('Checkout failed:', error);
       alert('There was an error publishing your comment. Please try again.');
@@ -46,7 +47,16 @@ const Discussions: React.FC<DiscussionsProps> = ({ problemId, comments, setComme
     }
   };
 
-
+  const handleDeleteComment = async (commentId: string) => {
+    try {
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/comments/${commentId}`);
+      setComments((prevComments) => prevComments.filter((comment) => comment.id !== commentId));
+    } catch (error) {
+      console.error('Delete failed:', error);
+      alert('There was an error deleting your comment. Please try again.');
+    }
+  };
+  console.log(comments);
   return (
     <div className="bg-white p-6 rounded-lg shadow h-full overflow-y-auto">
       <div className="flex justify-between items-center mb-6">
@@ -59,7 +69,6 @@ const Discussions: React.FC<DiscussionsProps> = ({ problemId, comments, setComme
         </button>
       </div>
 
-      {/* Render New Comment Modal */}
       {showNewComment && (
         <NewCommentModal
           onClose={handleCloseNewComment}
@@ -89,6 +98,14 @@ const Discussions: React.FC<DiscussionsProps> = ({ problemId, comments, setComme
                 <button className="hover:text-blue-500">Reply</button>
                 <button className="hover:text-blue-500">Share</button>
                 <button className="hover:text-blue-500">Report</button>
+                {comment.employeeId === employeeId && (
+                  <button
+                    onClick={() => handleDeleteComment(comment.id)}
+                    className="hover:text-red-500"
+                  >
+                    Delete
+                  </button>
+                )}
               </div>
             </div>
           </div>
