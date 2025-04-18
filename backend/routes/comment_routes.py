@@ -7,7 +7,11 @@ from controllers.comment_controller import (
     get_comment_by_id,
     create_comment,
     update_comment,
-    delete_comment
+    delete_comment,
+    get_comments_by_problemid
+)
+from controllers.employee_controller import(
+    get_employee_by_id
 )
 from schemas.comment import CommentCreate, CommentUpdate, CommentOut
 
@@ -16,6 +20,10 @@ router = APIRouter(prefix="/comments", tags=["Comments"])
 @router.get("/", response_model=List[CommentOut])
 def list_comments(db: Session = Depends(get_db)):
     return get_all_comments(db)
+
+@router.get("/fromProblem/{problem_id}", response_model=List[CommentOut])
+def retrieve_comment(problem_id: int, db: Session = Depends(get_db)):
+    return get_comments_by_problemid(problem_id, db)
 
 @router.get("/{comment_id}", response_model=CommentOut)
 def retrieve_comment(comment_id: int, db: Session = Depends(get_db)):

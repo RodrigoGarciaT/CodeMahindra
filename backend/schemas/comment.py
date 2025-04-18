@@ -17,6 +17,9 @@ class CommentUpdate(BaseModel):
 class CommentOut(CommentBase):
     id: int
     messageDate: datetime
+    firstName: str
+    lastName: str
+    profilePicture: str
 
     class Config:
         from_attributes = True

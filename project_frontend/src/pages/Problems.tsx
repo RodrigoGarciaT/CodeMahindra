@@ -8,18 +8,44 @@ import Submissions from '../components/Submissions';
 import Leaderboard from '../components/Leaderboard';
 import Discussions from '../components/Discussions';
 import { useLocation } from 'react-router-dom';
+import axios from 'axios';
+import { Comment } from '../types/submission';
 
 const Problems = () => {
   const [code, setCode] = useState('// Your code here');
   const [activeTab, setActiveTab] = useState('problem');
   const location = useLocation();  // Get location to access the problemId prop passed through the route
-
+  const [comments, setComments] = useState<Comment[]>([]);
   const handleSubmissionSelect = (submissionCode: string) => {
     setCode(submissionCode);
   };
 
   // Access the problemId passed from the route
-  const problemId = location.state?.problemId || '';  // Default to empty string if no problemId
+  const problemId = location.state?.problemId || 1;  // Default to empty string if no problemId
+
+  const getComments = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/comments/fromProblem/${problemId}`);
+      const comments = response.data.map((comment: any) => ({
+        id: comment.id,
+        userName: comment.firstName + ' ' + comment.lastName,
+        profilePic: comment.profilePicture,
+        comment: comment.description,
+        postDate: comment.messageDate
+      }));
+
+      setComments(comments);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await getComments();
+    };
+    fetchData();
+  }, []);
 
   return (
     <div className="h-screen bg-[#363B41] flex items-center justify-center">
@@ -39,7 +65,13 @@ const Problems = () => {
               {activeTab === 'problem' && <ProblemStatement problemId={problemId} />}  {/* Pass problemId as prop */}
               {activeTab === 'submissions' && <Submissions onSelectSubmission={handleSubmissionSelect} />}
               {activeTab === 'leaderboard' && <Leaderboard />}
-              {activeTab === 'discussions' && <Discussions problemId={problemId} />}
+              {activeTab === 'discussions' && (
+                <Discussions 
+                  problemId={problemId} 
+                  comments={comments}
+                  setComments={setComments}
+                />
+                )}
             </div>
           </Resizable>
           <div className="flex-1 flex flex-col">

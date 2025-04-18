@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime
 from database import Base
 
 class Team(Base):
-    __tablename__ = "teams"  
+    __tablename__ = "Team"  
 
     id = Column(Integer, primary_key=True, index=True)
     creationDate = Column(DateTime)
