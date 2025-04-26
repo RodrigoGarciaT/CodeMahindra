@@ -4,6 +4,17 @@ export interface TestCase {
     output: string;
   }
   
+  export interface TestCaseResult {
+    id: string;
+    status: 'AC' | 'WA' | 'RE' | 'processing';
+    message: string;
+  }
+  
+  export interface Submission {
+    problem_id: number;
+    source_code: string;
+  }
+  
   export interface Problem {
     id: string;
     name: string;
