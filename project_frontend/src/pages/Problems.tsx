@@ -79,7 +79,7 @@ const Problems = () => {
           </Resizable>
           <div className="flex-1 flex flex-col">
             <CodeEditor code={code} onChange={setCode} />
-            <ActionButtons code={code} />
+            <ActionButtons code={code} problemId={problemId} employeeId={employeeId} language='C++'  />
           </div>
         </div>
       </div>
