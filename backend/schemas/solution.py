@@ -23,6 +23,10 @@ class SolutionOut(SolutionBase):
     employee_id: UUID
     problem_id: int
     submissionDate: datetime
-
+    
+class Submission(BaseModel):
+    employee_id: UUID
+    problem_id: int
+    source_code: str
     class Config:
         from_attributes = True

@@ -1,47 +1,78 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
+import axios from 'axios';
 import { TestCase } from '../types/problem';
 
 interface ActionButtonsProps {
   code: string;
+  problemId: number;
+  employeeId: string;
+  language: string;
+}
+
+interface TestCaseResult {
+  id: string;
+  result: 'AC' | 'WA' | 'RE' | 'TL';
+  time: string;
+  memory: string;
+  expected_output: string;
+  output: string;
+
+}
+
+interface Submission {
+  problem_id: number;
+  source_code: string;
+  employee_id: string;
 }
 
 interface TestResult {
   id: string;
-  result: 'passed' | 'failed' | 'processing';
+  result: string;
   status?: string;
 }
 
-const mockTestCases: TestCase[] = [
-  { id: '1', input: '5\n1 2 3 4 5', output: '15' },
-  { id: '2', input: '3\n10 20 30', output: '60' },
-  { id: '3', input: '4\n2 4 6 8', output: '20' },
-  { id: '4', input: '2\n100 200', output: '300' },
-];
-
-const ActionButtons = ({ code }: ActionButtonsProps) => {
+const ActionButtons = ({ code, problemId, employeeId }: ActionButtonsProps) => {
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [customInput, setCustomInput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [runResult, setRunResult] = useState<string | null>(null);
   const [testResults, setTestResults] = useState<TestResult[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [testCases, setTestCases] = useState<TestCase[]>([]);
 
   const simulateCodeRun = async () => {
     setIsProcessing(true);
     setRunResult(null);
 
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    try {
+      console.log(problemId);
+      console.log(code);
+      
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/solutions/test/`,
+        { source_code: code,
+          problem_id: problemId,
+          input: customInput
+        }
+      );
+      const result: TestCaseResult = response.data;
+      let customMessage = '';
+      if (result.result === 'AC') {
+        customMessage = `Accepted ✅\nOutput matched expected output in ${result.time} and ${result.memory} memory.\nExpected: ${result.expected_output}\nGot: ${result.output}`;
+      } else if (result.result === 'WA') {
+        customMessage = `Wrong Answer ❌\nExpected: ${result.expected_output}\nGot: ${result.output}`;
+      } else if (result.result === 'RE') {
+        customMessage = `Runtime Error 💥\nYour code crashed during execution.`;
+      } else if (result.result === 'TL') {
+        customMessage = `Time Limit Exceeded ⏱️\nYour code took too long to run.`;
+      }
+      setRunResult(`${result.result}\n${customMessage}`);
+    } catch (error) {
+      console.error("Error running the code:", error);
+      setRunResult('Error occurred during code execution');
+    }
 
-    const outcomes = [
-      { status: 'Compilation error :(', message: 'Check the compiler output, fix the error and try again.\n\nError: missing return statement' },
-      { status: 'Time Limit Exceeded', message: 'Your code took too long to execute.' },
-      { status: 'Accepted', message: 'Output: 15\nExecution time: 0.042s' },
-      { status: 'Wrong Answer', message: 'Expected output: 15\nYour output: 10' },
-    ];
-
-    const randomOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
-    setRunResult(`${randomOutcome.status}\n${randomOutcome.message}`);
     setIsProcessing(false);
   };
 
@@ -49,26 +80,54 @@ const ActionButtons = ({ code }: ActionButtonsProps) => {
     setIsSubmitting(true);
     setTestResults([]);
 
-    const processingResults = mockTestCases.map(test => ({
-      id: test.id,
-      result: 'processing' as 'passed' | 'failed' | 'processing',
-      status: 'Processing...'
-    }));
-    setTestResults(processingResults);
+    const submission: Submission = {
+      problem_id: problemId,
+      source_code: code,
+      employee_id: employeeId
+    };
 
-    for (let i = 0; i < mockTestCases.length; i++) {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/solutions/test-results`,
+        submission
+      );
+      const results: TestCaseResult[] = response.data;
+      // Sort by original id (assuming it's numeric or sortable as string)
+      results.sort((a, b) => {
+        const idA = parseInt(a.id, 10);
+        const idB = parseInt(b.id, 10);
+        return idA - idB;
+      });
 
-      const result: TestResult = {
-        id: mockTestCases[i].id,
-        result: Math.random() > 0.5 ? 'passed' : 'failed',
-      };
+      // Reassign ids to be index + 1
+      results.forEach((r, index) => {
+        r.id = (index + 1).toString();
+      });
+      const processingResults: TestResult[] = results.map((result) => {
+        let outcome: string;
 
-      setTestResults(prev => [
-        ...prev.slice(0, i),
-        result,
-        ...prev.slice(i + 1)
-      ]);
+        switch (result.result) {
+          case 'AC':
+            outcome = 'passed';
+            break;
+          default:
+            outcome = result.result;
+        }
+
+        return {
+          id: result.id,
+          result: outcome,
+          status: "",
+        };
+      });
+
+      setTestResults(processingResults);
+      console.log(testResults);
+      console.log(processingResults);
+      console.log(results);
+    } catch (error) {
+      console.error("Error submitting the code:", error);
+      setTestResults([]);
     }
 
     setIsSubmitting(false);
