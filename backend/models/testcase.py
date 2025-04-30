@@ -7,4 +7,4 @@ class TestCase(Base):
     id = Column(Integer, primary_key=True, index=True)
     input = Column(Text)
     output = Column(Text)
-    problem_id = Column(Integer, ForeignKey("Problem.id"))
+    problem_id = Column(Integer, ForeignKey("Problem.id", ondelete="CASCADE"))
