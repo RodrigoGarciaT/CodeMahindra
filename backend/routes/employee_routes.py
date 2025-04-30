@@ -7,9 +7,10 @@ from controllers.employee_controller import (
     get_employee_by_id,
     create_employee,
     update_employee,
-    delete_employee
+    delete_employee,
+    set_admin_status
 )
-from schemas.employee import EmployeeCreate, EmployeeUpdate, EmployeeOut
+from schemas.employee import EmployeeCreate, EmployeeUpdate, EmployeeOut, AdminStatusUpdate
 from uuid import UUID
 
 router = APIRouter(prefix="/employees", tags=["Employees"])
@@ -33,3 +34,8 @@ def update_existing_employee(employee_id: UUID, employee: EmployeeUpdate, db: Se
 @router.delete("/{employee_id}", status_code=204)
 def delete_existing_employee(employee_id: UUID, db: Session = Depends(get_db)):
     delete_employee(employee_id, db)
+    
+# ✅ New PATCH route to update admin status
+@router.patch("/{employee_id}/admin-status", response_model=EmployeeOut)
+def update_admin_status(employee_id: UUID, status_update: AdminStatusUpdate, db: Session = Depends(get_db)):
+    return set_admin_status(employee_id, status_update.is_admin, db)
