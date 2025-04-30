@@ -1,45 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Trash2, GraduationCap, Search } from 'lucide-react';
+import axios from 'axios';
 
 interface ProblemManage {
   id: string;
   difficulty: string;
   name: string;
   expirationDate: string;
-  isActive: boolean;
+  wasGraded: boolean;
 }
-
-const initialProblems: ProblemManage[] = [
-  {
-    id: "1",
-    difficulty: "Easy",
-    name: "Sample Problem",
-    expirationDate: "2024-04-01",
-    isActive: true
-  },
-  {
-    id: "2",
-    difficulty: "Medium",
-    name: "String Manipulation",
-    expirationDate: "2024-04-15",
-    isActive: true
-  },
-  {
-    id: "3",
-    difficulty: "Hard",
-    name: "Dynamic Programming",
-    expirationDate: "2024-05-01",
-    isActive: true
-  },
-  {
-    id: "4",
-    difficulty: "Easy",
-    name: "Array Basics",
-    expirationDate: "2024-03-15",
-    isActive: false
-  }
-];
 
 interface ProblemCardProps {
   problem: ProblemManage;
@@ -82,12 +52,12 @@ const ProblemCard: React.FC<ProblemCardProps> = ({ problem, onDelete, onGrade, o
       
       <div className="flex items-center justify-between mt-4">
         <span className={`px-3 py-1 rounded-full text-sm ${
-          problem.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+          !problem.wasGraded ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
         }`}>
-          {problem.isActive ? 'Active' : 'Inactive'}
+          {!problem.wasGraded ? 'Active' : 'Inactive'}
         </span>
         <div className="flex gap-2">
-          {problem.isActive && (
+          {!problem.wasGraded && (
             <button
               onClick={() => onGrade(problem.id)}
               className="p-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors text-white"
@@ -111,9 +81,29 @@ const ProblemCard: React.FC<ProblemCardProps> = ({ problem, onDelete, onGrade, o
 
 const ManageProblems: React.FC = () => {
   const navigate = useNavigate();
-  const [problems, setProblems] = useState<ProblemManage[]>(initialProblems);
+  const [problems, setProblems] = useState<ProblemManage[]>([]);
   const [filter, setFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const [searchTerm, setSearchTerm] = useState('');
+  
+  const fetchProblems = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:8000/problems/");
+      const fetchedProblems = response.data.map((problem: any) => ({
+        id: problem.id,
+        name: problem.name,
+        difficulty: problem.difficulty,
+        expirationDate: problem.expirationDate,
+        wasGraded: problem.was_graded
+      }));
+      setProblems(fetchedProblems);
+    } catch (err) {
+      console.error("❌ Error loading problems:", err);
+    } 
+  };
+
+  useEffect(() => {
+    fetchProblems();
+  }, []);
 
   const handleDeleteProblem = (id: string) => {
     setProblems(problems.filter(problem => problem.id !== id));
@@ -121,18 +111,18 @@ const ManageProblems: React.FC = () => {
 
   const handleGradeProblem = (id: string) => {
     setProblems(problems.map(problem => 
-      problem.id === id ? { ...problem, isActive: false } : problem
+      problem.id === id ? { ...problem, wasGraded: true } : problem
     ));
   };
 
   const handleViewProblem = (id: string) => {
-    navigate(`/problemList/problem/${id}`);
+    navigate(`/problemList/problem/${id}`, { state: { problemId: id } });
   };
 
   const filteredProblems = problems
     .filter(problem => {
-      if (filter === 'active') return problem.isActive;
-      if (filter === 'inactive') return !problem.isActive;
+      if (filter === 'active') return !problem.wasGraded;
+      if (filter === 'inactive') return problem.wasGraded;
       return true;
     })
     .filter(problem => 
