@@ -105,8 +105,14 @@ const ManageProblems: React.FC = () => {
     fetchProblems();
   }, []);
 
-  const handleDeleteProblem = (id: string) => {
-    setProblems(problems.filter(problem => problem.id !== id));
+  const handleDeleteProblem = async (id: string) => {
+    try {
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/problems/${id}`);
+      setProblems(problems.filter(problem => problem.id !== id));
+    } catch (error) {
+      console.error('Delete failed:', error);
+      alert('There was an error deleting your problem. Please try again.');
+    }
   };
 
   const handleGradeProblem = (id: string) => {

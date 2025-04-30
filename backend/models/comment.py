@@ -10,8 +10,8 @@ class Comment(Base):
     id = Column(Integer, primary_key=True, index=True)
     description = Column(Text)
     messageDate = Column(DateTime, server_default=func.now())
-    employee_id = Column(UUID(as_uuid=True), ForeignKey("Employee.id"))
-    problem_id = Column(Integer, ForeignKey("Problem.id"))
+    employee_id = Column(UUID(as_uuid=True), ForeignKey("Employee.id", ondelete="CASCADE"))
+    problem_id = Column(Integer, ForeignKey("Problem.id", ondelete="CASCADE"))
 
     # relationships
     employee = relationship("Employee", backref="comments")

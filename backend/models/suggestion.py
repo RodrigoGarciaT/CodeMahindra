@@ -11,4 +11,4 @@ class Suggestion(Base):
     comment = Column(Text)
     path = Column(String(255))
     suggestionDate = Column(DateTime, server_default=func.now())
-    employee_id = Column(UUID(as_uuid=True), ForeignKey("Employee.id"))
+    employee_id = Column(UUID(as_uuid=True), ForeignKey("Employee.id", ondelete="CASCADE"))

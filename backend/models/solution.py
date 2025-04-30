@@ -6,7 +6,11 @@ from database import Base
 class Solution(Base):
     __tablename__ = "Solution"
 
-    employee_id = Column(UUID(as_uuid=True), ForeignKey("Employee.id"), primary_key=True)
+    employee_id = Column(
+    UUID(as_uuid=True),
+    ForeignKey("Employee.id", ondelete="CASCADE"),
+    primary_key=True
+)
     problem_id = Column(ForeignKey("Problem.id"), primary_key=True)
     submissionDate = Column(DateTime, server_default=func.now())
     status = Column(String(50))
