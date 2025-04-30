@@ -23,7 +23,6 @@ const Problems = () => {
 
   // Access the problemId passed from the route
   const problemId = location.state?.problemId || 1;  // Default to empty string if no problemId
-
   const getComments = async () => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/comments/fromProblem/${problemId}`);
