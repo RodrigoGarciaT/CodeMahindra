@@ -101,10 +101,23 @@ const ManageUsers: React.FC = () => {
   };
 
 
-  const handleToggleAdmin = (id: string) => {
-    setUsers(users.map(user => 
-      user.id === id ? { ...user, isAdmin: !user.isAdmin } : user
-    ));
+  const handleToggleAdmin = async (id: string) => {
+    const userToUpdate = users.find(user => user.id === id);
+    if (!userToUpdate) return;
+  
+    const newIsAdmin = !userToUpdate.isAdmin;
+  
+    try {
+      await axios.patch(
+        `${import.meta.env.VITE_BACKEND_URL}/employees/${id}/admin-status`,
+        { is_admin: newIsAdmin }
+      );
+      setUsers(users.map(user => 
+        user.id === id ? { ...user, isAdmin: newIsAdmin } : user
+      ));
+    } catch (err) {
+      console.error("❌ Error updating admin status:", err);
+    }
   };
 
   const filteredUsers = users
