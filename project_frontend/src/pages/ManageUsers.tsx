@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Shield, ShieldOff, Trash2, Search } from 'lucide-react';
 
 interface UserManage {
@@ -9,33 +10,6 @@ interface UserManage {
   isAdmin: boolean;
   id: string;
 }
-
-const initialUsers: UserManage[] = [
-  {
-    profileEpic: "https://images.pexels.com/photos/2269872/pexels-photo-2269872.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    firstName: "John",
-    lastName: "Doe",
-    email: "john@example.com",
-    isAdmin: true,
-    id: "f683124d-6fc7-4586-8590-86573f5aa66e"
-  },
-  {
-    profileEpic: "https://images.pexels.com/photos/1858175/pexels-photo-1858175.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    firstName: "Jane",
-    lastName: "Smith",
-    email: "jane@example.com",
-    isAdmin: false,
-    id: "f683124d-6fc7-4586-8590-86573f5aa67e"
-  },
-  {
-    profileEpic: "https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    firstName: "Mike",
-    lastName: "Johnson",
-    email: "mike@example.com",
-    isAdmin: false,
-    id: "f683124d-6fc7-4586-8590-86573f5aa68e"
-  }
-];
 
 interface UserCardProps {
   user: UserManage;
@@ -92,13 +66,40 @@ const UserCard: React.FC<UserCardProps> = ({ user, onDelete, onToggleAdmin }) =>
 };
 
 const ManageUsers: React.FC = () => {
-  const [users, setUsers] = useState<UserManage[]>(initialUsers);
+  const [users, setUsers] = useState<UserManage[]>([]);
   const [filter, setFilter] = useState<'all' | 'admin' | 'user'>('all');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const handleDeleteUser = (id: string) => {
-    setUsers(users.filter(user => user.id !== id));
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/employees/`);
+      const fetchedUsers = response.data.map((user: any) => ({
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        isAdmin: user.isAdmin,
+        profileEpic: user.profileEpic || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkshh0IMgSA8yw_1JFALVsXFojVdR88C05Fw&s",
+      }));
+      setUsers(fetchedUsers);
+    } catch (err) {
+      console.error("❌ Error loading users:", err);
+    }
   };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const handleDeleteUser = async (id: string) => {
+    try {
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/employees/${id}`);
+      setUsers(users.filter(user => user.id !== id));
+    } catch (err) {
+      console.error("❌ Error deleting user:", err);
+    }
+  };
+
 
   const handleToggleAdmin = (id: string) => {
     setUsers(users.map(user => 
