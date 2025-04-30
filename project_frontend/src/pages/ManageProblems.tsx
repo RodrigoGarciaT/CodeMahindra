@@ -87,7 +87,7 @@ const ManageProblems: React.FC = () => {
   
   const fetchProblems = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/problems/");
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/problems/`);
       const fetchedProblems = response.data.map((problem: any) => ({
         id: problem.id,
         name: problem.name,
