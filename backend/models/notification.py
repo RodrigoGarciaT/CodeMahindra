@@ -8,4 +8,4 @@ class Notification(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(255), nullable=False)
     description = Column(Text)
-    employee_id = Column(UUID(as_uuid=True), ForeignKey("Employee.id"))
+    employee_id = Column(UUID(as_uuid=True), ForeignKey("Employee.id", ondelete="CASCADE"))
