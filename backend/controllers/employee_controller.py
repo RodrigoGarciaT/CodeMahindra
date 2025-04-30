@@ -62,3 +62,13 @@ def delete_employee(employee_id: UUID, db: Session):
         raise HTTPException(status_code=404, detail="Employee not found")
     db.delete(employee)
     db.commit()
+
+def set_admin_status(employee_id: UUID, is_admin: bool, db: Session) -> Employee:
+    employee = db.query(Employee).filter(Employee.id == employee_id).first()
+    if not employee:
+        raise HTTPException(status_code=404, detail="Employee not found")
+
+    employee.isAdmin = is_admin
+    db.commit()
+    db.refresh(employee)
+    return employee
