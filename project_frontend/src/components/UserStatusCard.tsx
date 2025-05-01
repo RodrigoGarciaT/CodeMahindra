@@ -1,14 +1,14 @@
 "use client"
-
 import type React from "react"
 import { motion } from "framer-motion"
+import type { User } from "../types/user"
 
 type UserStatusCardProps = {
-  rank: number
+  user: User
   percentile: number
 }
 
-const UserStatusCard: React.FC<UserStatusCardProps> = ({ rank, percentile }) => {
+const UserStatusCard: React.FC<UserStatusCardProps> = ({ user, percentile }) => {
   return (
     <motion.div
       className="bg-gradient-to-br from-orange-400 to-amber-500 rounded-xl p-5 relative overflow-hidden"
@@ -21,12 +21,18 @@ const UserStatusCard: React.FC<UserStatusCardProps> = ({ rank, percentile }) => 
     >
       <div className="flex items-start gap-4 relative z-10">
         <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg flex-shrink-0 mt-1">
-          <span className="text-orange-500 text-xl font-bold">#{rank}</span>
+          <span className="text-orange-500 text-xl font-bold">
+            {user.rank ? `#${user.rank}` : "-"}
+          </span>
         </div>
-
         <div className="flex-1 min-w-0">
           <p className="text-white font-bold text-lg">You are doing better than</p>
-          <p className="text-white text-2xl font-extrabold">{percentile}% of other players!</p>
+          <p className="text-white text-2xl font-extrabold">{percentile}% of other players</p>
+          <div className="mt-2 text-white text-sm">
+            <p><strong>Points:</strong> {user.coins.toLocaleString()} QP</p>
+            {user.position && <p><strong>Position:</strong> {user.position}</p>}
+            {user.team && <p><strong>Team:</strong> {user.team}</p>}
+          </div>
         </div>
       </div>
 
@@ -44,4 +50,3 @@ const UserStatusCard: React.FC<UserStatusCardProps> = ({ rank, percentile }) => 
 }
 
 export default UserStatusCard
-
