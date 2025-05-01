@@ -14,6 +14,7 @@ class ProblemBase(BaseModel):
     acceptance: Optional[float] = None
     expirationDate: Optional[datetime] = None
     solution: Optional[str] = None
+    language: str
     was_graded: bool = False
 
 class ProblemCreate(ProblemBase):
