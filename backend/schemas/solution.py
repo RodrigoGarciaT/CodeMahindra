@@ -28,5 +28,6 @@ class Submission(BaseModel):
     employee_id: UUID
     problem_id: int
     source_code: str
+    language: str # language va a ser o C++, Javascript, Python o Java
     class Config:
         from_attributes = True

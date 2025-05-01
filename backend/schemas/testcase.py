@@ -28,5 +28,6 @@ class TestInput(BaseModel):
     problem_id: int
     source_code: str
     input: str
+    language: str
     class Config:
         from_attributes = True

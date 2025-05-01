@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from typing import List
 from uuid import UUID
 from sqlalchemy.orm import Session
@@ -39,9 +39,29 @@ def delete_existing_solution(employee_id: UUID, problem_id: int, db: Session = D
 
 # New routes for testing solutions
 @router.post("/test", response_model=TestCaseResult)
-def test_solution_code(data: TestInput, db: Session = Depends(get_db)):
-    return test_code(data.problem_id, data.source_code, data.input)
+async def test_solution_code(data: TestInput, db: Session = Depends(get_db)):
+    try:
+        return await test_code(
+            problem_id=data.problem_id,
+            source_code=data.source_code,
+            input=data.input,
+            language=data.language,
+            db=db
+        )
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error testing code: {str(e)}"
+        )
 
 @router.post("/test-results", response_model=List[TestCaseResult])
-def get_submission_test_results(submission: Submission, db: Session = Depends(get_db)):
-    return get_test_case_results(submission)
+async def get_submission_test_results(submission: Submission, db: Session = Depends(get_db)):
+    try:
+        return get_test_case_results(submission, db)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error getting test results: {str(e)}"
+        )
