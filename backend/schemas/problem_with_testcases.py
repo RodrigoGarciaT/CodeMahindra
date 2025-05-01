@@ -22,6 +22,7 @@ class ProblemCreateWithTestCases(BaseModel):
     creationDate: datetime = datetime.utcnow()
     expirationDate: datetime
     solution: str
+    language:str
     testcases: List[TestCaseCreate]
 
 
@@ -38,4 +39,5 @@ class ProblemOutWithTestCases(BaseModel):
     creationDate: datetime
     expirationDate: datetime
     solution: str
+    language: str
     testcases: List[TestCaseCreate]

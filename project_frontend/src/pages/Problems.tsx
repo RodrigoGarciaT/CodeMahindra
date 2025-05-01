@@ -17,6 +17,7 @@ const Problems = () => {
   const [activeTab, setActiveTab] = useState('problem');
   const location = useLocation();  // Get location to access the problemId prop passed through the route
   const [comments, setComments] = useState<Comment[]>([]);
+  const [selectedLanguage, setSelectedLanguage] = useState("C++");
   const handleSubmissionSelect = (submissionCode: string) => {
     setCode(submissionCode);
   };
@@ -77,8 +78,8 @@ const Problems = () => {
             </div>
           </Resizable>
           <div className="flex-1 flex flex-col">
-            <CodeEditor code={code} onChange={setCode} />
-            <ActionButtons code={code} problemId={problemId} employeeId={employeeId} language='C++'  />
+            <CodeEditor code={code} onChange={setCode} selectedLanguage={selectedLanguage} setSelectedLanguage={setSelectedLanguage}  />
+            <ActionButtons code={code} problemId={problemId} employeeId={employeeId} language={selectedLanguage}  />
           </div>
         </div>
       </div>

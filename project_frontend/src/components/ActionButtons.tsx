@@ -45,11 +45,12 @@ const ActionButtons = ({ code, problemId, employeeId, language }: ActionButtonsP
     setIsProcessing(true);
     setRunResult(null);
 
-    try {
-      console.log(problemId);
+    console.log(problemId);
       console.log(code);
       console.log(customInput);
       console.log(language);
+
+    try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/solutions/test`,
         {
