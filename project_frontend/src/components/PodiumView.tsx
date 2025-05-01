@@ -10,8 +10,8 @@ type PodiumViewProps = {
 }
 
 const PodiumView: React.FC<PodiumViewProps> = ({ topUsers }) => {
-  // Sort users by points (desc) and take the top 3
-  const podiumUsers = [...topUsers].sort((a, b) => b.points - a.points).slice(0, 3)
+  // Sort users by coins (desc) and take the top 3
+  const podiumUsers = [...topUsers].sort((a, b) => b.coins - a.coins).slice(0, 3)
 
   return (
     <div className="relative w-full max-w-3xl mx-auto h-[600px]">
@@ -139,7 +139,7 @@ const PodiumView: React.FC<PodiumViewProps> = ({ topUsers }) => {
               >
                 <div className="bg-gradient-to-r from-red-600 to-red-500 text-white px-5 py-2 rounded-full shadow-lg border border-red-400">
                   <p className="text-center font-bold whitespace-nowrap">
-                    {podiumUsers[1]?.points.toLocaleString()} QP
+                    {podiumUsers[1]?.coins.toLocaleString()} QP
                   </p>
                 </div>
               </motion.div>
@@ -197,7 +197,7 @@ const PodiumView: React.FC<PodiumViewProps> = ({ topUsers }) => {
               >
                 <div className="bg-gradient-to-r from-red-600 to-red-500 text-white px-5 py-2 rounded-full shadow-lg border border-red-400">
                   <p className="text-center font-bold whitespace-nowrap">
-                    {podiumUsers[0]?.points.toLocaleString()} QP
+                    {podiumUsers[0]?.coins.toLocaleString()} QP
                   </p>
                 </div>
               </motion.div>
@@ -246,7 +246,7 @@ const PodiumView: React.FC<PodiumViewProps> = ({ topUsers }) => {
               >
                 <div className="bg-gradient-to-r from-red-600 to-red-500 text-white px-5 py-2 rounded-full shadow-lg border border-red-400">
                   <p className="text-center font-bold whitespace-nowrap">
-                    {podiumUsers[2]?.points.toLocaleString()} QP
+                    {podiumUsers[2]?.coins.toLocaleString()} QP
                   </p>
                 </div>
               </motion.div>
@@ -259,8 +259,4 @@ const PodiumView: React.FC<PodiumViewProps> = ({ topUsers }) => {
 }
 
 export default PodiumView
-
-
-
-
 

@@ -19,13 +19,16 @@ class EmployeeBase(BaseModel):
     position_id: Optional[int] = None
     team_id: Optional[int] = None
 
+    # 🆕 Campos para autenticación con Jira
+    jira_email: Optional[str] = None
+    jira_api_token: Optional[str] = None
+
 class EmployeeCreate(EmployeeBase):
     email: EmailStr
     password: str
     firstName: str
     nationality: str
     phoneNumber: str
-
 
 class EmployeeUpdate(EmployeeBase):
     password: Optional[str] = None
@@ -34,11 +37,10 @@ class EmployeeOut(EmployeeBase):
     id: UUID
     email: EmailStr
     firstName: str
-    
+
     class Config:
         from_attributes = True
-        
+
     @classmethod
     def from_orm(cls, obj):
-        """Método opcional para la migración"""
-        return cls.model_validate(obj)  # Usar el nuevo método model_validate
+        return cls.model_validate(obj)

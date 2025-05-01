@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from typing import List
-import os
 import base64
 import requests
 
@@ -15,6 +14,8 @@ from controllers.task_controller import (
     delete_task,
     create_task_from_jira,
 )
+from models.employee import Employee
+from dependencies import get_current_employee  # ✅ CORREGIDO
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
@@ -52,12 +53,13 @@ def delete_existing_task(task_id: int, db: Session = Depends(get_db)):
 
 # ----- Integración con Jira -----
 
-JIRA_BASE_URL = os.getenv("JIRA_BASE_URL", "https://your-domain.atlassian.net/rest/api/3")
-JIRA_EMAIL = os.getenv("JIRA_EMAIL", "")
-JIRA_API_TOKEN = os.getenv("JIRA_API_TOKEN", "")
+JIRA_BASE_URL = "https://your-domain.atlassian.net/rest/api/3"
 
-def get_jira_headers():
-    auth_str = f"{JIRA_EMAIL}:{JIRA_API_TOKEN}"
+def get_jira_headers(user: Employee):
+    if not user.jira_email or not user.jira_api_token:
+        raise HTTPException(status_code=400, detail="Jira credentials not found for this user.")
+
+    auth_str = f"{user.jira_email}:{user.jira_api_token}"
     auth_token = base64.b64encode(auth_str.encode("ascii")).decode("ascii")
     return {
         "Authorization": f"Basic {auth_token}",
@@ -65,9 +67,9 @@ def get_jira_headers():
     }
 
 @router.get("/jira/issues")
-def get_jira_issues():
-    headers = get_jira_headers()
-    params = {"jql": "project = SCRUM"}  # <- tu clave real de proyecto
+def get_jira_issues(current_user: Employee = Depends(get_current_employee)):  # ✅ CORREGIDO
+    headers = get_jira_headers(current_user)
+    params = {"jql": "project = SCRUM"}
 
     try:
         response = requests.get(f"{JIRA_BASE_URL}/search", headers=headers, params=params)
@@ -76,10 +78,26 @@ def get_jira_issues():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.post("/jira/update")
+def update_jira_issue(
+    issue_id: str,
+    transition_id: str,
+    current_user: Employee = Depends(get_current_employee)  # ✅ CORREGIDO
+):
+    headers = get_jira_headers(current_user)
+    body = {"transition": {"id": transition_id}}
+    try:
+        url = f"{JIRA_BASE_URL}/issue/{issue_id}/transitions"
+        response = requests.post(url, json=body, headers=headers)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.post("/jira/webhook")
 async def jira_webhook(request: Request, db: Session = Depends(get_db)):
     """
-    Webhook para recibir eventos desde Jira.
+    Webhook para recibir eventos desde Jira (uso global o general).
     """
     data = await request.json()
     print("📩 Webhook de Jira recibido:", data)
@@ -89,18 +107,3 @@ async def jira_webhook(request: Request, db: Session = Depends(get_db)):
         return {"status": "created", "task_id": task.id}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-@router.post("/jira/update")
-def update_jira_issue(issue_id: str, transition_id: str):
-    headers = get_jira_headers()
-    body = {
-        "transition": {"id": transition_id}
-    }
-    try:
-        url = f"{JIRA_BASE_URL}/issue/{issue_id}/transitions"
-        response = requests.post(url, json=body, headers=headers)
-        response.raise_for_status()
-        return response.json()
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-

@@ -1,63 +1,44 @@
 "use client"
-
-import { useState, useCallback } from "react"
-import { users } from "../types/mockUsers";
-import PodiumView from "../components/PodiumView";
-import RankingList from "../components/RankingList";
-import UserStatusCard from "../components/UserStatusCard";
-import TopPlayerCard from "../components/TopPlayerCard";
+import { useEffect, useState, useCallback } from "react"
+import PodiumView from "../components/PodiumView"
+import RankingList from "../components/RankingList"
+import UserStatusCard from "../components/UserStatusCard"
+import TopPlayerCard from "../components/TopPlayerCard"
 import { motion } from "framer-motion"
 
-export default function Ranking() {
-  const currentUserRank = 4
-  const percentile = 60
+interface User {
+  id: string
+  name: string
+  avatar?: string
+  coins: number
+  position?: string
+  team?: string
+  rank: number
+}
 
+export default function Ranking() {
+  const [userData, setUserData] = useState<User[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const usersPerPage = 6
 
-  // Extend users with more mock data
-  const extendedUsers = [
-    ...users,
-    {
-      id: 6,
-      name: "Zain Vaccaro",
-      avatar: "/avatars/avatar6.png",
-      flag: "/flags/flag6.png",
-      points: 448,
-    },
-    {
-      id: 7,
-      name: "Skylar Geidt",
-      avatar: "/avatars/avatar7.png",
-      flag: "/flags/flag7.png",
-      points: 448,
-    },
-    {
-      id: 8,
-      name: "Justin Bator",
-      avatar: "/avatars/avatar8.png",
-      flag: "/flags/flag8.png",
-      points: 448,
-    },
-    {
-      id: 9,
-      name: "Cooper Lipshutz",
-      avatar: "/avatars/avatar9.png",
-      flag: "/flags/flag9.png",
-      points: 448,
-    },
-    {
-      id: 10,
-      name: "Alfredo Septimus",
-      avatar: "/avatars/avatar10.png",
-      flag: "/flags/flag10.png",
-      points: 448,
-    },
-  ]
+  useEffect(() => {
+    fetch("http://localhost:8000/ranking")
+      .then((res) => res.json())
+      .then((data) => {
+        // Asignamos el rank manualmente basado en posición
+        const ranked = data
+          .sort((a: User, b: User) => b.coins - a.coins)
+          .map((user: User, index: number) => ({
+            ...user,
+            rank: index + 1
+          }))
+        setUserData(ranked)
+      })
+      .catch((err) => console.error("Error loading ranking:", err))
+  }, [])
 
-  const sortedUsers = [...extendedUsers].sort((a, b) => b.points - a.points)
-  const podiumUsers = sortedUsers.slice(0, 3)
-  const restUsers = sortedUsers.slice(3)
+  const podiumUsers = userData.slice(0, 3)
+  const restUsers = userData.slice(3)
 
   const totalPages = Math.ceil(restUsers.length / usersPerPage)
   const indexOfFirstUser = (currentPage - 1) * usersPerPage
@@ -67,6 +48,10 @@ export default function Ranking() {
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page)
   }, [])
+
+  // Usamos directamente el usuario en la posición 3 (índice 3 = rank 4)
+  const currentUser = userData[3] // simulando que el usuario actual es el #4
+  const percentile = 60 // puedes calcularlo si lo deseas
 
   return (
     <div className="min-h-screen bg-[#121212] text-white overflow-x-hidden py-6">
@@ -98,8 +83,10 @@ export default function Ranking() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <UserStatusCard rank={currentUserRank} percentile={percentile} />
-            <TopPlayerCard user={podiumUsers[0]} />
+            {currentUser && (
+              <UserStatusCard user={currentUser} percentile={percentile} />
+            )}
+            {podiumUsers[0] && <TopPlayerCard user={podiumUsers[0]} />}
           </motion.div>
 
           {/* Center column */}
@@ -121,7 +108,6 @@ export default function Ranking() {
           >
             <RankingList
               users={currentUsers}
-              startRank={indexOfFirstUser + 4}
               currentPage={currentPage}
               totalPages={totalPages}
               onPageChange={handlePageChange}
@@ -132,7 +118,3 @@ export default function Ranking() {
     </div>
   )
 }
-
-
-
-
