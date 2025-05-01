@@ -59,7 +59,7 @@ async def test_solution_code(data: TestInput, db: Session = Depends(get_db)):
 @router.post("/test-results", response_model=List[TestCaseResult])
 async def get_submission_test_results(submission: Submission, db: Session = Depends(get_db)):
     try:
-        return get_test_case_results(submission, db)
+        return await get_test_case_results(submission, db)
     except Exception as e:
         raise HTTPException(
             status_code=500,
