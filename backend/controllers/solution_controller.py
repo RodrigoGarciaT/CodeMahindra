@@ -10,6 +10,7 @@ import random
 from models.problem import Problem
 from pydantic import BaseModel
 from typing import Optional
+from models.testcase import TestCase
 
 import os
 from dotenv import load_dotenv
@@ -191,6 +192,44 @@ async def test_code(problem_id: int, source_code: str, input: str, language: str
     
     return test_result
 
+async def evaluate_testcases(
+    source_code: str,
+    language: str,
+    testcases: List[TestCaseBase]
+) -> List[TestCaseResult]:
+    """
+    Evaluate code against multiple test cases.
+    
+    Args:
+        source_code: The source code to evaluate
+        language: Programming language (must match language_map keys)
+        testcases: List of TestCaseBase objects containing input/output pairs
+        
+    Returns:
+        List of TestCaseResult objects with evaluation results
+    """
+    async def process_testcase(testcase: TestCaseBase) -> TestCaseResult:
+        result = await evaluate_code(
+            source_code=source_code,
+            stdin=testcase.input,
+            expected_output=testcase.output,
+            language=language
+        )
+        
+        return TestCaseResult(
+            id=testcase.id,
+            result=result.result,
+            time=result.time,
+            memory=result.memory,
+            expected_output=testcase.output,
+            output=result.output,
+            error_details=result.error_details if hasattr(result, 'error_details') else None
+        )
+
+    # Process all test cases concurrently
+    tasks = [process_testcase(tc) for tc in testcases]
+    return await asyncio.gather(*tasks)
+
 def generate_random_test_case_result() -> TestCaseResult:
     status = random.choice(['AC', 'WA', 'TL', 'RE'])
     time = round(random.uniform(0.1, 1.5), 3) 
@@ -207,6 +246,40 @@ def generate_random_test_case_result() -> TestCaseResult:
         output=output
     )
 
-def get_test_case_results(submission: Submission, db: Session) -> List[TestCaseResult]:
-    test_cases = [generate_random_test_case_result() for _ in range(10)]
-    return test_cases
+async def get_test_case_results(submission: Submission, db: Session) -> List[TestCaseResult]:
+    # 1. Get all test cases for the problem from database
+    db_test_cases = db.query(TestCase).filter(
+        TestCase.problem_id == submission.problem_id
+    ).all()
+    
+    if not db_test_cases:
+        raise HTTPException(
+            status_code=404,
+            detail="No test cases found for this problem"
+        )
+    
+    # 2. Convert SQLAlchemy TestCase objects to TestCaseBase objects
+    testcases = [
+        TestCaseBase(
+            id=tc.id,
+            input=tc.input,
+            output=tc.output,
+            problem_id=tc.problem_id
+        ) for tc in db_test_cases
+    ]
+    
+    # 3. Evaluate against all test cases using evaluate_testcases
+    results = await evaluate_testcases(
+        source_code=submission.source_code,
+        language=submission.language,
+        testcases=testcases
+    )
+    return results
+
+
+'''
+    en get_test_case_results primero conseguimos los testcases
+    
+    despues los evaluamos y retornamos eso
+
+'''
