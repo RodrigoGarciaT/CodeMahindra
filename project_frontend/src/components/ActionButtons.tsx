@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import axios from 'axios';
 import { TestCase } from '../types/problem';
@@ -17,13 +17,13 @@ interface TestCaseResult {
   memory: string;
   expected_output: string;
   output: string;
-
 }
 
 interface Submission {
   problem_id: number;
   source_code: string;
   employee_id: string;
+  language: string;
 }
 
 interface TestResult {
@@ -32,7 +32,7 @@ interface TestResult {
   status?: string;
 }
 
-const ActionButtons = ({ code, problemId, employeeId }: ActionButtonsProps) => {
+const ActionButtons = ({ code, problemId, employeeId, language }: ActionButtonsProps) => {
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [customInput, setCustomInput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -48,12 +48,15 @@ const ActionButtons = ({ code, problemId, employeeId }: ActionButtonsProps) => {
     try {
       console.log(problemId);
       console.log(code);
-      
+      console.log(customInput);
+      console.log(language);
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/solutions/test/`,
-        { source_code: code,
+        `${import.meta.env.VITE_BACKEND_URL}/solutions/test`,
+        {
           problem_id: problemId,
-          input: customInput
+          source_code: code,
+          input: customInput,
+          language: language,
         }
       );
       const result: TestCaseResult = response.data;
@@ -79,11 +82,11 @@ const ActionButtons = ({ code, problemId, employeeId }: ActionButtonsProps) => {
   const simulateSubmission = async () => {
     setIsSubmitting(true);
     setTestResults([]);
-
     const submission: Submission = {
       problem_id: problemId,
       source_code: code,
-      employee_id: employeeId
+      employee_id: employeeId,
+      language: language,
     };
 
     try {
@@ -92,39 +95,19 @@ const ActionButtons = ({ code, problemId, employeeId }: ActionButtonsProps) => {
         submission
       );
       const results: TestCaseResult[] = response.data;
-      // Sort by original id (assuming it's numeric or sortable as string)
-      results.sort((a, b) => {
-        const idA = parseInt(a.id, 10);
-        const idB = parseInt(b.id, 10);
-        return idA - idB;
-      });
 
-      // Reassign ids to be index + 1
+      results.sort((a, b) => parseInt(a.id, 10) - parseInt(b.id, 10));
       results.forEach((r, index) => {
         r.id = (index + 1).toString();
       });
-      const processingResults: TestResult[] = results.map((result) => {
-        let outcome: string;
 
-        switch (result.result) {
-          case 'AC':
-            outcome = 'passed';
-            break;
-          default:
-            outcome = result.result;
-        }
-
-        return {
-          id: result.id,
-          result: outcome,
-          status: "",
-        };
-      });
+      const processingResults: TestResult[] = results.map((result) => ({
+        id: result.id,
+        result: result.result === 'AC' ? 'passed' : result.result,
+        status: "",
+      }));
 
       setTestResults(processingResults);
-      console.log(testResults);
-      console.log(processingResults);
-      console.log(results);
     } catch (error) {
       console.error("Error submitting the code:", error);
       setTestResults([]);
