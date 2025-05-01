@@ -38,6 +38,7 @@ class EmployeeOut(EmployeeBase):
     email: EmailStr
     firstName: str
 
+
 class AdminStatusUpdate(BaseModel):
     is_admin: bool
     class Config:
