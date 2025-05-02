@@ -14,7 +14,7 @@ class Employee(Base):
     firstName = Column(String(255))
     lastName = Column(String(255))
     birthDate = Column(Date)
-    profilePicture = Column(String(255))
+    profilePicture = Column(String, nullable=True)  # ✅ Debe estar definido así
     email = Column(String(255), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
     isAdmin = Column(Boolean, default=False)
@@ -22,3 +22,4 @@ class Employee(Base):
     phoneNumber = Column(String(20))
     position_id = Column(Integer, ForeignKey("Position.id"))  # Coincide con __tablename__ en Position
     team_id = Column(Integer, ForeignKey("Team.id"))         # Coincide con __tablename__ en Team
+    

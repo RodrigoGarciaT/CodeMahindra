@@ -26,6 +26,7 @@ class EmployeeCreate(EmployeeBase):
     lastName: str
     nationality: str = "No especificado"
     phoneNumber: str = "0000000000"
+    profilePicture: Optional[str] = None
 
 
 class EmployeeUpdate(EmployeeBase):
@@ -35,6 +36,10 @@ class EmployeeOut(EmployeeBase):
     id: UUID
     email: EmailStr
     firstName: str
+    profilePicture: Optional[str] = None
+    model_config = {
+        "from_attributes": True
+    }
 
 class AdminStatusUpdate(BaseModel):
     is_admin: bool

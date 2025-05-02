@@ -12,7 +12,14 @@ import LogoutButton from "../components/LogoutButton";
 export default function ProfilePage() {
     const [activeTab, setActiveTab] = useState("current");
     interface User {
-        firstName: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+      nationality: string;
+      experience: number;
+      coins: number;
+      phoneNumber: string;
+      profilePicture: string;
     }
 
     const [user, setUser] = useState<User | null>(null);
@@ -56,7 +63,7 @@ export default function ProfilePage() {
                   <div className="relative mt-6 w-full max-w-md mx-auto">
                     <div className="flex items-center rounded-full bg-white p-3 shadow-md">
                       <div className="mr-3 h-12 w-12 overflow-hidden rounded-full border-2 border-white">
-                        <img src={profilePic} alt="Profile" className="h-full w-full object-cover" />
+                      <img src={user?.profilePicture ?? profilePic} alt="Profile" className="h-full w-full object-cover" />
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center">
@@ -66,7 +73,7 @@ export default function ProfilePage() {
                       </div>
                       <div className="flex items-center text-black">
                         <img src={coinIcon} alt="Coins" className="mr-2 h-6 w-6" />
-                        <span className="font-medium">9462 coins</span>
+                        <span>{user?.coins ?? 0}</span>
                       </div>
                     </div>
                 </div>
@@ -76,7 +83,7 @@ export default function ProfilePage() {
                   <Progress value={65} className="h-4 bg-gray-700" indicatorClassName="bg-red-500" />
                   <div className="mt-2 flex justify-between">
                     <span>Nivel 5</span>
-                    <span>9462 exp</span>
+                    <span>{user?.experience ?? 0} xp</span>
                   </div>
                 </div>
   
@@ -90,15 +97,15 @@ export default function ProfilePage() {
                   <div className="space-y-4">
                     <div className="flex items-center">
                       <Mail className="mr-3 h-5 w-5 text-black" />
-                      <span>rodrigo.garcia.torres04@gmail.com</span>
+                      <span>{user?.email ?? "Cargando..."}</span>
                     </div>
                     <div className="flex items-center text-black">
                       <Phone className="mr-3 h-5 w-5" />
-                      <span>Add your mobile number</span>
+                      <span>{user?.phoneNumber ?? "No proporcionado"}</span>
                     </div>
                     <div className="flex items-center">
                       <MapPin className="mr-3 h-5 w-5 text-black" />
-                      <span>Mexico</span>
+                      <span>{user?.nationality ?? "No especificado"}</span>
                     </div>
                   </div>
                 </div>

@@ -41,6 +41,7 @@ def create_employee(db: Session, employee_create: EmployeeCreate):
         lastName=employee_create.lastName,
         nationality=employee_create.nationality,
         phoneNumber=employee_create.phoneNumber,
+        profilePicture=employee_create.profilePicture 
     )
 
     db.add(db_employee)
@@ -67,6 +68,7 @@ def verify_google_token(token: str):
             "name": idinfo.get("name"),
             "picture": idinfo.get("picture"),
             "sub": idinfo["sub"],
+            "profile_picture": idinfo.get("picture"),
         }
     
     except ValueError:
@@ -135,7 +137,8 @@ def google_auth(data: GoogleToken, db: Session = Depends(get_db)):
             firstName=first_name,
             lastName=last_name,
             nationality="No especificado",
-            phoneNumber="0000000000"
+            phoneNumber="0000000000",
+            profilePicture=google_data.get("profile_picture"),
         )
         user = create_employee(db, new_user)
 
@@ -151,7 +154,7 @@ def google_auth(data: GoogleToken, db: Session = Depends(get_db)):
                 "phoneNumber": user.phoneNumber,
                 "isAdmin": user.isAdmin,
                 "coins": user.coins,
-                "profilePicture": user.profilePicture,
+                "profilePicture": google_data.get("picture") or user.profilePicture,
                 "position_id": user.position_id,
                 "team_id": user.team_id
             }
