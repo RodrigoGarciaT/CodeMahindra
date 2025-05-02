@@ -54,7 +54,7 @@ def create_employee(db: Session, employee_create: EmployeeCreate):
 
 def verify_google_token(token: str):
     try:
-        VITE_GOOGLE_CLIENT_ID = os.getenv("VITE_GOOGLE_CLIENT_ID")
+        VITE_GOOGLE_CLIENT_ID = os.getenv('VITE_GOOGLE_CLIENT_ID')
         if not VITE_GOOGLE_CLIENT_ID:
             raise HTTPException(status_code=500, detail="Google Client ID not configured")
 
