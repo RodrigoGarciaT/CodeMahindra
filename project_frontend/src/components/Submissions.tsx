@@ -1,60 +1,14 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { CheckCircle2, XCircle, Code2 } from 'lucide-react';
-
-interface Submission {
-  id: string;
-  sent_date: string;
-  status: string;
-  code: string;
-  runtime: string;
-  memory: string;
-  inTeam: boolean;
-  language: string;
-}
+import { Submission } from '../types/submission';
 
 interface SubmissionsProps {
+  submissions: Submission[];
+  loading: boolean;
+  error: string | null;
   onSelectSubmission?: (code: string, language: string) => void;
 }
 
-const Submissions = ({ onSelectSubmission }: SubmissionsProps) => {
-  const [submissions, setSubmissions] = useState<Submission[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchSubmissions = async () => {
-      try {
-        const employee_id = "f683124d-6fc7-4586-8590-86573f5aa66e";
-        const problem_id = 30;
-        
-        const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/solutions/employee/${employee_id}/problem/${problem_id}`
-        );
-        // Transform the API response to match your Submission interface
-        const formattedSubmissions = response.data.map((solution: any) => ({
-          id: solution.id.toString(),
-          sent_date: solution.submissionDate,
-          status: solution.status,
-          code: solution.code,
-          runtime: `${solution.executionTime}s`,
-          memory: `${solution.memory}MB`,
-          inTeam: solution.inTeam,
-          language: solution.language
-        }));
-        
-        setSubmissions(formattedSubmissions);
-      } catch (err) {
-        setError('Failed to fetch submissions');
-        console.error('Error fetching submissions:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSubmissions();
-  }, []);
-
+const Submissions = ({ submissions, loading, error, onSelectSubmission }: SubmissionsProps) => {
   if (loading) {
     return (
       <div className="bg-white p-6 rounded-lg shadow h-full overflow-y-auto">

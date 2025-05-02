@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy.orm import relationship
 from database import Base
 
 class Team(Base):
@@ -10,3 +11,6 @@ class Team(Base):
     experience = Column(Integer)
     level = Column(Integer)
     name = Column(String(255))
+
+    # Relación inversa con Employee
+    employees = relationship("Employee", back_populates="team")

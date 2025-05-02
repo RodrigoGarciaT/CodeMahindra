@@ -55,20 +55,22 @@ const TopPlayerCard: React.FC<TopPlayerCardProps> = ({ user }) => {
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.2 }}
             >
-              <span>{user.points.toLocaleString()} points</span>
+              <span>{user.coins.toLocaleString()} QP</span>
             </motion.div>
 
-            <motion.div
-              className="w-8 h-8 rounded-md overflow-hidden shadow-md border-2 border-gray-800"
-              whileHover={{ scale: 1.2 }}
-              transition={{ duration: 0.3 }}
-            >
-              <img
-                src={user.flag || "/placeholder.svg?height=32&width=32"}
-                alt={`${user.name}'s nationality`}
-                className="w-full h-full object-cover"
-              />
-            </motion.div>
+            {user.flag && (
+              <motion.div
+                className="w-8 h-8 rounded-md overflow-hidden shadow-md border-2 border-gray-800"
+                whileHover={{ scale: 1.2 }}
+                transition={{ duration: 0.3 }}
+              >
+                <img
+                  src={user.flag}
+                  alt={`${user.name}'s nationality`}
+                  className="w-full h-full object-cover"
+                />
+              </motion.div>
+            )}
           </div>
         </div>
       </div>
@@ -77,6 +79,3 @@ const TopPlayerCard: React.FC<TopPlayerCardProps> = ({ user }) => {
 }
 
 export default TopPlayerCard
-
-
-
