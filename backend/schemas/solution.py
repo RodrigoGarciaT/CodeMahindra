@@ -20,6 +20,7 @@ class SolutionUpdate(SolutionBase):
     pass
 
 class SolutionOut(SolutionBase):
+    id: int  # New field
     employee_id: UUID
     problem_id: int
     submissionDate: datetime
