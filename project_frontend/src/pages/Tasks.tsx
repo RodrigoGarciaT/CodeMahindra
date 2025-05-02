@@ -159,7 +159,7 @@ export default function Tasks() {
   };
 
   return (
-    <div className="bg-slate-50 min-h-screen">
+    <div className="bg-[#363B41] min-h-screen">
       <Dialog open={jiraModalOpen} onClose={() => {}} className="relative z-50">
         <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
         <div className="fixed inset-0 flex items-center justify-center p-4">
@@ -193,7 +193,7 @@ export default function Tasks() {
       {/* Resto del dashboard */}
       <div className="max-w-[1600px] mx-auto p-6">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-slate-800">Task Management</h1>
+          <h1 className="text-2xl font-bold text-slate-100">Task Management</h1>
           <Button
             variant="outline"
             onClick={fetchTasks}
