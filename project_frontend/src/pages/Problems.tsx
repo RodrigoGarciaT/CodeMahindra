@@ -9,21 +9,26 @@ import Leaderboard from '../components/Leaderboard';
 import Discussions from '../components/Discussions';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
-import { Comment } from '../types/submission';
+import { Comment, Submission } from '../types/submission';
 
 const Problems = () => {
   const employeeId = 'f683124d-6fc7-4586-8590-86573f5aa66e'
   const [code, setCode] = useState('// Your code here');
   const [activeTab, setActiveTab] = useState('problem');
-  const location = useLocation();  // Get location to access the problemId prop passed through the route
+  const location = useLocation();
   const [comments, setComments] = useState<Comment[]>([]);
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [selectedLanguage, setSelectedLanguage] = useState("C++");
-  const handleSubmissionSelect = (submissionCode: string) => {
+  const [loadingSubmissions, setLoadingSubmissions] = useState(true);
+  const [submissionsError, setSubmissionsError] = useState<string | null>(null);
+
+  const handleSubmissionSelect = (submissionCode: string, language: string) => {
     setCode(submissionCode);
+    setSelectedLanguage(language);
   };
 
-  // Access the problemId passed from the route
-  const problemId = location.state?.problemId || 1;  // Default to empty string if no problemId
+  const problemId = location.state?.problemId || 1;
+
   const getComments = async () => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/comments/fromProblem/${problemId}`);
@@ -35,19 +40,43 @@ const Problems = () => {
         postDate: comment.messageDate,
         employeeId: comment.employee_id
       }));
-
       setComments(comments);
     } catch (error) {
       console.error('Error fetching comments:', error);
     }
   };
 
+  const getSubmissions = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/solutions/employee/${employeeId}/problem/${problemId}`
+      );
+      const formattedSubmissions = response.data.map((solution: any) => ({
+        id: solution.id.toString(),
+        sent_date: solution.submissionDate,
+        status: solution.status,
+        code: solution.code,
+        runtime: `${solution.executionTime}s`,
+        memory: `${solution.memory}MB`,
+        inTeam: solution.inTeam,
+        language: solution.language
+      }));
+      setSubmissions(formattedSubmissions);
+    } catch (err) {
+      setSubmissionsError('Failed to fetch submissions');
+      console.error('Error fetching submissions:', err);
+    } finally {
+      setLoadingSubmissions(false);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       await getComments();
+      await getSubmissions();
     };
     fetchData();
-  }, []);
+  }, [problemId]);
 
   return (
     <div className="h-screen bg-[#363B41] flex items-center justify-center">
@@ -64,8 +93,15 @@ const Problems = () => {
             }}
           >
             <div className="h-full overflow-auto pr-1">
-              {activeTab === 'problem' && <ProblemStatement problemId={problemId} />}  {/* Pass problemId as prop */}
-              {activeTab === 'submissions' && <Submissions onSelectSubmission={handleSubmissionSelect} />}
+              {activeTab === 'problem' && <ProblemStatement problemId={problemId} />}
+              {activeTab === 'submissions' && (
+                <Submissions 
+                  submissions={submissions}
+                  loading={loadingSubmissions}
+                  error={submissionsError}
+                  onSelectSubmission={handleSubmissionSelect}
+                />
+              )}
               {activeTab === 'leaderboard' && <Leaderboard />}
               {activeTab === 'discussions' && (
                 <Discussions 
@@ -74,7 +110,7 @@ const Problems = () => {
                   setComments={setComments}
                   employeeId={employeeId}
                 />
-                )}
+              )}
             </div>
           </Resizable>
           <div className="flex-1 flex flex-col">
