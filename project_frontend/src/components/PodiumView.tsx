@@ -115,7 +115,7 @@ const PodiumView: React.FC<PodiumViewProps> = ({ topUsers }) => {
 
                   <div className="absolute -right-2 -bottom-1 w-10 h-10 rounded-md overflow-hidden border-2 border-gray-800 shadow-lg">
                     <img
-                      src={podiumUsers[1]?.flag || "/placeholder.svg?height=40&width=40"}
+                      src={podiumUsers[1]?.flag || "https://static.vecteezy.com/system/resources/thumbnails/007/095/871/small/usa-realistic-waving-flag-illustration-national-country-background-symbol-independence-day-free-vector.jpg"}
                       alt="Flag"
                       className="w-full h-full object-cover"
                     />
@@ -173,7 +173,7 @@ const PodiumView: React.FC<PodiumViewProps> = ({ topUsers }) => {
 
                   <div className="absolute -right-2 -bottom-1 w-10 h-10 rounded-md overflow-hidden border-2 border-gray-800 shadow-lg">
                     <img
-                      src={podiumUsers[0]?.flag || "/placeholder.svg?height=40&width=40"}
+                      src={podiumUsers[0]?.flag || "https://static.vecteezy.com/system/resources/thumbnails/007/095/871/small/usa-realistic-waving-flag-illustration-national-country-background-symbol-independence-day-free-vector.jpg"}
                       alt="Flag"
                       className="w-full h-full object-cover"
                     />
@@ -222,7 +222,7 @@ const PodiumView: React.FC<PodiumViewProps> = ({ topUsers }) => {
 
                   <div className="absolute -right-2 -bottom-1 w-10 h-10 rounded-md overflow-hidden border-2 border-gray-800 shadow-lg">
                     <img
-                      src={podiumUsers[2]?.flag || "/placeholder.svg?height=40&width=40"}
+                      src={podiumUsers[2]?.flag || "https://static.vecteezy.com/system/resources/thumbnails/007/095/871/small/usa-realistic-waving-flag-illustration-national-country-background-symbol-independence-day-free-vector.jpg"}
                       alt="Flag"
                       className="w-full h-full object-cover"
                     />
