@@ -25,6 +25,13 @@ class SolutionOut(SolutionBase):
     problem_id: int
     submissionDate: datetime
     
+class LeaderboardEntry(BaseModel):
+    profilePicture: str
+    firstName: str
+    lastName: str
+    testCasesPassed: int
+    time: float
+    
 class Submission(BaseModel):
     employee_id: UUID
     problem_id: int
