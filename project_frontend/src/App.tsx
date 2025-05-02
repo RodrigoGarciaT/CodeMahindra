@@ -24,6 +24,8 @@ import StoreManagement from './pages/StoreManagement';
 import ImageUploaderCloudinary from './pages/ImageUploaderCloudinary'
 import ManageUsers from './pages/ManageUsers';
 import ManageProblems from './pages/ManageProblems';
+import EditProfile from './pages/EditProfile';
+
 // 1. Layout que incluye la Navbar
 function LayoutConNavbar() {
   return (
@@ -68,6 +70,7 @@ function App() {
             <Route path="/team" element={<TeamPage />} />
             <Route path="/test" element={<ImageUploaderCloudinary />} />
             <Route path="/Profile" element={<ProfilePage />} />
+            <Route path="/profile/view" element={<EditProfile />} />
 
           </Route>
         </Routes>
