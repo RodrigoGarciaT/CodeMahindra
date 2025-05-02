@@ -7,7 +7,6 @@ import coinIcon from "../images/robot_male_1.svg";
 import flag from "../images/robot_male_1.svg";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import LogoutButton from "../components/LogoutButton";
 
 export default function ProfilePage() {
     const [activeTab, setActiveTab] = useState("current");
@@ -210,7 +209,6 @@ export default function ProfilePage() {
               </div>
             </Card>
           </div>
-          <LogoutButton />
         </div>
       </div>
     </div>
