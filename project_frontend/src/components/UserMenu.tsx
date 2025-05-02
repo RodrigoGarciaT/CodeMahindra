@@ -81,7 +81,7 @@ const UserMenu = () => {
             <button
               className="flex w-full items-center px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
               onClick={() => {
-                navigate("/profile")
+                navigate("/profile/view")
                 setOpen(false)
               }}
             >
