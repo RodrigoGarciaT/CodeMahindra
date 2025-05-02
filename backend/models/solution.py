@@ -2,6 +2,7 @@ from sqlalchemy import Column, ForeignKey, String, Text, Float, Boolean, DateTim
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 from database import Base
+from sqlalchemy.orm import relationship  # Add this import
 
 class Solution(Base):
     __tablename__ = "Solution"
@@ -29,3 +30,4 @@ class Solution(Base):
     inTeam = Column(Boolean)
     language = Column(String(50))
     testCasesPassed = Column(Integer, nullable=False, server_default="0")
+ 

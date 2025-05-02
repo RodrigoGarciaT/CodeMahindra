@@ -3,7 +3,7 @@ from typing import List
 from uuid import UUID
 from sqlalchemy.orm import Session
 from database import get_db
-from schemas.solution import SolutionCreate, SolutionUpdate, SolutionOut, Submission
+from schemas.solution import SolutionCreate, SolutionUpdate, SolutionOut, Submission, LeaderboardEntry
 from schemas.testcase import TestCaseResult, TestInput
 from controllers.solution_controller import (
     get_all_solutions,
@@ -13,8 +13,11 @@ from controllers.solution_controller import (
     update_solution,
     delete_solution,
     test_code,
-    get_test_case_results
+    get_test_case_results,
+    get_problem_leaderboard_data
 )
+
+
 
 router = APIRouter(prefix="/solutions", tags=["Solutions"])
 
@@ -82,3 +85,10 @@ async def get_submission_test_results(submission: Submission, db: Session = Depe
             status_code=500,
             detail=f"Error getting test results: {str(e)}"
         )
+
+@router.get("/problem/{problem_id}/leaderboard", response_model=List[LeaderboardEntry])
+def get_problem_leaderboard(
+    problem_id: int, 
+    db: Session = Depends(get_db)
+):
+    return get_problem_leaderboard_data(problem_id, db)
