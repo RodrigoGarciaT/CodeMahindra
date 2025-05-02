@@ -200,8 +200,6 @@ async def test_code(problem_id: int, source_code: str, input: str, language: str
         expected_output=None,  # We just want the output
         language=problem.language
     )
-    print(source_code)
-    print(problem.language)
     
     if solution_result.result != 'AC':
         raise HTTPException(
@@ -211,10 +209,6 @@ async def test_code(problem_id: int, source_code: str, input: str, language: str
     
     expected_output = solution_result.output
     
-    print(language)
-    print(source_code)
-    print(input)
-    print(expected_output)
     # 3. Evaluate the submitted code against the expected output
     test_result = await evaluate_code(
         source_code=source_code,
@@ -222,7 +216,7 @@ async def test_code(problem_id: int, source_code: str, input: str, language: str
         expected_output=expected_output,
         language=language
     )
-    # print(test_result.output)
+    
     return test_result
 
 async def evaluate_testcases(
