@@ -16,21 +16,34 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
+# Updated configuration for self-hosted Judge0
+
 JUDGE0_CONFIG = {
-    'url': os.getenv('JUDGE0_URL'),
+    'url': os.getenv('SELF_HOSTED_JUDGE0_URL'),
     'headers': {
-        'content-type': 'application/json',
-        'x-rapidapi-key': os.getenv('JUDGE0_API_KEY'),
-        'x-rapidapi-host': os.getenv('JUDGE0_API_HOST')
+        'content-type': 'application/json'
     }
 }
 
+# Updated language mappings to match your Judge0 instance
 language_map = {
-    'Python': 71,
-    'C++': 54,
-    'Java': 62,
-    'Javascript': 63
+    'Python': 71,    # Python 3.8.1
+    'C++': 54,       # C++ (GCC 9.2.0)
+    'Java': 62,      # Java (OpenJDK 13.0.1)
+    'Javascript': 63 # JavaScript (Node.js 12.14.0)
 }
+
+# Descomentar este y comentar otro en caso de fallo
+'''
+JUDGE0_CONFIG = {
+   'url': os.getenv('JUDGE0_URL'),
+   'headers': {
+       'content-type': 'application/json',
+       'x-rapidapi-key': os.getenv('JUDGE0_API_KEY'),
+       'x-rapidapi-host': os.getenv('JUDGE0_API_HOST')
+   }
+}'''
+
 
 class TestCaseBase(BaseModel):
     input: str
@@ -48,6 +61,7 @@ class TestCaseResult(BaseModel):
     memory: Optional[int]
     expected_output: Optional[str]
     output: Optional[str]
+    error_details: Optional[str] = None  # Added for better error reporting
 
 async def submit_code_to_judge0(source_code, stdin, language, expected_output=None):
     if language not in language_map:
@@ -58,21 +72,25 @@ async def submit_code_to_judge0(source_code, stdin, language, expected_output=No
     payload = {
         "language_id": language_id,
         "source_code": source_code,
-        "stdin": stdin
+        "stdin": stdin,
+        "cpu_time_limit": 5,    # Added time limit (seconds)
+        "memory_limit": 128000  # Added memory limit (KB)
     }
 
     if expected_output is not None:
         payload["expected_output"] = expected_output
 
-    # print(JUDGE0_CONFIG['url'])
-    # print(JUDGE0_CONFIG['headers'])
     try:
-        async with httpx.AsyncClient() as client:
-            response = await client.post(JUDGE0_CONFIG['url'], headers=JUDGE0_CONFIG['headers'], json=payload, timeout=10)
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.post(
+                JUDGE0_CONFIG['url'],
+                headers=JUDGE0_CONFIG['headers'],
+                json=payload
+            )
         response.raise_for_status()
         return response.json()
     except httpx.TimeoutException as e:
-        return {'timeout': True}
+        return {'timeout': True, 'error': str(e)}
     except Exception as e:
         return {'error': str(e)}
 
@@ -80,14 +98,24 @@ async def evaluate_code(source_code, stdin, expected_output, language) -> TestCa
     result = await submit_code_to_judge0(source_code, stdin, language, expected_output)
 
     if result.get('timeout'):
-        return TestCaseResult(id=-1, result='TL', time=None, memory=None, expected_output=expected_output, output=None)
+        return TestCaseResult(
+            id=-1, result='TL', time=None, memory=None,
+            expected_output=expected_output, output=None,
+            error_details='Execution timed out'
+        )
     if result.get('error'):
-        return TestCaseResult(id=-1, result='RE', time=None, memory=None, expected_output=expected_output, output=None)
+        return TestCaseResult(
+            id=-1, result='RE', time=None, memory=None,
+            expected_output=expected_output, output=None,
+            error_details=result['error']
+        )
 
     status_id = result.get('status', {}).get('id', 0)
     time_taken = result.get('time')
     memory_used = result.get('memory')
     stdout = result.get('stdout')
+    stderr = result.get('stderr')
+    compile_output = result.get('compile_output')
 
     if status_id == 3:
         verdict = 'AC'
@@ -100,15 +128,23 @@ async def evaluate_code(source_code, stdin, expected_output, language) -> TestCa
     else:
         verdict = 'RE'
 
+    error_details = None
+    if stderr:
+        error_details = stderr
+    elif compile_output:
+        error_details = compile_output
+
     return TestCaseResult(
         id=-1,
         result=verdict,
         time=time_taken,
         memory=memory_used,
         expected_output=expected_output,
-        output=stdout
+        output=stdout,
+        error_details=error_details
     )
 
+# Database operations remain unchanged
 def get_all_solutions(db: Session) -> List[Solution]:
     return db.query(Solution).all()
 
@@ -173,21 +209,15 @@ async def test_code(problem_id: int, source_code: str, input: str, language: str
         expected_output=None,  # We just want the output
         language=problem.language
     )
-    print(source_code)
-    print(problem.language)
     
     if solution_result.result != 'AC':
         raise HTTPException(
             status_code=400,
-            detail=f"Reference solution failed with status: {solution_result.result}"
+            detail=f"Reference solution failed with status: {solution_result.result}. Error: {solution_result.error_details}"
         )
     
     expected_output = solution_result.output
     
-    print(language)
-    print(source_code)
-    print(input)
-    print(expected_output)
     # 3. Evaluate the submitted code against the expected output
     test_result = await evaluate_code(
         source_code=source_code,
@@ -195,7 +225,7 @@ async def test_code(problem_id: int, source_code: str, input: str, language: str
         expected_output=expected_output,
         language=language
     )
-    # print(test_result.output)
+    
     return test_result
 
 async def evaluate_testcases(
@@ -205,14 +235,6 @@ async def evaluate_testcases(
 ) -> List[TestCaseResult]:
     """
     Evaluate code against multiple test cases.
-    
-    Args:
-        source_code: The source code to evaluate
-        language: Programming language (must match language_map keys)
-        testcases: List of TestCaseBase objects containing input/output pairs
-        
-    Returns:
-        List of TestCaseResult objects with evaluation results
     """
     async def process_testcase(testcase: TestCaseBase) -> TestCaseResult:
         result = await evaluate_code(
@@ -229,7 +251,7 @@ async def evaluate_testcases(
             memory=result.memory,
             expected_output=testcase.output,
             output=result.output,
-            error_details=result.error_details if hasattr(result, 'error_details') else None
+            error_details=result.error_details
         )
 
     # Process all test cases concurrently
@@ -281,11 +303,3 @@ async def get_test_case_results(submission: Submission, db: Session) -> List[Tes
         testcases=testcases
     )
     return results
-
-
-'''
-    en get_test_case_results primero conseguimos los testcases
-    
-    despues los evaluamos y retornamos eso
-
-'''
