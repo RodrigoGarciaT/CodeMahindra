@@ -3,9 +3,5 @@
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ],
-  "include": [
-    "src/**/*",             // Asegúrate de que todo el código fuente de tu aplicación esté incluido
-    "google.d.ts"           // Asegúrate de que google.d.ts esté incluido en tu proyecto
   ]
 }
