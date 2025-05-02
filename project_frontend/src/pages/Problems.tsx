@@ -17,13 +17,13 @@ const Problems = () => {
   const [activeTab, setActiveTab] = useState('problem');
   const location = useLocation();  // Get location to access the problemId prop passed through the route
   const [comments, setComments] = useState<Comment[]>([]);
+  const [selectedLanguage, setSelectedLanguage] = useState("C++");
   const handleSubmissionSelect = (submissionCode: string) => {
     setCode(submissionCode);
   };
 
   // Access the problemId passed from the route
   const problemId = location.state?.problemId || 1;  // Default to empty string if no problemId
-
   const getComments = async () => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/comments/fromProblem/${problemId}`);
@@ -78,8 +78,8 @@ const Problems = () => {
             </div>
           </Resizable>
           <div className="flex-1 flex flex-col">
-            <CodeEditor code={code} onChange={setCode} />
-            <ActionButtons code={code} />
+            <CodeEditor code={code} onChange={setCode} selectedLanguage={selectedLanguage} setSelectedLanguage={setSelectedLanguage}  />
+            <ActionButtons code={code} problemId={problemId} employeeId={employeeId} language={selectedLanguage}  />
           </div>
         </div>
       </div>

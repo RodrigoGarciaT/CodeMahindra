@@ -10,6 +10,8 @@ import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 interface CodeEditorProps {
   code: string;
   onChange: (value: string) => void;
+  selectedLanguage: string; // Add this prop
+  setSelectedLanguage: (language: string) => void; // Add this prop
 }
 
 const languageExtensions: Record<string, any> = {
@@ -19,8 +21,8 @@ const languageExtensions: Record<string, any> = {
   Java: java(),
 };
 
-const CodeEditor = ({ code, onChange }: CodeEditorProps) => {
-  const [selectedLanguage, setSelectedLanguage] = useState("C++");
+const CodeEditor = ({ code, onChange, selectedLanguage, setSelectedLanguage }: CodeEditorProps) => {
+  //const [selectedLanguage, setSelectedLanguage] = useState("C++");
 
   return (
     <div className="h-full w-full border border-border rounded-md overflow-hidden">

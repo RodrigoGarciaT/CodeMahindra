@@ -30,10 +30,6 @@ const Navbar = () => {
                 <BookOpen className="h-4 w-4 mr-2" />
                 Problemas
               </Link>
-              <Link to="/problems/create" className={getLinkClass('/problems/create')}>
-                <PlusCircle className="h-4 w-4 mr-2" />
-                Create Problem
-              </Link>
               <Link to="/tasks" className={getLinkClass('/tasks')}>
                 <Code2 className="h-4 w-4 mr-2" />
                 Tareas
@@ -50,9 +46,9 @@ const Navbar = () => {
                 <ShoppingBag className="h-4 w-4 mr-2" />
                 Store
               </Link>
-              <Link to="/store/manage" className={getLinkClass('/store/manage')}>
+              <Link to="/admin" className={getLinkClass('/admin')}>
                 <Settings className="h-4 w-4 mr-2" />
-                Manage Store
+                Admin
               </Link>
             </div>
           </div>

@@ -4,7 +4,6 @@ from models.problem import Problem
 from schemas.problem import ProblemCreate, ProblemUpdate
 from schemas.problem_with_testcases import ProblemCreateWithTestCases, ProblemOutWithTestCases
 from schemas.problem_with_testcases import TestCaseCreate  # Import TestCaseCreate
-
 from datetime import datetime
 from models.testcase import TestCase
 from typing import List
@@ -34,13 +33,18 @@ def update_problem(problem_id: int, data: ProblemUpdate, db: Session) -> Problem
     db.commit()
     db.refresh(problem)
     return problem
-
+    
 def delete_problem(problem_id: int, db: Session):
-    problem = db.query(Problem).filter(Problem.id == problem_id).first()
-    if not problem:
-        raise HTTPException(status_code=404, detail="Problem not found")
-    db.delete(problem)
-    db.commit()
+    try:
+        problem = db.query(Problem).filter(Problem.id == problem_id).first()
+        if not problem:
+            raise HTTPException(status_code=404, detail="Problem not found")
+        
+        db.delete(problem)
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Failed to delete problem: {str(e)}")
 
 def create_problem_with_testcases(data: ProblemCreateWithTestCases, db: Session) -> ProblemOutWithTestCases:
     # Create the problem
@@ -54,7 +58,8 @@ def create_problem_with_testcases(data: ProblemCreateWithTestCases, db: Session)
         difficulty=data.difficulty,
         creationDate=data.creationDate,
         expirationDate=data.expirationDate,
-        solution=data.solution
+        solution=data.solution,
+        language=data.language
     )
     
     db.add(new_problem)
@@ -89,5 +94,6 @@ def create_problem_with_testcases(data: ProblemCreateWithTestCases, db: Session)
         creationDate=new_problem.creationDate,
         expirationDate=new_problem.expirationDate,
         solution=new_problem.solution,
+        language = new_problem.language,
         testcases=testcases  # Now this is a list of Pydantic model instances, not raw TestCase objects
     )
