@@ -6,12 +6,21 @@ from database import Base
 class Solution(Base):
     __tablename__ = "Solution"
 
+    # New auto-incrementing primary key
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    
+    # Changed from primary_key=True to regular columns
     employee_id = Column(
-    UUID(as_uuid=True),
-    ForeignKey("Employee.id", ondelete="CASCADE"),
-    primary_key=True
-)
-    problem_id = Column(ForeignKey("Problem.id"), primary_key=True)
+        UUID(as_uuid=True),
+        ForeignKey("Employee.id", ondelete="CASCADE"),
+        nullable=False
+    )
+    problem_id = Column(
+        ForeignKey("Problem.id", ondelete="CASCADE"),
+        nullable=False
+    )
+    
+    # All existing columns remain unchanged
     submissionDate = Column(DateTime, server_default=func.now())
     status = Column(String(50))
     code = Column(Text)
@@ -20,4 +29,3 @@ class Solution(Base):
     inTeam = Column(Boolean)
     language = Column(String(50))
     testCasesPassed = Column(Integer, nullable=False, server_default="0")
-
