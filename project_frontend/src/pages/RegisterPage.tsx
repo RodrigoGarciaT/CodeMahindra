@@ -1,10 +1,9 @@
-"use client"
-
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
 import { Eye, EyeOff, ArrowRight, Mail, Lock, User, CheckCircle } from "lucide-react"
 import { Link } from "react-router-dom"
 import logo from "../images/logo-codemahindra.png"
+
 
 const countryList = [
   "Afganistán", "Alemania", "Argentina", "Australia", "Brasil", "Canadá", "Chile", "China", "Colombia", "Corea del Sur", "Cuba",
@@ -15,6 +14,7 @@ const countryList = [
 
 const RegisterPage: React.FC = () => {
   const [name, setName] = useState("")
+  const [lastName, setLastName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirm, setConfirm] = useState("")
@@ -130,7 +130,7 @@ const RegisterPage: React.FC = () => {
 
     setIsLoading(true)
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/employees/`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/employees`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -139,6 +139,7 @@ const RegisterPage: React.FC = () => {
           email,
           password,
           firstName: name,
+          lastName: lastName,
           nationality,
           phoneNumber: phone
           // otros opcionales si quieres: experience, team_id, etc.
@@ -169,6 +170,7 @@ const RegisterPage: React.FC = () => {
     }
   }
 
+  
   const getPasswordStrengthText = () => {
     return ["", "Débil", "Moderada", "Buena", "Fuerte"][passwordStrength] || ""
   }
@@ -219,8 +221,8 @@ const RegisterPage: React.FC = () => {
                     {successMessage}
                   </div>
                 )}
-
                 <InputField label="Nombre completo" icon={<User />} value={name} onChange={setName} placeholder="Tu nombre" />
+                <InputField label="Apellido" icon={<User />} value={lastName} onChange={setLastName} placeholder="Tu apellido" />
                 <InputField label="Correo electrónico" icon={<Mail />} value={email} onChange={setEmail} placeholder="tu@correo.com" type="email" />
                 <PasswordField label="Contraseña" value={password} onChange={setPassword} show={showPassword} setShow={setShowPassword} placeholder="Crea tu contraseña" />
                 <PasswordField label="Confirmar contraseña" value={confirm} onChange={setConfirm} show={showConfirmPassword} setShow={setShowConfirmPassword} placeholder="Repite tu contraseña"/>

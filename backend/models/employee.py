@@ -15,20 +15,20 @@ class Employee(Base):
     firstName = Column(String(255))
     lastName = Column(String(255))
     birthDate = Column(Date)
-    profilePicture = Column(String(255))
+    profilePicture = Column(String, nullable=True)  # ✅ Debe estar definido así
     email = Column(String(255), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
     isAdmin = Column(Boolean, default=False)
     coins = Column(Integer, default=0)
     phoneNumber = Column(String(20))
-
     position_id = Column(Integer, ForeignKey("Position.id"))
     team_id = Column(Integer, ForeignKey("Team.id"))
 
     # Relaciones con Position y Team
     position = relationship("Position", back_populates="employees")
     team = relationship("Team", back_populates="employees")
-
+    
     # Campos para autenticación con Jira
     jira_email = Column(String(255))
     jira_api_token = Column(String(255))
+
