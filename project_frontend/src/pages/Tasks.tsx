@@ -22,7 +22,7 @@ import {
   TooltipContent,
   TooltipProvider,
 } from "@/components/tooltip";
-import { Input } from "@/components/input";
+import { Input } from "@/components/Input";
 
 interface Task {
   id: number;
