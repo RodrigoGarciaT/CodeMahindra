@@ -22,9 +22,10 @@ class EmployeeBase(BaseModel):
 class EmployeeCreate(EmployeeBase):
     email: EmailStr
     password: str
-    firstName: str
-    nationality: str
-    phoneNumber: str
+    firstName: str = "Google User"
+    lastName: str
+    nationality: str = "No especificado"
+    phoneNumber: str = "0000000000"
 
 
 class EmployeeUpdate(EmployeeBase):

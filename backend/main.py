@@ -27,6 +27,7 @@ from routes.suggestion_routes import router as suggestion_router
 from routes.resource_routes import router as resource_router
 from routes.suggestion_resource_routes import router as suggestion_resource_router
 from routes.auth import router as auth_router
+from routes.users import router as users_router
 
 
 
@@ -69,7 +70,7 @@ app.include_router(employee_product_router)
 app.include_router(task_router)
 app.include_router(suggestion_resource_router)
 app.include_router(auth_router, prefix="/auth", tags=["auth"])
-
+app.include_router(users_router)
 
 # Health check route
 @app.get("/")

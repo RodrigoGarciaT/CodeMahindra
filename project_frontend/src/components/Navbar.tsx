@@ -1,10 +1,11 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Home, Code2, BookOpen, Trophy, ShoppingBag, Bell, ShoppingCart, PlusCircle, Settings } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 
 const Navbar = () => {
   const { itemCount } = useCart();
   const location = useLocation(); // Get the current location
+  const navigate = useNavigate(); // Hook to navigate programmatically
 
   const getLinkClass = (path: string) => {
     return location.pathname === path
@@ -67,10 +68,13 @@ const Navbar = () => {
             <button className="p-2 rounded-full hover:bg-gray-100">
               <Bell className="h-5 w-5" />
             </button>
-            <div className="flex items-center space-x-2">
-              <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
-              <span>Digital Creatives</span>
-            </div>
+            <div
+                onClick={() => navigate("/Profile")}
+                className="flex items-center space-x-2 cursor-pointer hover:bg-gray-100 px-2 py-1 rounded"
+              >
+                <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
+                <span>Digital Creatives</span>
+              </div>
           </div>
         </div>
       </div>
