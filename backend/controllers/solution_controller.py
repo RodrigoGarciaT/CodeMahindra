@@ -11,7 +11,7 @@ from models.problem import Problem
 from pydantic import BaseModel
 from typing import Optional
 from models.testcase import TestCase
-
+from uuid import UUID 
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -148,33 +148,27 @@ async def evaluate_code(source_code, stdin, expected_output, language) -> TestCa
 def get_all_solutions(db: Session) -> List[Solution]:
     return db.query(Solution).all()
 
-def get_solution(employee_id, problem_id, db: Session) -> Solution:
-    sol = db.query(Solution).filter(
-        Solution.employee_id == employee_id,
-        Solution.problem_id == problem_id
-    ).first()
+def get_solution_by_id(solution_id: int, db: Session) -> Solution:
+    sol = db.query(Solution).filter(Solution.id == solution_id).first()
     if not sol:
         raise HTTPException(status_code=404, detail="Solution not found")
     return sol
 
+def get_solutions_by_employee_and_problem(employee_id: UUID, problem_id: int, db: Session) -> List[Solution]:
+    return db.query(Solution).filter(
+        Solution.employee_id == employee_id,
+        Solution.problem_id == problem_id
+    ).order_by(Solution.submissionDate.desc()).all()
+
 def create_solution(data: SolutionCreate, db: Session) -> Solution:
-    existing = db.query(Solution).filter(
-        Solution.employee_id == data.employee_id,
-        Solution.problem_id == data.problem_id
-    ).first()
-    if existing:
-        raise HTTPException(status_code=400, detail="Solution already exists")
     sol = Solution(**data.dict())
     db.add(sol)
     db.commit()
     db.refresh(sol)
     return sol
 
-def update_solution(employee_id, problem_id, data: SolutionUpdate, db: Session) -> Solution:
-    sol = db.query(Solution).filter(
-        Solution.employee_id == employee_id,
-        Solution.problem_id == problem_id
-    ).first()
+def update_solution(solution_id: int, data: SolutionUpdate, db: Session) -> Solution:
+    sol = db.query(Solution).filter(Solution.id == solution_id).first()
     if not sol:
         raise HTTPException(status_code=404, detail="Solution not found")
     for key, value in data.dict(exclude_unset=True).items():
@@ -183,16 +177,13 @@ def update_solution(employee_id, problem_id, data: SolutionUpdate, db: Session) 
     db.refresh(sol)
     return sol
 
-def delete_solution(employee_id, problem_id, db: Session):
-    sol = db.query(Solution).filter(
-        Solution.employee_id == employee_id,
-        Solution.problem_id == problem_id
-    ).first()
+def delete_solution(solution_id: int, db: Session):
+    sol = db.query(Solution).filter(Solution.id == solution_id).first()
     if not sol:
         raise HTTPException(status_code=404, detail="Solution not found")
     db.delete(sol)
     db.commit()
-
+    
 async def test_code(problem_id: int, source_code: str, input: str, language: str, db: Session) -> TestCaseResult:
     # 1. Get the problem's solution code
     problem = db.query(Problem).filter(Problem.id == problem_id).first()
@@ -302,4 +293,38 @@ async def get_test_case_results(submission: Submission, db: Session) -> List[Tes
         language=submission.language,
         testcases=testcases
     )
+    
+    # 4. Calculate statistics
+    passed_count = sum(1 for result in results if result.result == 'AC')
+    status = "Accepted" if passed_count == len(results) else "Failed"
+    
+    # Get MAX execution time and memory (only from successful test cases)
+    max_execution_time = max(
+        (float(result.time) for result in results 
+         if result.time is not None and result.result == 'AC'),
+        default=0
+    )
+    
+    max_memory = max(
+        (result.memory for result in results 
+         if result.memory is not None and result.result == 'AC'),
+        default=0
+    )
+    
+    # 5. Always create new solution
+    solution = create_solution(
+        SolutionCreate(
+            employee_id=submission.employee_id,
+            problem_id=submission.problem_id,
+            status=status,
+            code=submission.source_code,
+            executionTime=max_execution_time,
+            memory=max_memory,
+            inTeam=False,
+            language=submission.language,
+            testCasesPassed=passed_count
+        ),
+        db
+    )
+    
     return results

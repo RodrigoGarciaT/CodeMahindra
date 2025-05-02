@@ -7,7 +7,8 @@ from schemas.solution import SolutionCreate, SolutionUpdate, SolutionOut, Submis
 from schemas.testcase import TestCaseResult, TestInput
 from controllers.solution_controller import (
     get_all_solutions,
-    get_solution,
+    get_solution_by_id,
+    get_solutions_by_employee_and_problem,
     create_solution,
     update_solution,
     delete_solution,
@@ -21,23 +22,39 @@ router = APIRouter(prefix="/solutions", tags=["Solutions"])
 def list_solutions(db: Session = Depends(get_db)):
     return get_all_solutions(db)
 
-@router.get("/{employee_id}/{problem_id}", response_model=SolutionOut)
-def retrieve_solution(employee_id: UUID, problem_id: int, db: Session = Depends(get_db)):
-    return get_solution(employee_id, problem_id, db)
+# New endpoint - get solution by ID
+@router.get("/{solution_id}", response_model=SolutionOut)
+def retrieve_solution_by_id(solution_id: int, db: Session = Depends(get_db)):
+    return get_solution_by_id(solution_id, db)
+
+# Updated endpoint - now returns List[SolutionOut] since multiple solutions may exist
+@router.get("/employee/{employee_id}/problem/{problem_id}", response_model=List[SolutionOut])
+def retrieve_solutions_for_problem(
+    employee_id: UUID, 
+    problem_id: int, 
+    db: Session = Depends(get_db)
+):
+    return get_solutions_by_employee_and_problem(employee_id, problem_id, db)
 
 @router.post("/", response_model=SolutionOut, status_code=201)
 def create_new_solution(data: SolutionCreate, db: Session = Depends(get_db)):
     return create_solution(data, db)
 
-@router.put("/{employee_id}/{problem_id}", response_model=SolutionOut)
-def update_existing_solution(employee_id: UUID, problem_id: int, data: SolutionUpdate, db: Session = Depends(get_db)):
-    return update_solution(employee_id, problem_id, data, db)
+# Updated to use solution_id instead of composite key
+@router.put("/{solution_id}", response_model=SolutionOut)
+def update_existing_solution(
+    solution_id: int, 
+    data: SolutionUpdate, 
+    db: Session = Depends(get_db)
+):
+    return update_solution(solution_id, data, db)
 
-@router.delete("/{employee_id}/{problem_id}", status_code=204)
-def delete_existing_solution(employee_id: UUID, problem_id: int, db: Session = Depends(get_db)):
-    delete_solution(employee_id, problem_id, db)
+# Updated to use solution_id
+@router.delete("/{solution_id}", status_code=204)
+def delete_existing_solution(solution_id: int, db: Session = Depends(get_db)):
+    delete_solution(solution_id, db)
 
-# New routes for testing solutions
+# Testing endpoints remain unchanged
 @router.post("/test", response_model=TestCaseResult)
 async def test_solution_code(data: TestInput, db: Session = Depends(get_db)):
     try:
