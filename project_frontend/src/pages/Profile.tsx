@@ -32,7 +32,7 @@ export default function ProfilePage() {
         return;
       }
     
-      axios.get("http://localhost:8000/user/me", {
+      axios.get(`http://localhost:8000/user/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
