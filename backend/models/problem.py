@@ -18,4 +18,5 @@ class Problem(Base):
     creationDate = Column(DateTime, server_default=func.now())
     expirationDate = Column(DateTime)
     solution = Column(Text)
+    language = Column(Text, nullable=False)
     was_graded = Column(Boolean, nullable=False, server_default='false')

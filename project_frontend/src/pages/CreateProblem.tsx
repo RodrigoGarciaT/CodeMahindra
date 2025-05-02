@@ -76,6 +76,7 @@ const CreateProblem = () => {
       creationDate: problem.creation_date,
       expirationDate: problem.expiration_date,
       solution: problem.solution,
+      language: problem.language,
       testcases: problem.testcases.map(tc => ({
         input: tc.input,
         output: tc.output,

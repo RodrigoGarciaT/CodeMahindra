@@ -20,9 +20,15 @@ class SolutionUpdate(SolutionBase):
     pass
 
 class SolutionOut(SolutionBase):
+    id: int  # New field
     employee_id: UUID
     problem_id: int
     submissionDate: datetime
-
+    
+class Submission(BaseModel):
+    employee_id: UUID
+    problem_id: int
+    source_code: str
+    language: str # language va a ser o C++, Javascript, Python o Java
     class Config:
         from_attributes = True

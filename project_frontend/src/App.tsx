@@ -15,13 +15,15 @@ import Dashboard from './components/Dashboard';
 import LandingPage from './pages/Landing'; // <-- Tu nueva página
 import { CartProvider } from './contexts/CartContext';
 import PullRequest from './pages/PullRequest';
+import GoogleReg from './pages/GoogleReg';
+import ProfilePage from './pages/Profile';
+import AdminDashboard from './pages/AdminDashboard';
 import Roadmap from './pages/Roadmap';
 import SpaceBackground from './components/SpaceBackground';
 import StoreManagement from './pages/StoreManagement';
-import ImageUploaderCloudinary from './pages/ImageUploaderCloudinary';
-import GoogleReg from './pages/GoogleReg';
-import ProfilePage from './pages/Profile';
-
+import ImageUploaderCloudinary from './pages/ImageUploaderCloudinary'
+import ManageUsers from './pages/ManageUsers';
+import ManageProblems from './pages/ManageProblems';
 // 1. Layout que incluye la Navbar
 function LayoutConNavbar() {
   return (
@@ -47,6 +49,9 @@ function App() {
           <Route element={<LayoutConNavbar />}>
             <Route path="/space" element={<SpaceBackground />} />
             <Route path="/" element={<Dashboard />} /> {/* Dashboard as default */}
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/manage-users" element={<ManageUsers />} />
+            <Route path="/manage-problems" element={<ManageProblems />} />
             <Route path="/problemList" element={<ProblemList />} />
             <Route path="/roadmap" element={<Roadmap/>} />
             <Route path="/problemList/problem/:problemId" element={<Problems />} />

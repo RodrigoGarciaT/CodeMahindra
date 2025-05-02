@@ -35,7 +35,9 @@ class EmployeeOut(EmployeeBase):
     id: UUID
     email: EmailStr
     firstName: str
-    
+
+class AdminStatusUpdate(BaseModel):
+    is_admin: bool
     class Config:
         from_attributes = True
         
