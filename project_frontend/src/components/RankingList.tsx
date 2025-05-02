@@ -7,13 +7,12 @@ import { ChevronLeft, ChevronRight, Trophy } from "lucide-react"
 
 type RankingListProps = {
   users: User[]
-  startRank: number
   currentPage: number
   totalPages: number
   onPageChange: (page: number) => void
 }
 
-const RankingList: React.FC<RankingListProps> = ({ users, startRank, currentPage, totalPages, onPageChange }) => {
+const RankingList: React.FC<RankingListProps> = ({ users, currentPage, totalPages, onPageChange }) => {
   return (
     <div className="flex flex-col h-full">
       <h2 className="text-xl font-bold mb-4 text-white flex items-center gap-2">
@@ -41,7 +40,7 @@ const RankingList: React.FC<RankingListProps> = ({ users, startRank, currentPage
               transition={{ duration: 0.3, delay: 0.1 * index }}
             >
               <div className="w-8 h-8 rounded-full bg-[#333]/50 flex items-center justify-center text-white/80 font-medium text-sm">
-                {startRank + index}
+                {user.rank}
               </div>
 
               <div className="ml-3 relative">
@@ -54,18 +53,20 @@ const RankingList: React.FC<RankingListProps> = ({ users, startRank, currentPage
                 </div>
 
                 {/* Flag */}
-                <div className="absolute -right-1 bottom-0 w-6 h-6 rounded-sm overflow-hidden border border-gray-800">
-                  <img
-                    src={user.flag || "/placeholder.svg?height=24&width=24"}
-                    alt="Flag"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+                {user.flag && (
+                  <div className="absolute -right-1 bottom-0 w-6 h-6 rounded-sm overflow-hidden border border-gray-800">
+                    <img
+                      src={user.flag}
+                      alt="Flag"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="ml-3 flex-1 min-w-0">
                 <p className="font-semibold text-white">{user.name}</p>
-                <p className="text-sm text-amber-400">{user.points.toLocaleString()} points</p>
+                <p className="text-sm text-amber-400">{user.coins.toLocaleString()} QP</p>
               </div>
             </motion.div>
           ))}
@@ -141,4 +142,3 @@ const RankingList: React.FC<RankingListProps> = ({ users, startRank, currentPage
 }
 
 export default RankingList
-
