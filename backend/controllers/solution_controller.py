@@ -14,6 +14,18 @@ from models.testcase import TestCase
 from uuid import UUID 
 import os
 from dotenv import load_dotenv
+from sqlalchemy import desc, asc
+from sqlalchemy.orm import joinedload
+from sqlalchemy import func  # Add this import at the top
+from models.employee import Employee 
+
+from sqlalchemy import func, desc, asc
+from sqlalchemy.orm import Session
+from sqlalchemy.sql import label
+from sqlalchemy import select
+from sqlalchemy.orm import aliased
+from sqlalchemy import over
+from typing import List
 load_dotenv()
 
 # Updated configuration for self-hosted Judge0
@@ -328,3 +340,54 @@ async def get_test_case_results(submission: Submission, db: Session) -> List[Tes
     )
     
     return results
+
+def get_problem_leaderboard_data(problem_id: int, db: Session) -> List[dict]:
+    # Subquery with row_number to rank solutions for each employee
+    ranked_solutions = (
+        db.query(
+            Solution,
+            Employee.profileEpic,
+            Employee.firstName,
+            Employee.lastName,
+            label("rank", func.row_number().over(
+                partition_by=Solution.employee_id,
+                order_by=[
+                    desc(Solution.testCasesPassed),
+                    asc(Solution.executionTime),
+                    asc(Solution.id)
+                ]
+            ))
+        )
+        .join(Employee, Solution.employee_id == Employee.id)
+        .filter(Solution.problem_id == problem_id)
+        .subquery()
+    )
+
+    # Select only the top-ranked (best) solution per employee
+    best_solutions = (
+        db.query(
+            ranked_solutions.c.profileEpic,
+            ranked_solutions.c.firstName,
+            ranked_solutions.c.lastName,
+            ranked_solutions.c.testCasesPassed,
+            ranked_solutions.c.executionTime
+        )
+        .filter(ranked_solutions.c.rank == 1)
+        .order_by(
+            desc(ranked_solutions.c.testCasesPassed),
+            asc(ranked_solutions.c.executionTime)
+        )
+        .all()
+    )
+
+    leaderboard = []
+    for profile_pic, first_name, last_name, test_cases_passed, exec_time in best_solutions:
+        leaderboard.append({
+            "profilePicture": profile_pic,
+            "firstName": first_name,
+            "lastName": last_name,
+            "testCasesPassed": test_cases_passed,
+            "time": exec_time
+        })
+
+    return leaderboard
