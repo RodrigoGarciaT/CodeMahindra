@@ -10,14 +10,14 @@ import CreateProblem from './pages/CreateProblem';
 import ProblemList from './pages/ProblemList';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import ProfilePage from './components/ProfilePage';
 import TeamPage from './components/TeamPage';
 import Dashboard from './components/Dashboard';
 import LandingPage from './pages/Landing'; // <-- Tu nueva página
 import { CartProvider } from './contexts/CartContext';
 import PullRequest from './pages/PullRequest';
+import GoogleReg from './pages/GoogleReg';
+import ProfilePage from './pages/Profile';
 import AdminDashboard from './pages/AdminDashboard';
-
 import Roadmap from './pages/Roadmap';
 import SpaceBackground from './components/SpaceBackground';
 import StoreManagement from './pages/StoreManagement';
@@ -41,6 +41,9 @@ function App() {
         <Routes>
           {/* 2. Ruta que NO muestra la Navbar (LandingPage) */}
           <Route path="/landing" element={<LandingPage />} />
+          <Route path="/GoogleReg" element={<GoogleReg />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login" element={<LoginPage />} />
 
           {/* 3. Ruta con Navbar */}
           <Route element={<LayoutConNavbar />}>
@@ -61,12 +64,11 @@ function App() {
             <Route path="/store" element={<Store />} />
             <Route path="/store/manage" element={<StoreManagement />} />
             <Route path="/cart" element={<Cart />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/profile" element={<ProfilePage />} />
             <Route path="/team" element={<TeamPage />} />
             <Route path="/test" element={<ImageUploaderCloudinary />} />
+            <Route path="/Profile" element={<ProfilePage />} />
+
           </Route>
         </Routes>
       </Router>

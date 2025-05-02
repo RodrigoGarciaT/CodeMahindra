@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
 import { Eye, EyeOff, ArrowRight, Mail, Lock, Github, Linkedin, Facebook } from "lucide-react"
@@ -266,7 +264,7 @@ const LoginPage: React.FC = () => {
                   ¿Aún no tienes una cuenta? Regístrate para acceder a todas las funciones.
                 </p>
                 <Link
-                  to="/register"
+                  to="/GoogleReg"
                   className="inline-block border-2 border-white text-white font-medium py-3 px-8 rounded-lg hover:bg-white hover:text-[#E63946] transition-colors duration-300"
                 >
                   Registrarse

@@ -1,20 +1,14 @@
-import { Link, useLocation } from 'react-router-dom';
-import {
-  Home,
-  Code2,
-  BookOpen,
-  Trophy,
-  ShoppingBag,
-  Bell,
-  ShoppingCart,
-  Settings
-} from 'lucide-react';
+
+import { Link, useLocation,} from 'react-router-dom';
+import { Home, Code2, BookOpen, Trophy, ShoppingBag, Bell, ShoppingCart, PlusCircle, Settings } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import UserMenu from './UserMenu'; // ✅ Asegúrate que la ruta sea correcta
 
 const Navbar = () => {
   const { itemCount } = useCart();
-  const location = useLocation();
+  const location = useLocation(); // Get the current location
+
+
 
   const getLinkClass = (path: string) => {
     return location.pathname === path
@@ -78,6 +72,7 @@ const Navbar = () => {
             </button>
             {/* ✅ Menú de usuario desplegable */}
             <UserMenu />
+
           </div>
         </div>
       </div>
