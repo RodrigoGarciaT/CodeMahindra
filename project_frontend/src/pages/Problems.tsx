@@ -10,9 +10,12 @@ import Discussions from '../components/Discussions';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { Comment, Submission } from '../types/submission';
+import { Provider } from '@radix-ui/react-tooltip';
 
 const Problems = () => {
   const employeeId = 'f683124d-6fc7-4586-8590-86573f5aa66e'
+  // const employeeId = "a5ecea3a-05d9-44f6-9465-695349143c75"
+  // const employeeId = "0749c2ab-674c-497b-a2bd-e04229bc2de6"
   const [code, setCode] = useState('// Your code here');
   const [activeTab, setActiveTab] = useState('problem');
   const location = useLocation();
@@ -21,6 +24,7 @@ const Problems = () => {
   const [selectedLanguage, setSelectedLanguage] = useState("C++");
   const [loadingSubmissions, setLoadingSubmissions] = useState(true);
   const [submissionsError, setSubmissionsError] = useState<string | null>(null);
+  const [leaderboard, setLeaderboard] = useState<any[]>([]);
 
   const handleSubmissionSelect = (submissionCode: string, language: string) => {
     setCode(submissionCode);
@@ -43,6 +47,23 @@ const Problems = () => {
       setComments(comments);
     } catch (error) {
       console.error('Error fetching comments:', error);
+    }
+  };
+
+   // Fetch leaderboard data
+   const fetchLeaderboard = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/solutions/problem/${problemId}/leaderboard`);
+      const mappedData = response.data.map((entry: any, index: number) => ({
+        rank: index + 1, // Calculate rank based on position
+        userName: `${entry.firstName} ${entry.lastName}`, // Combine first and last name for userName
+        profilePic: entry.profilePicture, // Use profilePicture from the response
+        testCasesPassed: entry.testCasesPassed,
+        time: `${entry.time}s`, // Convert time to string with 's' suffix
+      }));
+      setLeaderboard(mappedData);
+    } catch (err) {
+      console.error('Failed to load leaderboard.', err);
     }
   };
 
@@ -74,6 +95,7 @@ const Problems = () => {
     const fetchData = async () => {
       await getComments();
       await getSubmissions();
+      await fetchLeaderboard();
     };
     fetchData();
   }, [problemId]);
@@ -102,7 +124,7 @@ const Problems = () => {
                   onSelectSubmission={handleSubmissionSelect}
                 />
               )}
-              {activeTab === 'leaderboard' && <Leaderboard />}
+              {activeTab === 'leaderboard' && <Leaderboard problemId={problemId} leaderboard={leaderboard} />}
               {activeTab === 'discussions' && (
                 <Discussions 
                   problemId={problemId} 

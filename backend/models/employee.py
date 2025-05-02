@@ -8,7 +8,11 @@ class Employee(Base):
     __tablename__ = "Employee"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
-    profileEpic = Column(String(255))
+    profileEpic = Column(
+        String(255),
+        nullable=False,
+        default='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkshh0IMgSA8yw_1JFALVsXFojVdR88C05Fw&s'
+    )
     nationality = Column(String(255))
     experience = Column(Integer)
     level = Column(Integer)
