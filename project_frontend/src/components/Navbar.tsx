@@ -1,70 +1,63 @@
-import { Link } from 'react-router-dom';
-import { Home, Code2, BookOpen, Trophy, ShoppingBag, Bell, ShoppingCart, PlusCircle } from 'lucide-react';
+
+import { Link, useLocation,} from 'react-router-dom';
+import { Home, Code2, BookOpen, Trophy, ShoppingBag, Bell, ShoppingCart, PlusCircle, Settings } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
+import UserMenu from './UserMenu'; // ✅ Asegúrate que la ruta sea correcta
 
 const Navbar = () => {
   const { itemCount } = useCart();
+  const location = useLocation(); // Get the current location
+
+
+
+  const getLinkClass = (path: string) => {
+    return location.pathname === path
+      ? 'flex items-center px-4 py-2 rounded-md bg-red-500 text-white'
+      : 'flex items-center px-4 py-2 rounded-md hover:bg-gray-100';
+  };
 
   return (
     <nav className="bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
+          {/* Navegación principal */}
           <div className="flex items-center space-x-4">
-            <Link to="/" className="flex items-center">
+            <Link to="/landing" className="flex items-center">
               <Code2 className="h-8 w-8 text-red-500" />
             </Link>
             <div className="flex space-x-2">
-              <Link
-                to="/"
-                className="flex items-center px-4 py-2 rounded-md bg-red-500 text-white"
-              >
+              <Link to="/" className={getLinkClass('/')}>
                 <Home className="h-4 w-4 mr-2" />
                 Inicio
               </Link>
-              <Link
-                to="/problems"
-                className="flex items-center px-4 py-2 rounded-md hover:bg-gray-100"
-              >
+              <Link to="/problems" className={getLinkClass('/problems')}>
                 <BookOpen className="h-4 w-4 mr-2" />
                 Problemas
               </Link>
-              <Link
-                to="/problems/create"
-                className="flex items-center px-4 py-2 rounded-md hover:bg-gray-100"
-              >
-                <PlusCircle className="h-4 w-4 mr-2" />
-                Create Problem
-              </Link>
-              <Link
-                to="/tasks"
-                className="flex items-center px-4 py-2 rounded-md hover:bg-gray-100"
-              >
+              <Link to="/tasks" className={getLinkClass('/tasks')}>
                 <Code2 className="h-4 w-4 mr-2" />
                 Tareas
               </Link>
-              <Link
-                to="/code"
-                className="flex items-center px-4 py-2 rounded-md hover:bg-gray-100"
-              >
+              <Link to="/code" className={getLinkClass('/code')}>
                 <Code2 className="h-4 w-4 mr-2" />
                 Código
               </Link>
-              <Link
-                to="/ranking"
-                className="flex items-center px-4 py-2 rounded-md hover:bg-gray-100"
-              >
+              <Link to="/ranking" className={getLinkClass('/ranking')}>
                 <Trophy className="h-4 w-4 mr-2" />
                 Ranking
               </Link>
-              <Link
-                to="/store"
-                className="flex items-center px-4 py-2 rounded-md hover:bg-gray-100"
-              >
+              <Link to="/store" className={getLinkClass('/store')}>
                 <ShoppingBag className="h-4 w-4 mr-2" />
-                Tienda
+                Store
+              </Link>
+              <Link to="/admin" className={getLinkClass('/admin')}>
+                <Settings className="h-4 w-4 mr-2" />
+                Admin
               </Link>
             </div>
           </div>
+
+          {/* Íconos + Menú usuario */}
           <div className="flex items-center space-x-4">
             <Link to="/cart" className="p-2 rounded-full hover:bg-gray-100 relative">
               <ShoppingCart className="h-5 w-5" />
@@ -77,10 +70,9 @@ const Navbar = () => {
             <button className="p-2 rounded-full hover:bg-gray-100">
               <Bell className="h-5 w-5" />
             </button>
-            <div className="flex items-center space-x-2">
-              <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
-              <span>Digital Creative</span>
-            </div>
+            {/* ✅ Menú de usuario desplegable */}
+            <UserMenu />
+
           </div>
         </div>
       </div>

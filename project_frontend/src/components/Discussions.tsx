@@ -1,47 +1,83 @@
-import { Comment } from '../types/submissions';
+import { useState } from 'react';
+import { Comment } from '../types/submission';
+import NewCommentModal from './NewCommentModal';
+import axios from 'axios';
 
-const mockComments: Comment[] = [
-  {
-    id: '1',
-    userName: 'Alice Johnson',
-    profilePic: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop',
-    comment: 'Great problem! I learned a lot about dynamic programming while solving it.',
-    postDate: '2025-03-28T10:30:00Z'
-  },
-  {
-    id: '2',
-    userName: 'Bob Smith',
-    profilePic: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&h=100&fit=crop',
-    comment: 'I found a more efficient solution using a priority queue. Would anyone like to discuss different approaches?',
-    postDate: '2025-03-28T09:45:00Z'
-  },
-  {
-    id: '3',
-    userName: 'Carol Williams',
-    profilePic: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop',
-    comment: 'The time complexity of my solution is O(n log n). Is there a way to optimize it further?',
-    postDate: '2025-03-28T09:15:00Z'
-  },
-  {
-    id: '4',
-    userName: 'David Brown',
-    profilePic: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop',
-    comment: 'Has anyone tried solving this using a different programming language? I\'d be interested in seeing other implementations.',
-    postDate: '2025-03-28T08:30:00Z'
-  }
-];
+interface DiscussionsProps {
+  problemId: number;
+  employeeId: string;
+  comments: Comment[];
+  setComments: React.Dispatch<React.SetStateAction<Comment[]>>;
+}
 
-const Discussions = () => {
+const Discussions: React.FC<DiscussionsProps> = ({ problemId, comments, setComments, employeeId }) => {
+  const [showNewComment, setShowNewComment] = useState(false);
+
+  const handleAddNewComment = () => {
+    setShowNewComment(true);
+  };
+
+  const handleCloseNewComment = () => {
+    setShowNewComment(false);
+  };
+
+  const handlePublishComment = async (newCommentDescription: string) => {
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/comments`, {
+        employee_id: employeeId,
+        description: newCommentDescription,
+        problem_id: problemId
+      });
+
+      const newComment = {
+        id: response.data.id,
+        userName: response.data.firstName + ' ' + response.data.lastName,
+        profilePic: response.data.profilePicture,
+        comment: response.data.description,
+        postDate: response.data.messageDate,
+        employeeId: response.data.employee_id
+      };
+
+      setComments((prevComments) => [...prevComments, newComment]);
+    } catch (error) {
+      console.error('Checkout failed:', error);
+      alert('There was an error publishing your comment. Please try again.');
+    } finally {
+      handleCloseNewComment();
+    }
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    try {
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/comments/${commentId}`);
+      setComments((prevComments) => prevComments.filter((comment) => comment.id !== commentId));
+    } catch (error) {
+      console.error('Delete failed:', error);
+      alert('There was an error deleting your comment. Please try again.');
+    }
+  };
+  console.log(comments);
   return (
     <div className="bg-white p-6 rounded-lg shadow h-full overflow-y-auto">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Discussions</h2>
-        <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors">
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+          onClick={handleAddNewComment}
+        >
           New Comment
         </button>
       </div>
+
+      {showNewComment && (
+        <NewCommentModal
+          onClose={handleCloseNewComment}
+          onPublish={handlePublishComment}
+        />
+      )}
+
       <div className="space-y-6">
-        {mockComments.map((comment) => (
+        {comments.map((comment) => (
           <div key={comment.id} className="flex space-x-4">
             <img
               src={comment.profilePic}
@@ -62,6 +98,14 @@ const Discussions = () => {
                 <button className="hover:text-blue-500">Reply</button>
                 <button className="hover:text-blue-500">Share</button>
                 <button className="hover:text-blue-500">Report</button>
+                {comment.employeeId === employeeId && (
+                  <button
+                    onClick={() => handleDeleteComment(comment.id)}
+                    className="hover:text-red-500"
+                  >
+                    Delete
+                  </button>
+                )}
               </div>
             </div>
           </div>
