@@ -6,5 +6,6 @@ router = APIRouter()
 @router.post("/")
 async def receive_github_webhook(request: Request):
     payload = await request.json()
-    await handle_github_event(payload)
+    event_type = request.headers.get("X-GitHub-Event")
+    await handle_github_event(payload, event_type)
     return {"status": "received"}
