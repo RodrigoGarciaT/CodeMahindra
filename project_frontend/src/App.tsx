@@ -12,7 +12,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import TeamPage from './components/TeamPage';
 import Dashboard from './components/Dashboard';
-import LandingPage from './pages/Landing'; // <-- Tu nueva página
+import LandingPage from './pages/LandingPage/Page'; // <-- Tu nueva página
 import { CartProvider } from './contexts/CartContext';
 import PullRequest from './pages/PullRequest';
 import GoogleReg from './pages/GoogleReg';
