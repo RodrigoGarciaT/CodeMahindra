@@ -1,3 +1,4 @@
+from uuid import UUID
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
@@ -27,5 +28,13 @@ class ProblemOut(ProblemBase):
     id: int
     creationDate: datetime
 
+class ProblemGradingResult(BaseModel):
+    message: str
+    first_place: Optional[UUID] = None
+    second_place: Optional[UUID] = None
+    third_place: Optional[UUID] = None
+    first_reward: Optional[int] = None
+    second_reward: Optional[int] = None
+    third_reward: Optional[int] = None
     class Config:
         from_attributes = True
