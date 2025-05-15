@@ -1,6 +1,7 @@
 from sqlalchemy import asc, desc, func
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
+from models.employee_xp_history import EmployeeXPHistory
 from models.employee import Employee
 from models.solution import Solution
 from models.problem import Problem
@@ -180,6 +181,14 @@ def grade_problem(problem_id: int, db: Session) -> ProblemGradingResult:
             # Update employee stats
             employee.coins += reward
             employee.experience += reward
+            
+            # Log the experience update in history
+            xp_entry = EmployeeXPHistory(
+                employee_id=employee.id,
+                experience=employee.experience,
+                date=datetime.utcnow()
+            )
+            db.add(xp_entry)
 
             # Set result fields
             if i == 0:
