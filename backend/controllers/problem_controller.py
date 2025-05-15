@@ -143,7 +143,10 @@ def grade_problem(problem_id: int, db: Session) -> ProblemGradingResult:
                     )
                 ).label("rank")
             )
-            .filter(Solution.problem_id == problem_id)
+            .filter(
+                Solution.problem_id == problem_id,
+                Solution.submissionDate >= problem.creationDate # only accepts submissions after the creationDate
+                )
             .subquery()
         )
 
