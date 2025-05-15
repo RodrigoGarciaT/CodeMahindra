@@ -5,8 +5,23 @@ from datetime import datetime
 
 class ProblemBase(BaseModel):
     reward: Optional[int] = None
-    name: str
+    name: Optional[str]
     description: Optional[str] = None
+    input_format: Optional[str]
+    output_format: Optional[str]
+    sample_input: Optional[str]
+    sample_output: Optional[str]
+    difficulty: Optional[str] = None
+    acceptance: Optional[float] = None
+    expirationDate: Optional[datetime] = None
+    solution: Optional[str] = None
+    language: Optional[str]
+    was_graded: Optional[bool] = False
+
+class ProblemCreate(BaseModel):
+    reward: int
+    name: str
+    description: str
     input_format: str
     output_format: str
     sample_input: str
@@ -16,13 +31,23 @@ class ProblemBase(BaseModel):
     expirationDate: Optional[datetime] = None
     solution: Optional[str] = None
     language: str
-    was_graded: bool = False
+    was_graded: Optional[bool] = False
 
-class ProblemCreate(ProblemBase):
-    pass
+class ProblemUpdate(BaseModel):
+    reward: Optional[int] = None
+    name: Optional[str] = None
+    description: Optional[str] = None
+    input_format: Optional[str] = None
+    output_format: Optional[str] = None
+    sample_input: Optional[str] = None
+    sample_output: Optional[str] = None
+    difficulty: Optional[str] = None
+    acceptance: Optional[float] = None
+    expirationDate: Optional[datetime] = None
+    solution: Optional[str] = None
+    language: Optional[str] = None
+    was_graded: Optional[bool] = None
 
-class ProblemUpdate(ProblemBase):
-    pass
 
 class ProblemOut(ProblemBase):
     id: int
