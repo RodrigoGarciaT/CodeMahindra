@@ -45,7 +45,17 @@ class PurchaseDetail(BaseModel):
     firstName: str
     lastName: str
     products: List[ProductInPurchase]
+
+class UpdateDeliveryStatus(BaseModel):
+    product_id: int
+    delivered: bool
     
 class PurchaseProductOut(PurchaseProductBase):
     class Config:
         orm_mode = True
+
+
+class UpdateDeliveryStatus(BaseModel):
+    purchase_id: int
+    employee_id: str
+    product_id: int
