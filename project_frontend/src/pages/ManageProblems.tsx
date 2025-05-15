@@ -115,12 +115,18 @@ const ManageProblems: React.FC = () => {
     }
   };
 
-  const handleGradeProblem = (id: string) => {
-    setProblems(problems.map(problem => 
-      problem.id === id ? { ...problem, wasGraded: true } : problem
-    ));
+  const handleGradeProblem = async (id: string) => {
+    try {
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/problems/${id}/grade`);
+      setProblems(problems.map(problem => 
+        problem.id === id ? { ...problem, wasGraded: true } : problem
+      ));
+      alert("✅ Problem graded successfully!");
+    } catch (error) {
+      console.error("Grading failed:", error);
+      alert("❌ Failed to grade the problem. Please try again.");
+    }
   };
-
   const handleViewProblem = (id: string) => {
     navigate(`/problemList/problem/${id}`, { state: { problemId: id } });
   };
