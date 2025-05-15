@@ -44,3 +44,10 @@ def delete_purchase_product(
 @router.get("/details/", response_model=list[schemas.PurchaseDetail])
 def read_purchase_details(db: Session = Depends(get_db)):
     return crud.get_purchase_details(db)
+
+@router.put("/items/")
+def update_delivery_status(data: schemas.UpdateDeliveryStatus, db: Session = Depends(get_db)):
+    product = crud.mark_product_as_delivered(db, data.purchase_id, data.employee_id, data.product_id)
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return {"message": "Delivery status updated", "product_id": data.product_id}

@@ -25,6 +25,7 @@ import ImageUploaderCloudinary from './pages/ImageUploaderCloudinary'
 import ManageUsers from './pages/ManageUsers';
 import ManageProblems from './pages/ManageProblems';
 import EditProfile from './pages/EditProfile';
+import PurchaseManager from './pages/PurchaseManager';
 
 // 1. Layout que incluye la Navbar
 function LayoutConNavbar() {
@@ -71,7 +72,7 @@ function App() {
             <Route path="/test" element={<ImageUploaderCloudinary />} />
             <Route path="/Profile" element={<ProfilePage />} />
             <Route path="/profile/view" element={<EditProfile />} />
-
+            <Route path ='/manage-purchase' element = {<PurchaseManager/>} />
           </Route>
         </Routes>
       </Router>

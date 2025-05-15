@@ -92,3 +92,19 @@ def get_purchase_details(db: Session = Depends(get_db)):
         result.append(purchase_data)
 
     return result
+
+def mark_product_as_delivered(db: Session, purchase_id: int, employee_id: str, product_id: int):
+    product = db.query(models.PurchaseProduct).filter_by(
+        purchase_id=purchase_id,
+        employee_id=employee_id,
+        product_id=product_id
+    ).first()
+
+    if product:
+        product.delivered = True
+        db.commit()
+        db.refresh(product)
+        return product
+
+    return None
+
