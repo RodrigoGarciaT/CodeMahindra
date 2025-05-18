@@ -38,7 +38,7 @@ interface Task {
   reporter?: string;
   assignee?: {
     name: string;
-    avatar?: string;
+    avatar?: string; //cambiar a ruta de usuario indivudal 
   };
   taskId?: string;
 }
@@ -83,6 +83,19 @@ export default function Tasks() {
       setTasks(enhancedData);
     } catch (err) {
       console.error("❌ Error loading tasks:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSyncFromJira = async () => {
+    setIsLoading(true);
+    try {
+      await axios.post("http://127.0.0.1:8000/tasks/jira/sync");
+      await fetchTasks(); // Recargar tareas después de sincronizar
+    } catch (err) {
+      console.error("❌ Error syncing from Jira:", err);
+      alert("Error syncing tasks from Jira.");
     } finally {
       setIsLoading(false);
     }
@@ -179,7 +192,7 @@ export default function Tasks() {
                 onChange={(e) => setJiraEmail(e.target.value)}
               />
               <Input
-                placeholder="Jira API Token"
+                placeholder="Jira API Token"   // cambiar enfoque de token id usario a token id por proyecto 
                 type="password"
                 value={jiraToken}
                 onChange={(e) => setJiraToken(e.target.value)}
@@ -194,15 +207,26 @@ export default function Tasks() {
       <div className="max-w-[1600px] mx-auto p-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-slate-100">Task Management</h1>
-          <Button
-            variant="outline"
-            onClick={fetchTasks}
-            className="flex items-center gap-2"
-            disabled={isLoading}
-          >
-            <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
-            Refresh
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={fetchTasks}
+              className="flex items-center gap-2"
+              disabled={isLoading}
+            >
+              <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
+              Refresh
+            </Button>
+            <Button
+              variant="default"
+              onClick={handleSyncFromJira}
+              className="flex items-center gap-2"
+              disabled={isLoading}
+            >
+              <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
+              Sync from Jira
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

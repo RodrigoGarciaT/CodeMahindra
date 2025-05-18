@@ -40,10 +40,10 @@ class EmployeeOut(EmployeeBase):
     email: EmailStr
     firstName: str
     profilePicture: Optional[str] = None
+
     model_config = {
         "from_attributes": True
     }
-
 
 class AdminStatusUpdate(BaseModel):
     is_admin: bool
@@ -53,3 +53,8 @@ class AdminStatusUpdate(BaseModel):
     @classmethod
     def from_orm(cls, obj):
         return cls.model_validate(obj)
+
+# ✅ Modelo para recibir credenciales de Jira
+class JiraAuthRequest(BaseModel):
+    jira_email: str
+    jira_api_token: str

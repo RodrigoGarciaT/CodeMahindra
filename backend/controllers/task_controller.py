@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from models.task import Task
 from schemas.task import TaskCreate, TaskUpdate
+from models.employee import Employee
 from typing import List
 
 # 🆕 Función auxiliar para extraer la descripción de Jira
@@ -77,8 +78,8 @@ def delete_task(task_id: int, db: Session):
     db.commit()
     return
 
-# 🆕 Función para crear un Task desde un issue de Jira
-def create_task_from_jira(data: dict, db: Session):
+# 🆕 Crear una tarea desde un issue de Jira asignándola al usuario autenticado
+def create_task_from_jira(data: dict, db: Session, current_user: Employee):
     issue = data.get("issue", {})
     fields = issue.get("fields", {})
 
@@ -89,12 +90,11 @@ def create_task_from_jira(data: dict, db: Session):
     estimated_time = fields.get("timeoriginalestimate", 0)  # segundos
     tags = fields.get("labels", [])
     tags_str = ", ".join(tags)
-    description = extract_description(fields)  # ✅ usamos la nueva función
-    sprint_info = fields.get("customfield_10020", [])  # ⚠️ puede variar según tu Jira
+    description = extract_description(fields)
+    sprint_info = fields.get("customfield_10020", [])
     sprint = sprint_info[0]["name"] if sprint_info else None
     reporter = fields.get("reporter", {}).get("displayName", "")
 
-    # 🆕 Info del asignado (assignee)
     assignee_name = fields.get("assignee", {}).get("displayName", None)
     assignee_avatar = fields.get("assignee", {}).get("avatarUrls", {}).get("48x48", None)
 
@@ -111,6 +111,7 @@ def create_task_from_jira(data: dict, db: Session):
         reporter=reporter,
         assignee_name=assignee_name,
         assignee_avatar=assignee_avatar,
+        employee_id=current_user.id,  # ✅ Relación con usuario autenticado
     )
     db.add(new_task)
     db.commit()
