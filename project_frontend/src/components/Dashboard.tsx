@@ -1,9 +1,39 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bot, Flag, Star, ChevronRight, Users } from 'lucide-react';
 
 function Dashboard() {
   const navigate = useNavigate();
+  const [user, setUser] = useState({
+  photo: '',
+  firstName: '',
+  lastName: '',
+  experience: 0, 
+  nationality: '',
+});
+
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetch('http://localhost:8000/user/me', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then(res => res.json())
+        .then(data => {
+          setUser({
+            photo: data.photo,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            experience: data.experience,
+            nationality: data.nationality,
+          });
+        })
+        .catch(err => console.error(err));
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#363B41] text-black p-6">
@@ -23,14 +53,16 @@ function Dashboard() {
           <div className="bg-gray-50 p-4 rounded-lg mb-6">
             <div className="flex items-center gap-4">
               <img 
-                src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=150&h=150&fit=crop" 
+                src={user.photo || "https://via.placeholder.com/150"} 
                 alt="Profile" 
                 className="w-12 h-12 rounded-full"
               />
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold">Davis Curtis</span>
-                  <Flag className="w-4 h-4" />
+                  <span className="font-semibold">{user.firstName} {user.lastName}</span>
+                  <Flag className="w-4 h-4 text-red-500" />
+                  <span>{user.nationality || 'Nacionalidad no disponible'}</span>
+
                 </div>
               </div>
             </div>
@@ -41,15 +73,15 @@ function Dashboard() {
             <div>
               <div className="flex justify-between text-sm mb-2">
                 <span>Nivel 5</span>
-                <span>9462 exp</span>
+                <span>{user.experience} exp</span>
               </div>
               <div className="w-full bg-gray-100 rounded-full h-2">
-                <div className="bg-red-500 h-2 rounded-full w-3/4"></div>
+                <div className="bg-red-500 h-2 rounded-full" style={{ width: `${Math.min(Number(user.experience) / 15000 * 100, 100)}%` }}></div>
               </div>
             </div>
           </div>
         </div>
-
+        
         {/* Weekly Challenges Section */}
         <div className="bg-white rounded-lg p-6 shadow-sm">
           <h2 className="text-xl font-bold mb-4">Desafíos Semanales</h2>

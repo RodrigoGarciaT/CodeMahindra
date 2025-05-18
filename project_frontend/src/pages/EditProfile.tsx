@@ -30,33 +30,45 @@ export default function EditProfile() {
     profilePicture: "",
   })
 
-  // Simulating API fetch
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        // Replace with actual API call
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+useEffect(() => {
+  const fetchUser = async () => {
+  try {
+    
+    const token = localStorage.getItem("token");
+    console.log("Token enviado:", token);
 
-        // Mock data
-        setUser({
-          firstName: "Davis",
-          lastName: "Curtis",
-          email: "davis.curtis@digitalcreatives.com",
-          nationality: "Estados Unidos",
-          experience: 9462,
-          coins: 350,
-          phoneNumber: "+1 555-123-4567",
-          profilePicture: "/placeholder.svg?height=150&width=150",
-        })
-      } catch (error) {
-        console.error("Error fetching user data:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
+    const res = await fetch("http://localhost:8000/user/me", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+    });
 
-    fetchUser()
-  }, [])
+    if (!res.ok) throw new Error("Error al obtener usuario");
+
+    const data = await res.json();
+
+    setUser({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      nationality: data.nationality || "",
+      experience: data.experience || 0,
+      coins: data.coins || 0,
+      phoneNumber: data.phoneNumber || "",
+      profilePicture: data.profilePicture || "",
+    });
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+  fetchUser()
+}, [])
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -72,25 +84,35 @@ export default function EditProfile() {
 
     try {
       // Replace with actual API call
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-      setSuccess(true)
+      const token = localStorage.getItem("token")
 
-      // Reset success message after 3 seconds
-      setTimeout(() => {
-        setSuccess(null)
-      }, 3000)
-    } catch (error) {
-      console.error("Error saving user data:", error)
-      setSuccess(false)
+      const res = await fetch("http://localhost:8000/user/me", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          firstName: user.firstName,
+          lastName: user.lastName,
+          nationality: user.nationality,
+          phoneNumber: user.phoneNumber,
+          profilePicture: user.profilePicture, // en base64 si estás usando eso temporalmente
+        }),
+      })
 
-      // Reset error message after 3 seconds
-      setTimeout(() => {
-        setSuccess(null)
-      }, 3000)
-    } finally {
-      setSaving(false)
-    }
+    if (!res.ok) throw new Error("Error al guardar los datos del usuario")
+
+    setSuccess(true)
+    setTimeout(() => setSuccess(null), 3000)
+  } catch (error) {
+    console.error("Error saving user data:", error)
+    setSuccess(false)
+    setTimeout(() => setSuccess(null), 3000)
+  } finally {
+    setSaving(false)
   }
+}
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]

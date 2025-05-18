@@ -115,7 +115,7 @@ const LoginPage: React.FC = () => {
       const token = data.access_token // Token recibido del backend
   
       // Guardar el token en el almacenamiento local o en un estado global
-      localStorage.setItem("auth_token", token)
+      localStorage.setItem("token", data.access_token);
   
       // Redirigir a la página principal o a donde desees
       window.location.href = "/dashboard" // Cambia esto según tu flujo de navegación
