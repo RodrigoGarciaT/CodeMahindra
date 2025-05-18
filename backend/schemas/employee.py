@@ -32,8 +32,20 @@ class EmployeeCreate(EmployeeBase):
     phoneNumber: str = "0000000000"
     profilePicture: Optional[str] = None
 
-class EmployeeUpdate(EmployeeBase):
-    password: Optional[str] = None
+class EmployeeUpdate(BaseModel):
+    firstName: Optional[str]
+    lastName: Optional[str]
+    phoneNumber: Optional[str]
+    nationality: Optional[str]
+    profilePicture: Optional[str]
+    birthDate: Optional[date] = None
+    profileEpic: Optional[str] = None
+    experience: Optional[int] = None
+    level: Optional[int] = None
+    position_id: Optional[int] = None
+    team_id: Optional[int] = None
+    jira_email: Optional[str] = None
+    jira_api_token: Optional[str] = None
 
 class EmployeeOut(EmployeeBase):
     id: UUID

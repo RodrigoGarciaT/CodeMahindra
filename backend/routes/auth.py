@@ -104,14 +104,21 @@ async def login(login_data: LoginRequest, db: Session = Depends(get_db)):
         "coins": user.coins,
         "profilePicture": user.profilePicture,  # Si tienes una imagen de perfil
         "position_id": user.position_id,
+        "nationality": user.nationality,
+        "phoneNumber": user.phoneNumber,
         "team_id": user.team_id
     })
-
+    print(f"[DEBUG] Token generado: {access_token}")
     return {
         "access_token": access_token,
         "token_type": "bearer"
     }
 
+@router.get("/test-token")
+def test_token():
+    token = create_access_token(data={"sub": "test@example.com"})
+    return {"token": token}
+   
 @router.post("/google")
 def google_auth(data: GoogleToken, db: Session = Depends(get_db)):
     google_data = verify_google_token(data.credential)
