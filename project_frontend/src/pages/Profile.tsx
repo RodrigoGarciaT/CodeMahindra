@@ -3,10 +3,11 @@ import { ArrowLeft, Edit, Mail, MapPin, Phone } from "lucide-react";
 import { Progress } from "../components/progress";
 import { Card } from "../components/card";
 import profilePic from "../images/robot_male_1.svg"; // Asegúrate de tener esta imagen
-import coinIcon from "../images/robot_male_1.svg";
+import coinIcon from "../images/coin.svg";
 import flag from "../images/robot_male_1.svg";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"
 
 export default function ProfilePage() {
     const [activeTab, setActiveTab] = useState("current");
@@ -22,6 +23,8 @@ export default function ProfilePage() {
     }
 
     const [user, setUser] = useState<User | null>(null);
+    const navigate = useNavigate()
+
 
     useEffect(() => {
       const token = localStorage.getItem("token");
@@ -89,7 +92,10 @@ export default function ProfilePage() {
                 <div className="mt-6 rounded-lg bg-[#FFFF] p-6">
                   <div className="mb-4 flex items-center justify-between">
                     <h3 className="text-lg font-medium">Personal Information</h3>
-                    <button className="text-black hover:text-black">
+                    <button 
+                      className="text-black hover:text-black"
+                      onClick={() => navigate('/profile/view')}
+                    >
                       <Edit className="h-5 w-5" />
                     </button>
                   </div>

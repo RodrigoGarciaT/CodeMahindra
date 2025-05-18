@@ -67,25 +67,35 @@ export default function EditProfile() {
 
     try {
       // Replace with actual API call
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-      setSuccess(true)
+      const token = localStorage.getItem("token")
 
-      // Reset success message after 3 seconds
-      setTimeout(() => {
-        setSuccess(null)
-      }, 3000)
-    } catch (error) {
-      console.error("Error saving user data:", error)
-      setSuccess(false)
+      const res = await fetch("http://localhost:8000/user/me", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          firstName: user.firstName,
+          lastName: user.lastName,
+          nationality: user.nationality,
+          phoneNumber: user.phoneNumber,
+          profilePicture: user.profilePicture, // en base64 si estás usando eso temporalmente
+        }),
+      })
 
-      // Reset error message after 3 seconds
-      setTimeout(() => {
-        setSuccess(null)
-      }, 3000)
-    } finally {
-      setSaving(false)
-    }
+    if (!res.ok) throw new Error("Error al guardar los datos del usuario")
+
+    setSuccess(true)
+    setTimeout(() => setSuccess(null), 3000)
+  } catch (error) {
+    console.error("Error saving user data:", error)
+    setSuccess(false)
+    setTimeout(() => setSuccess(null), 3000)
+  } finally {
+    setSaving(false)
   }
+}
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
