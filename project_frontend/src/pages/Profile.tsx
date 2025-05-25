@@ -8,6 +8,8 @@ import flag from "../images/robot_male_1.svg";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"
+import ReactCountryFlag from "react-country-flag";
+import CountryName from "../components/CountryName";
 
 export default function ProfilePage() {
     const [activeTab, setActiveTab] = useState("current");
@@ -69,7 +71,7 @@ export default function ProfilePage() {
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center">
-                        <h2 className="text-lg font-bold text-black">{user?.firstName ?? "Cargando..."}</h2>
+                        <h2 className="text-lg font-bold text-black">{user ? `${user.firstName} ${user.lastName}` : "Cargando..."}</h2>
                           <img src={flag} alt="Flag" className="h-5 w-6" />
                         </div>
                       </div>
@@ -110,9 +112,13 @@ export default function ProfilePage() {
                     </div>
                     <div className="flex items-center">
                       <MapPin className="mr-3 h-5 w-5 text-black" />
-                      <span>{user?.nationality ?? "No especificado"}</span>
+                      {user?.nationality ? (
+                        <CountryName code={user.nationality} />
+                      ) : (
+                        <span>No especificado</span>
+                      )}
                     </div>
-                  </div>
+                    </div>
                 </div>
               </Card>
             </div>
