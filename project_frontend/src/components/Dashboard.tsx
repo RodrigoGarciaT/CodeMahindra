@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bot, Flag, Star, ChevronRight, Users } from 'lucide-react';
+import CountryName from "../components/CountryName"; // ajusta la ruta según tu estructura
+
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -10,6 +12,7 @@ function Dashboard() {
   lastName: '',
   experience: 0, 
   nationality: '',
+  profilePicture:'',
 });
 
 
@@ -29,12 +32,17 @@ function Dashboard() {
             lastName: data.lastName,
             experience: data.experience,
             nationality: data.nationality,
+            profilePicture: data.profilePicture,
           });
         })
         .catch(err => console.error(err));
     }
   }, []);
 
+const initials = user
+    ? `${user.firstName?.charAt(0) || ""}${user.lastName?.charAt(0) || ""}`.toUpperCase()
+    : "?"
+    
   return (
     <div className="min-h-screen bg-[#363B41] text-black p-6">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -49,20 +57,30 @@ function Dashboard() {
               Ver más
             </button>
           </div>
-          
+         
           <div className="bg-gray-50 p-4 rounded-lg mb-6">
             <div className="flex items-center gap-4">
-              <img 
-                src={user.photo || "https://via.placeholder.com/150"} 
-                alt="Profile" 
-                className="w-12 h-12 rounded-full"
-              />
+              {user?.profilePicture ? (
+                <div className="w-12 h-12 rounded-full overflow-hidden">
+                  <img 
+                    src={user.profilePicture}
+                    alt="Profile" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center">
+                  <span className="text-lg font-semibold text-gray-600">{initials}</span>
+                </div>
+              )}
               <div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-4">
                   <span className="font-semibold">{user.firstName} {user.lastName}</span>
-                  <Flag className="w-4 h-4 text-red-500" />
-                  <span>{user.nationality || 'Nacionalidad no disponible'}</span>
-
+                  {user.nationality ? (
+                    <CountryName code={user.nationality} />
+                  ) : (
+                    <span className="text-sm text-gray-500">Nacionalidad no disponible</span>
+                  )}
                 </div>
               </div>
             </div>
