@@ -2,6 +2,7 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { ArrowLeft, User, Mail, Phone, Flag, Briefcase, Coins, Upload, Loader2, Check, X } from "lucide-react"
+import ReactCountryFlag from "react-country-flag";
 
 interface UserProfile {
   firstName: string
@@ -130,6 +131,10 @@ useEffect(() => {
     }
   }
 
+const initials = user
+    ? `${user.firstName?.charAt(0) || ""}${user.lastName?.charAt(0) || ""}`.toUpperCase()
+    : "?"
+    
   return (
     <div className="min-h-screen bg-gray-800 pb-10">
       {/* Header */}
@@ -162,20 +167,16 @@ useEffect(() => {
               <div className="bg-white rounded-xl shadow-lg p-6 lg:col-span-1 h-fit">
                 <h2 className="text-lg font-bold mb-6">Foto de Perfil</h2>
                 <div className="flex flex-col items-center">
-                  <div className="relative group">
-                    <div className="h-32 w-32 rounded-full overflow-hidden bg-gray-200 mb-4">
-                      {user.profilePicture ? (
-                        <img
-                          src={user.profilePicture || "/placeholder.svg"}
-                          alt="Profile"
-                          className="h-full w-full object-cover"
+                  <div className="relative group w-40 h-40 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+                      {user?.profilePicture ? (
+                        <img 
+                          src={user.profilePicture} 
+                          alt="Profile" 
+                          className="w-full h-full object-cover"
                         />
                       ) : (
-                        <div className="h-full w-full flex items-center justify-center bg-gray-200">
-                          <User className="h-16 w-16 text-gray-400" />
-                        </div>
+                        <span className="text-gray-600 text-[2.5rem] md:text-[3rem] lg:text-[3.5rem]">{initials}</span>
                       )}
-                    </div>
                     <label
                       htmlFor="profile-picture"
                       className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity"
@@ -335,16 +336,26 @@ useEffect(() => {
                         className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent appearance-none bg-white"
                       >
                         <option value="">Selecciona un país</option>
-                        <option value="Argentina">Argentina</option>
-                        <option value="Brasil">Brasil</option>
-                        <option value="Chile">Chile</option>
-                        <option value="Colombia">Colombia</option>
-                        <option value="España">España</option>
-                        <option value="Estados Unidos">Estados Unidos</option>
-                        <option value="México">México</option>
-                        <option value="Perú">Perú</option>
-                        <option value="Venezuela">Venezuela</option>
+                        <option value="AR">Argentina</option>
+                        <option value="BR">Brasil</option>
+                        <option value="CL">Chile</option>
+                        <option value="CO">Colombia</option>
+                        <option value="ES">España</option>
+                        <option value="US">Estados Unidos</option>
+                        <option value="MX">México</option>
+                        <option value="PE">Perú</option>
+                        <option value="VE">Venezuela</option>
                       </select>
+                      {user.nationality && (
+                        <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                          <ReactCountryFlag
+                            countryCode={user.nationality}
+                            svg
+                            style={{ width: "1.5em", height: "1.5em" }}
+                            title={user.nationality}
+                          />
+                          </div>
+                        )} 
                     </div>
                   </div>
 
