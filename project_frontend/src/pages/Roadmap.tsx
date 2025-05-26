@@ -3,6 +3,7 @@ import SpaceBackground from "../components/SpaceBackground";
 import { edges } from "../data/edges";
 import { nodes } from "../data/nodes";
 import FloatingBot from "../components/FloatingBot";
+import PlatformInfo from "../components/PlatformInfo";
 
 const getImage = (name: string) =>
   new URL(`../images/platforms/${name}`, import.meta.url).href;
@@ -18,6 +19,10 @@ const Roadmap: React.FC = () => {
   const [startDrag, setStartDrag] = useState({ x: 0, y: 0 });
 
   const [dimensions, setDimensions] = useState({ width: 1200, height: 1200 });
+
+  const [selectedNode, setSelectedNode] = useState<typeof nodes[0] | null>(null);
+  const [draggingEnabled, setDraggingEnabled] = useState(true);
+  const [zoomEnabled, setZoomEnabled] = useState(true);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -53,15 +58,16 @@ const Roadmap: React.FC = () => {
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
+    if (!isDragging || !draggingEnabled) return; // ✅ se bloquea si no está permitido
     const newX = e.clientX - startDrag.x;
     const newY = e.clientY - startDrag.y;
     setOffset({ x: newX, y: newY });
-  };
+  };  
 
   const handleMouseUp = () => setIsDragging(false);
 
   const handleWheel = (e: React.WheelEvent) => {
+    if (!zoomEnabled) return; // 🚫 bloquea zoom si está dentro del panel
     e.preventDefault();
     if (!containerRef.current) return;
 
@@ -142,14 +148,23 @@ const Roadmap: React.FC = () => {
       <div
         ref={containerRef}
         className={`relative w-full h-[calc(100vh-64px)] overflow-hidden select-none ${
-          isDragging ? "cursor-grabbing" : "cursor-grab"
-        }`}
+          draggingEnabled ? (isDragging ? "cursor-grabbing" : "cursor-grab") : "cursor-default"
+        }`}        
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
         onWheel={handleWheel}
       >
+        {selectedNode && (
+          <PlatformInfo
+            platform={selectedNode}
+            onClose={() => setSelectedNode(null)}
+            setDraggingEnabled={setDraggingEnabled}
+            setZoomEnabled={setZoomEnabled} // ✅ nuevo
+          />
+        )}
+
         <div className="absolute inset-0 bg-[#FFEBEB] z-0" />
         <div className="absolute inset-0 z-10">
           <SpaceBackground />
@@ -228,7 +243,10 @@ const Roadmap: React.FC = () => {
                     }}
                   >
                     <button
-                      onClick={() => focusOnNode(node.id)}
+                      onClick={() => {
+                        focusOnNode(node.id);
+                        setSelectedNode(node);
+                      }}                      
                       className="flex flex-col items-center text-white text-sm font-bold focus:outline-none transform transition duration-300 ease-in-out hover:scale-110 hover:drop-shadow-[0_0_8px_#E31837] active:scale-95"
                     >
                       <span className="mb-2 bg-black/70 px-3 py-1 rounded shadow-md transition-all duration-300 text-center">

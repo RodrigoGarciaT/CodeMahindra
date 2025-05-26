@@ -1,18 +1,21 @@
 import type React from "react"
+
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+import { jwtDecode } from "jwt-decode"
 import { ArrowLeft, User, Mail, Phone, Flag, Briefcase, Coins, Upload, Loader2, Check, X } from "lucide-react"
 import ReactCountryFlag from "react-country-flag";
 
-interface UserProfile {
+interface DecodedToken {
   firstName: string
   lastName: string
-  email: string
+  sub: string
   nationality: string
   experience?: number
   coins?: number
   phoneNumber: string
   profilePicture?: string
+  isAdmin?: boolean
 }
 
 export default function EditProfile() {
@@ -20,14 +23,15 @@ export default function EditProfile() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [success, setSuccess] = useState<boolean | null>(null)
-  const [user, setUser] = useState<UserProfile>({
+
+  const [user, setUser] = useState<DecodedToken>({
     firstName: "",
     lastName: "",
-    email: "",
+    sub: "",
     nationality: "",
     experience: 0,
     coins: 0,
-    phoneNumber: "",
+    phoneNumber: "",  
     profilePicture: "",
   })
 
@@ -70,6 +74,25 @@ useEffect(() => {
   fetchUser()
 }, [])
 
+=======
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem("token")
+        if (token) {
+          const decoded = jwtDecode<DecodedToken>(token)
+          console.log("Decoded:", decoded);
+          setUser(decoded)
+        }
+      } catch (error) {
+        console.error("Error decoding token:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+  
+    fetchUser()
+  }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -288,7 +311,7 @@ const initials = user
                         type="email"
                         id="email"
                         name="email"
-                        value={user.email}
+                        value={user.sub || ""}
                         onChange={handleChange}
                         className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-gray-50"
                         placeholder="tu@email.com"

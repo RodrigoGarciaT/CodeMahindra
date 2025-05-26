@@ -6,10 +6,11 @@ from controllers.problem_controller import (
     get_all_problems,
     get_problem_by_id,
     create_problem,
+    grade_problem,
     update_problem,
     delete_problem
 )
-from schemas.problem import ProblemCreate, ProblemUpdate, ProblemOut
+from schemas.problem import ProblemCreate, ProblemGradingResult, ProblemUpdate, ProblemOut
 from controllers.problem_controller import create_problem_with_testcases
 from schemas.problem_with_testcases import ProblemCreateWithTestCases, ProblemOutWithTestCases
 
@@ -44,3 +45,10 @@ def create_problem_with_testcases_endpoint(
         return create_problem_with_testcases(data, db)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+    
+@router.post("/{problem_id}/grade", response_model=ProblemGradingResult)
+def grade_problem_endpoint(
+    problem_id: int, 
+    db: Session = Depends(get_db)
+):
+    return grade_problem(problem_id, db)
