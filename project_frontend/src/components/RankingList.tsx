@@ -10,6 +10,7 @@ type RankingListProps = {
   currentPage: number
   totalPages: number
   onPageChange: (page: number) => void
+  
 }
 
 const RankingList: React.FC<RankingListProps> = ({ users, currentPage, totalPages, onPageChange }) => {

@@ -1,10 +1,48 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bot, Flag, Star, ChevronRight, Users } from 'lucide-react';
+import CountryName from "../components/CountryName"; // ajusta la ruta según tu estructura
+
 
 function Dashboard() {
   const navigate = useNavigate();
+  const [user, setUser] = useState({
+  photo: '',
+  firstName: '',
+  lastName: '',
+  experience: 0, 
+  nationality: '',
+  profilePicture:'',
+});
 
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetch('http://localhost:8000/user/me', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then(res => res.json())
+        .then(data => {
+          setUser({
+            photo: data.photo,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            experience: data.experience,
+            nationality: data.nationality,
+            profilePicture: data.profilePicture,
+          });
+        })
+        .catch(err => console.error(err));
+    }
+  }, []);
+
+const initials = user
+    ? `${user.firstName?.charAt(0) || ""}${user.lastName?.charAt(0) || ""}`.toUpperCase()
+    : "?"
+    
   return (
     <div className="min-h-screen bg-[#363B41] text-black p-6">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -19,18 +57,30 @@ function Dashboard() {
               Ver más
             </button>
           </div>
-          
+         
           <div className="bg-gray-50 p-4 rounded-lg mb-6">
             <div className="flex items-center gap-4">
-              <img 
-                src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=150&h=150&fit=crop" 
-                alt="Profile" 
-                className="w-12 h-12 rounded-full"
-              />
+              {user?.profilePicture ? (
+                <div className="w-12 h-12 rounded-full overflow-hidden">
+                  <img 
+                    src={user.profilePicture}
+                    alt="Profile" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center">
+                  <span className="text-lg font-semibold text-gray-600">{initials}</span>
+                </div>
+              )}
               <div>
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold">Davis Curtis</span>
-                  <Flag className="w-4 h-4" />
+                <div className="flex items-center gap-4">
+                  <span className="font-semibold">{user.firstName} {user.lastName}</span>
+                  {user.nationality ? (
+                    <CountryName code={user.nationality} />
+                  ) : (
+                    <span className="text-sm text-gray-500">Nacionalidad no disponible</span>
+                  )}
                 </div>
               </div>
             </div>
@@ -41,15 +91,15 @@ function Dashboard() {
             <div>
               <div className="flex justify-between text-sm mb-2">
                 <span>Nivel 5</span>
-                <span>9462 exp</span>
+                <span>{user.experience} exp</span>
               </div>
               <div className="w-full bg-gray-100 rounded-full h-2">
-                <div className="bg-red-500 h-2 rounded-full w-3/4"></div>
+                <div className="bg-red-500 h-2 rounded-full" style={{ width: `${Math.min(Number(user.experience) / 15000 * 100, 100)}%` }}></div>
               </div>
             </div>
           </div>
         </div>
-
+        
         {/* Weekly Challenges Section */}
         <div className="bg-white rounded-lg p-6 shadow-sm">
           <h2 className="text-xl font-bold mb-4">Desafíos Semanales</h2>

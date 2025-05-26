@@ -3,10 +3,13 @@ import { ArrowLeft, Edit, Mail, MapPin, Phone } from "lucide-react";
 import { Progress } from "../components/progress";
 import { Card } from "../components/card";
 import profilePic from "../images/robot_male_1.svg"; // Asegúrate de tener esta imagen
-import coinIcon from "../images/robot_male_1.svg";
+import coinIcon from "../images/coin.svg";
 import flag from "../images/robot_male_1.svg";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"
+import ReactCountryFlag from "react-country-flag";
+import CountryName from "../components/CountryName";
 
 export default function ProfilePage() {
     const [activeTab, setActiveTab] = useState("current");
@@ -22,6 +25,8 @@ export default function ProfilePage() {
     }
 
     const [user, setUser] = useState<User | null>(null);
+    const navigate = useNavigate()
+
 
     useEffect(() => {
       const token = localStorage.getItem("token");
@@ -66,7 +71,7 @@ export default function ProfilePage() {
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center">
-                        <h2 className="text-lg font-bold text-black">{user?.firstName ?? "Cargando..."}</h2>
+                        <h2 className="text-lg font-bold text-black">{user ? `${user.firstName} ${user.lastName}` : "Cargando..."}</h2>
                           <img src={flag} alt="Flag" className="h-5 w-6" />
                         </div>
                       </div>
@@ -89,7 +94,10 @@ export default function ProfilePage() {
                 <div className="mt-6 rounded-lg bg-[#FFFF] p-6">
                   <div className="mb-4 flex items-center justify-between">
                     <h3 className="text-lg font-medium">Personal Information</h3>
-                    <button className="text-black hover:text-black">
+                    <button 
+                      className="text-black hover:text-black"
+                      onClick={() => navigate('/profile/view')}
+                    >
                       <Edit className="h-5 w-5" />
                     </button>
                   </div>
@@ -104,9 +112,13 @@ export default function ProfilePage() {
                     </div>
                     <div className="flex items-center">
                       <MapPin className="mr-3 h-5 w-5 text-black" />
-                      <span>{user?.nationality ?? "No especificado"}</span>
+                      {user?.nationality ? (
+                        <CountryName code={user.nationality} />
+                      ) : (
+                        <span>No especificado</span>
+                      )}
                     </div>
-                  </div>
+                    </div>
                 </div>
               </Card>
             </div>
