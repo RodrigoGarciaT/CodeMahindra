@@ -1,6 +1,30 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bot, Flag, Star, ChevronRight, Users, Database, FileStack as Stack, Link2, Trees as Tree, FileSearch, Package, Share2, MousePointer2, Search, Layout, Clock, GitCompare, Workflow, BrainCircuit, LineChart, Binary, Calculator, ArrowLeft } from 'lucide-react';
+import {
+  Bot,
+  Flag,
+  Star,
+  ChevronRight,
+  Users,
+  Database,
+  FileStack as Stack,
+  Link2,
+  Trees as Tree,
+  FileSearch,
+  Package,
+  Share2,
+  MousePointer2,
+  Search,
+  Layout,
+  Clock,
+  GitCompare,
+  Workflow,
+  BrainCircuit,
+  LineChart,
+  Binary,
+  Calculator,
+  ArrowLeft,
+} from 'lucide-react';
 import type { Bot as BotType } from './BotStore';
 
 interface Achievement {
@@ -289,14 +313,14 @@ function Dashboard() {
         <div className="bg-white rounded-lg p-6 shadow-sm">
           <h2 className="text-xl font-bold mb-4">Desafíos Semanales</h2>
           <div className="space-y-4">
-            <button 
+            <button
               className="w-full bg-red-500 hover:bg-red-600 text-white p-4 rounded-lg flex justify-between items-center"
               onClick={() => navigate('/tasks')}
             >
               <span>Completar tareas</span>
               <ChevronRight />
             </button>
-            <button 
+            <button
               className="w-full bg-red-500 hover:bg-red-600 text-white p-4 rounded-lg flex justify-between items-center"
               onClick={() => navigate('/problems')}
             >
@@ -348,7 +372,7 @@ function Dashboard() {
             )}
           </div>
         </div>
-        
+
         {/* Team Section */}
         <div className="bg-white rounded-lg p-6 shadow-sm md:col-span-2">
           <div className="flex justify-between items-center mb-4">
@@ -376,8 +400,7 @@ function Dashboard() {
           </div>
 
           <div className="space-y-4">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="bg-gray-50 p-4 rounded-lg flex items-center justify-between">
+            {[...Array(4)].map((_, i) => (<div key={i} className="bg-gray-50 p-4 rounded-lg flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <img
                     src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=150&h=150&fit=crop"
