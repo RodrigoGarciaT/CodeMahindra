@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Star, ChevronRight } from 'lucide-react';
 import { motion, useAnimation } from 'framer-motion';
 
-import Botoriginal from '../images/BotsTecmahindra/Bot original.png';
+import Botoriginal from '../images/BotsTecmahindra/Botoriginal.png';
 import BotMahindra2 from '../images/BotsTecmahindra/BotMahindra2.png';
 import BotMahindra3 from '../images/BotsTecmahindra/BotMahindra3.png';
 import BotMahindra4 from '../images/BotsTecmahindra/BotMahindra4.png';
