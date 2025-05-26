@@ -9,7 +9,7 @@ class EmployeeRankingOut(BaseModel):
     coins: int
     position: Optional[str]
     team: Optional[str]
-    rank: int  # ← nuevo campo
+    rank: int  
 
     class Config:
         from_attributes = True
