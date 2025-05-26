@@ -1,8 +1,9 @@
 
 import { Link, useLocation,} from 'react-router-dom';
-import { Home, Code2, BookOpen, Trophy, ShoppingBag, Bell, ShoppingCart, PlusCircle, Settings } from 'lucide-react';
+import { Home, Code2, BookOpen, Trophy, ShoppingBag, Bell, ShoppingCart, ListTodo, Settings } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import UserMenu from './UserMenu'; // ✅ Asegúrate que la ruta sea correcta
+import logo from '../images/logo-codemahindra.png'
 
 const Navbar = () => {
   const { itemCount } = useCart();
@@ -23,24 +24,28 @@ const Navbar = () => {
           {/* Navegación principal */}
           <div className="flex items-center space-x-4">
             <Link to="/landing" className="flex items-center">
-              <Code2 className="h-8 w-8 text-red-500" />
+              <img
+                src={logo}
+                alt="CodeMahindra Logo"
+                className="h-20 w-auto object-contain"
+              />
             </Link>
+
             <div className="flex space-x-2">
               <Link to="/" className={getLinkClass('/')}>
                 <Home className="h-4 w-4 mr-2" />
-                Inicio
+                Home
               </Link>
               <Link to="/problems" className={getLinkClass('/problems')}>
                 <BookOpen className="h-4 w-4 mr-2" />
-                Problemas
+                Problems
               </Link>
               <Link to="/tasks" className={getLinkClass('/tasks')}>
-                <Code2 className="h-4 w-4 mr-2" />
-                Tareas
+                <ListTodo className="h-4 w-4 mr-2" />                Tasks
               </Link>
               <Link to="/code" className={getLinkClass('/code')}>
                 <Code2 className="h-4 w-4 mr-2" />
-                Código
+                Code
               </Link>
               <Link to="/ranking" className={getLinkClass('/ranking')}>
                 <Trophy className="h-4 w-4 mr-2" />

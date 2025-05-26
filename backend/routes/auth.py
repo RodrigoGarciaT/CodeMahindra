@@ -5,7 +5,7 @@ from models.employee import Employee
 from schemas.login import LoginRequest
 from schemas.employee import EmployeeCreate, EmployeeOut
 from fastapi import APIRouter, Depends, HTTPException
-from database import get_db  # Asegúrate de importar get_db correctamente
+from database import get_db
 from pydantic import BaseModel
 from schemas.create_access_token import create_access_token 
 import os
@@ -54,7 +54,7 @@ def create_employee(db: Session, employee_create: EmployeeCreate):
 
 def verify_google_token(token: str):
     try:
-        VITE_GOOGLE_CLIENT_ID = os.getenv("VITE_GOOGLE_CLIENT_ID")
+        VITE_GOOGLE_CLIENT_ID = os.getenv('VITE_GOOGLE_CLIENT_ID')
         if not VITE_GOOGLE_CLIENT_ID:
             raise HTTPException(status_code=500, detail="Google Client ID not configured")
 
@@ -150,7 +150,17 @@ def google_auth(data: GoogleToken, db: Session = Depends(get_db)):
         user = create_employee(db, new_user)
 
 
-    token = create_access_token(data={"sub": user.email})
+    token = create_access_token(data={
+        "sub": user.email,
+    "firstName": user.firstName,
+    "lastName": user.lastName,
+    "phoneNumber": user.phoneNumber,
+    "isAdmin": user.isAdmin,
+    "coins": user.coins,
+    "profilePicture": google_data.get("picture") or user.profilePicture,
+    "position_id": user.position_id,
+    "team_id": user.team_id
+})
     return JSONResponse(
         content={
             "access_token": token,

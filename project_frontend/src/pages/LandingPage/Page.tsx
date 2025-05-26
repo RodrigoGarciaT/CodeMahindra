@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 
 import { Link } from "react-router-dom"
@@ -7,7 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useEffect, useState, useRef } from "react"
 
 const getImage = (name: string) =>
-  new URL(`../images/${name}`, import.meta.url).href;
+  new URL(`../../images/${name}`, import.meta.url).href;
 
 // Custom hook for scroll animations
 function useElementOnScreen(options: IntersectionObserverInit) {

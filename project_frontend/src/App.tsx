@@ -12,7 +12,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import TeamPage from './components/TeamPage';
 import Dashboard from './components/Dashboard';
-import LandingPage from './pages/Landing'; // <-- Tu nueva página
+import LandingPage from './pages/LandingPage/Page'; // <-- Tu nueva página
 import { CartProvider } from './contexts/CartContext';
 import PullRequest from './pages/PullRequest';
 import GoogleReg from './pages/GoogleReg';
@@ -25,6 +25,7 @@ import ImageUploaderCloudinary from './pages/ImageUploaderCloudinary'
 import ManageUsers from './pages/ManageUsers';
 import ManageProblems from './pages/ManageProblems';
 import EditProfile from './pages/EditProfile';
+import PurchaseManager from './pages/PurchaseManager';
 
 // 1. Layout que incluye la Navbar
 function LayoutConNavbar() {
@@ -71,7 +72,7 @@ function App() {
             <Route path="/test" element={<ImageUploaderCloudinary />} />
             <Route path="/Profile" element={<ProfilePage />} />
             <Route path="/profile/view" element={<EditProfile />} />
-
+            <Route path ='/manage-purchase' element = {<PurchaseManager/>} />
           </Route>
         </Routes>
       </Router>
