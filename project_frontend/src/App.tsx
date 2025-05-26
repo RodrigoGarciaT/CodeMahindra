@@ -25,6 +25,8 @@ import ImageUploaderCloudinary from './pages/ImageUploaderCloudinary'
 import ManageUsers from './pages/ManageUsers';
 import ManageProblems from './pages/ManageProblems';
 import EditProfile from './pages/EditProfile';
+// Importa tu componente BotStore
+import BotStore from './pages/BotStore';
 
 // 1. Layout que incluye la Navbar
 function LayoutConNavbar() {
@@ -41,16 +43,16 @@ function App() {
     <CartProvider>
       <Router>
         <Routes>
-          {/* 2. Ruta que NO muestra la Navbar (LandingPage) */}
+          {/* 2. Rutas que NO muestran la Navbar */}
           <Route path="/landing" element={<LandingPage />} />
           <Route path="/GoogleReg" element={<GoogleReg />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
 
-          {/* 3. Ruta con Navbar */}
+          {/* 3. Rutas con Navbar */}
           <Route element={<LayoutConNavbar />}>
             <Route path="/space" element={<SpaceBackground />} />
-            <Route path="/" element={<Dashboard />} /> {/* Dashboard as default */}
+            <Route path="/" element={<Dashboard />} /> {/* Dashboard como página principal */}
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/manage-users" element={<ManageUsers />} />
             <Route path="/manage-problems" element={<ManageProblems />} />
@@ -63,15 +65,15 @@ function App() {
             <Route path="/code" element={<Code />} />
             <Route path="/code/detail/:id" element={<PullRequest />} />
             <Route path="/ranking" element={<Ranking />} />
-            <Route path="/store" element={<Store />} />
+            <Route path="/store" element={<Store />} /> {/* Ruta existente para la tienda */}
             <Route path="/store/manage" element={<StoreManagement />} />
             <Route path="/cart" element={<Cart />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} /> {/* Otra ruta al dashboard */}
             <Route path="/team" element={<TeamPage />} />
             <Route path="/test" element={<ImageUploaderCloudinary />} />
             <Route path="/Profile" element={<ProfilePage />} />
             <Route path="/profile/view" element={<EditProfile />} />
-
+            <Route path="/bot-store" element={<BotStore />} /> {/* Ruta principal de la tienda de bots */}
           </Route>
         </Routes>
       </Router>
