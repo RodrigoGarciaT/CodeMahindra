@@ -13,7 +13,7 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const navItems = [
-    { path: '/', label: 'Inicio', icon: <Home className="h-4 w-4 mr-1" /> },
+    { path: '/home', label: 'Inicio', icon: <Home className="h-4 w-4 mr-1" /> },
     { path: '/problems', label: 'Problemas', icon: <BookOpen className="h-4 w-4 mr-1" /> },
     { path: '/tasks', label: 'Tareas', icon: <ListTodo className="h-4 w-4 mr-1" /> },
     { path: '/code', label: 'Código', icon: <Code2 className="h-4 w-4 mr-1" /> },
@@ -32,7 +32,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
         {/* Logo + Hamburguesa */}
         <div className="flex items-center gap-2 h-full">
-          <Link to="/landing" className="flex items-center h-full">
+          <Link to="/landing-page" className="flex items-center h-full">
             <img
               src={logo}
               alt="CodeMahindra Logo"
