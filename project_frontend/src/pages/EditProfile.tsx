@@ -16,6 +16,7 @@ interface DecodedToken {
   phoneNumber: string
   profilePicture?: string
   isAdmin?: boolean
+  email?: string
 }
 
 export default function EditProfile() {
@@ -33,6 +34,7 @@ export default function EditProfile() {
     coins: 0,
     phoneNumber: "",  
     profilePicture: "",
+    email: ""
   })
 
 useEffect(() => {
@@ -63,6 +65,7 @@ useEffect(() => {
       coins: data.coins || 0,
       phoneNumber: data.phoneNumber || "",
       profilePicture: data.profilePicture || "",
+      email: data.email || ""
     });
   } catch (error) {
     console.error("Error fetching user data:", error);
@@ -74,7 +77,6 @@ useEffect(() => {
   fetchUser()
 }, [])
 
-=======
   useEffect(() => {
     const fetchUser = async () => {
       try {

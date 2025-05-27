@@ -22,7 +22,7 @@ export default function Ranking() {
   const usersPerPage = 6
 
   useEffect(() => {
-    fetch("http://localhost:8000/ranking")
+    fetch("https://code-mahindra-backend.vercel.app/ranking")
       .then((res) => res.json())
       .then((data) => {
         // Asignamos el rank manualmente basado en posición
