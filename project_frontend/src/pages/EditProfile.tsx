@@ -59,7 +59,7 @@ useEffect(() => {
     setUser({
       firstName: data.firstName,
       lastName: data.lastName,
-      email: data.email,
+      sub: data.email,
       nationality: data.nationality || "",
       experience: data.experience || 0,
       coins: data.coins || 0,
