@@ -16,6 +16,7 @@ interface DecodedToken {
   phoneNumber: string
   profilePicture?: string
   isAdmin?: boolean
+  email?: string
 }
 
 export default function EditProfile() {
@@ -33,6 +34,7 @@ export default function EditProfile() {
     coins: 0,
     phoneNumber: "",  
     profilePicture: "",
+    email: ""
   })
 
   useEffect(() => {

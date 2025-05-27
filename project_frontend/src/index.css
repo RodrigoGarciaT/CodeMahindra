@@ -194,3 +194,16 @@ html {
 .animation-delay-500 {
   animation-delay: 500ms;
 }
+
+@keyframes floating {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-floating {
+  animation: floating 3s ease-in-out infinite;
+}
