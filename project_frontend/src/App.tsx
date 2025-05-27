@@ -10,7 +10,7 @@ import CreateProblem from './pages/CreateProblem';
 import ProblemList from './pages/ProblemList';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import TeamPage from './components/TeamPage';
+import TeamPage from './pages/TeamPage';
 import Dashboard from './pages/Home/Page';
 import LandingPage from './pages/LandingPage/Page';
 import { CartProvider } from './contexts/CartContext';

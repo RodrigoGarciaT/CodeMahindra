@@ -29,7 +29,7 @@ function ProfileAndTeamPage() {
       <div className="max-w-7xl mx-auto p-6 text-gray-900">
         {/* Botón Volver con fondo blanco y texto negro */}
         <button 
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/home')}
           className="flex items-center gap-2 bg-white text-black hover:bg-gray-200 p-2 rounded-md mb-6"
         >
           <ArrowLeft className="w-5 h-5" />
