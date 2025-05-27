@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bot, Flag, Star, ChevronRight, Users } from 'lucide-react';
-import CountryName from "../components/CountryName"; // ajusta la ruta según tu estructura
+import CountryName from "../../components/CountryName"; // ajusta la ruta según tu estructura
 
 
 function Dashboard() {

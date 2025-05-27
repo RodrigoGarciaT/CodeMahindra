@@ -11,8 +11,8 @@ import ProblemList from './pages/ProblemList';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import TeamPage from './components/TeamPage';
-import Dashboard from './components/Dashboard';
-import LandingPage from './pages/LandingPage/Page'; // <-- Tu nueva página
+import Dashboard from './pages/Home/Page';
+import LandingPage from './pages/LandingPage/Page';
 import { CartProvider } from './contexts/CartContext';
 import PullRequest from './pages/PullRequest';
 import GoogleReg from './pages/GoogleReg';
@@ -43,7 +43,8 @@ function App() {
       <Router>
         <Routes>
           {/* 2. Ruta que NO muestra la Navbar (LandingPage) */}
-          <Route path="/landing" element={<LandingPage />} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/landing-page" element={<LandingPage />} />
           <Route path="/GoogleReg" element={<GoogleReg />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
@@ -51,7 +52,7 @@ function App() {
           {/* 3. Ruta con Navbar */}
           <Route element={<LayoutConNavbar />}>
             <Route path="/space" element={<SpaceBackground />} />
-            <Route path="/" element={<Dashboard />} /> {/* Dashboard as default */}
+            <Route path="/home" element={<Dashboard />} /> {/* Dashboard as default */}
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/manage-users" element={<ManageUsers />} />
             <Route path="/manage-problems" element={<ManageProblems />} />
