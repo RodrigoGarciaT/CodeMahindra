@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';  // Import Axios
-import { Problem } from '../types/problem';
+import { Problem } from '@/types/problem';
 
 interface ProblemStatementProps {
   problemId: string;

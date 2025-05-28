@@ -37,6 +37,46 @@ export default function EditProfile() {
     email: ""
   })
 
+useEffect(() => {
+  const fetchUser = async () => {
+  try {
+    
+    const token = localStorage.getItem("token");
+    console.log("Token enviado:", token);
+
+    const res = await fetch("http://localhost:8000/user/me", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) throw new Error("Error al obtener usuario");
+
+    const data = await res.json();
+
+    setUser({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      sub: data.email,
+      nationality: data.nationality || "",
+      experience: data.experience || 0,
+      coins: data.coins || 0,
+      phoneNumber: data.phoneNumber || "",
+      profilePicture: data.profilePicture || "",
+      email: data.email || ""
+    });
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+  fetchUser()
+}, [])
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -72,7 +112,7 @@ export default function EditProfile() {
       // Replace with actual API call
       const token = localStorage.getItem("token")
 
-      const res = await fetch("http://localhost:8000/user/me", {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/me/`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

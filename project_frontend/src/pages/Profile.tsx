@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"
 import ReactCountryFlag from "react-country-flag";
-import CountryName from "../components/CountryName";
+import CountryName from "./Home/CountryName";
 
 export default function ProfilePage() {
     const [activeTab, setActiveTab] = useState("current");
@@ -37,7 +37,7 @@ export default function ProfilePage() {
         return;
       }
     
-      axios.get(`http://localhost:8000/user/me`, {
+      axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/me/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

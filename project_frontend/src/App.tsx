@@ -1,9 +1,9 @@
 import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import Problems from './pages/Problems';
-import Tasks from './pages/Tasks';
+import Problems from './pages/Problems/Page';
+import Tasks from './pages/Tasks/Tasks';
 import Code from './pages/Code';
-import Ranking from './pages/Ranking';
+import Ranking from './pages/Ranking/Ranking';
 import Store from './pages/Store';
 import Cart from './pages/Cart';
 import CreateProblem from './pages/CreateProblem';
@@ -18,8 +18,8 @@ import PullRequest from './pages/PullRequest';
 import GoogleReg from './pages/GoogleReg';
 import ProfilePage from './pages/Profile';
 import AdminDashboard from './pages/AdminDashboard';
-import Roadmap from './pages/Roadmap';
-import SpaceBackground from './components/SpaceBackground';
+import Roadmap from './pages/Roadmap/Page';
+import SpaceBackground from './pages/Roadmap/SpaceBackground';
 import StoreManagement from './pages/StoreManagement';
 import ImageUploaderCloudinary from './pages/ImageUploaderCloudinary'
 import ManageUsers from './pages/ManageUsers';

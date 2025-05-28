@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bot, Flag, Star, ChevronRight, Users } from 'lucide-react';
-import CountryName from "../../components/CountryName"; // ajusta la ruta según tu estructura
+import CountryName from "./CountryName";
 
 
 function Dashboard() {
@@ -19,7 +19,7 @@ function Dashboard() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      fetch('http://localhost:8000/user/me', {
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/user/me/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

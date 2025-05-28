@@ -1,9 +1,9 @@
 "use client"
 import { useEffect, useState, useCallback } from "react"
-import PodiumView from "../components/PodiumView"
-import RankingList from "../components/RankingList"
-import UserStatusCard from "../components/UserStatusCard"
-import TopPlayerCard from "../components/TopPlayerCard"
+import PodiumView from "./PodiumView"
+import RankingList from "./RankingList"
+import UserStatusCard from "./UserStatusCard"
+import TopPlayerCard from "./TopPlayerCard"
 import { motion } from "framer-motion"
 
 interface User {
@@ -22,7 +22,7 @@ export default function Ranking() {
   const usersPerPage = 6
 
   useEffect(() => {
-    fetch("https://code-mahindra-backend.vercel.app/ranking")
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/ranking/`)
       .then((res) => res.json())
       .then((data) => {
         // Asignamos el rank manualmente basado en posición
@@ -55,12 +55,14 @@ export default function Ranking() {
 
   return (
     <div className="min-h-screen bg-[#121212] text-white overflow-x-hidden py-6">
-      {/* Background circles - SOLUCIÓN: Cambiando de fixed a absolute y conteniendo dentro del div principal */}
+      {/* 
+      Background circles
       <div className="relative w-full h-full">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full border border-gray-700 opacity-20 pointer-events-none"></div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full border border-gray-700 opacity-30 pointer-events-none"></div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full border border-gray-700 opacity-40 pointer-events-none"></div>
       </div>
+      */}
 
       {/* Main content */}
       <div className="max-w-[1300px] mx-auto px-6 relative z-10">

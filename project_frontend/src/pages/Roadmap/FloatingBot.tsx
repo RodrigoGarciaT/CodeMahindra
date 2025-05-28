@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-const botImage = new URL("../images/robot_male_1.svg", import.meta.url).href;
+const botImage = new URL("../../images/robot_male_1.svg", import.meta.url).href;
 
 const FloatingBot: React.FC = () => {
   const botRef = useRef<HTMLDivElement>(null);
