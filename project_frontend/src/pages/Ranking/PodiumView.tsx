@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import type { User } from "../types/user"
+import type { User } from "@/types/user"
 import { motion } from "framer-motion"
 import { Clock, Crown } from "lucide-react"
 
@@ -10,8 +10,8 @@ type PodiumViewProps = {
 }
 
 const PodiumView: React.FC<PodiumViewProps> = ({ topUsers }) => {
-  // Sort users by points (desc) and take the top 3
-  const podiumUsers = [...topUsers].sort((a, b) => b.points - a.points).slice(0, 3)
+  // Sort users by coins (desc) and take the top 3
+  const podiumUsers = [...topUsers].sort((a, b) => b.coins - a.coins).slice(0, 3)
 
   return (
     <div className="relative w-full max-w-3xl mx-auto h-[600px]">
@@ -32,6 +32,8 @@ const PodiumView: React.FC<PodiumViewProps> = ({ topUsers }) => {
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full border border-gray-700 opacity-20"></div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full border border-gray-700 opacity-30"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full border border-gray-700 opacity-40"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] rounded-full border border-gray-700 opacity-50"></div>
       </div>
 
       {/* Podium container */}
@@ -115,7 +117,7 @@ const PodiumView: React.FC<PodiumViewProps> = ({ topUsers }) => {
 
                   <div className="absolute -right-2 -bottom-1 w-10 h-10 rounded-md overflow-hidden border-2 border-gray-800 shadow-lg">
                     <img
-                      src={podiumUsers[1]?.flag || "/placeholder.svg?height=40&width=40"}
+                      src={podiumUsers[1]?.flag || "https://static.vecteezy.com/system/resources/thumbnails/007/095/871/small/usa-realistic-waving-flag-illustration-national-country-background-symbol-independence-day-free-vector.jpg"}
                       alt="Flag"
                       className="w-full h-full object-cover"
                     />
@@ -139,7 +141,7 @@ const PodiumView: React.FC<PodiumViewProps> = ({ topUsers }) => {
               >
                 <div className="bg-gradient-to-r from-red-600 to-red-500 text-white px-5 py-2 rounded-full shadow-lg border border-red-400">
                   <p className="text-center font-bold whitespace-nowrap">
-                    {podiumUsers[1]?.points.toLocaleString()} QP
+                    {podiumUsers[1]?.coins.toLocaleString()} QP
                   </p>
                 </div>
               </motion.div>
@@ -173,7 +175,7 @@ const PodiumView: React.FC<PodiumViewProps> = ({ topUsers }) => {
 
                   <div className="absolute -right-2 -bottom-1 w-10 h-10 rounded-md overflow-hidden border-2 border-gray-800 shadow-lg">
                     <img
-                      src={podiumUsers[0]?.flag || "/placeholder.svg?height=40&width=40"}
+                      src={podiumUsers[0]?.flag || "https://static.vecteezy.com/system/resources/thumbnails/007/095/871/small/usa-realistic-waving-flag-illustration-national-country-background-symbol-independence-day-free-vector.jpg"}
                       alt="Flag"
                       className="w-full h-full object-cover"
                     />
@@ -197,7 +199,7 @@ const PodiumView: React.FC<PodiumViewProps> = ({ topUsers }) => {
               >
                 <div className="bg-gradient-to-r from-red-600 to-red-500 text-white px-5 py-2 rounded-full shadow-lg border border-red-400">
                   <p className="text-center font-bold whitespace-nowrap">
-                    {podiumUsers[0]?.points.toLocaleString()} QP
+                    {podiumUsers[0]?.coins.toLocaleString()} QP
                   </p>
                 </div>
               </motion.div>
@@ -222,7 +224,7 @@ const PodiumView: React.FC<PodiumViewProps> = ({ topUsers }) => {
 
                   <div className="absolute -right-2 -bottom-1 w-10 h-10 rounded-md overflow-hidden border-2 border-gray-800 shadow-lg">
                     <img
-                      src={podiumUsers[2]?.flag || "/placeholder.svg?height=40&width=40"}
+                      src={podiumUsers[2]?.flag || "https://static.vecteezy.com/system/resources/thumbnails/007/095/871/small/usa-realistic-waving-flag-illustration-national-country-background-symbol-independence-day-free-vector.jpg"}
                       alt="Flag"
                       className="w-full h-full object-cover"
                     />
@@ -246,7 +248,7 @@ const PodiumView: React.FC<PodiumViewProps> = ({ topUsers }) => {
               >
                 <div className="bg-gradient-to-r from-red-600 to-red-500 text-white px-5 py-2 rounded-full shadow-lg border border-red-400">
                   <p className="text-center font-bold whitespace-nowrap">
-                    {podiumUsers[2]?.points.toLocaleString()} QP
+                    {podiumUsers[2]?.coins.toLocaleString()} QP
                   </p>
                 </div>
               </motion.div>
@@ -259,8 +261,4 @@ const PodiumView: React.FC<PodiumViewProps> = ({ topUsers }) => {
 }
 
 export default PodiumView
-
-
-
-
 

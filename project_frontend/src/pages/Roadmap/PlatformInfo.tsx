@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { infoPlatforms } from "../data/infoPlatforms";
+import { infoPlatforms } from "./data/infoPlatforms";
 
 interface Platform {
   id: string;

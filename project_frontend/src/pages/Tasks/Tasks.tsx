@@ -21,8 +21,8 @@ import {
   TooltipTrigger,
   TooltipContent,
   TooltipProvider,
-} from "@/components/tooltip";
-import { Input } from "@/components/Input";
+} from "@/pages/Tasks/Tooltip";
+import { Input } from "@/pages/Tasks/Input";
 
 interface Task {
   id: number;
@@ -41,6 +41,8 @@ interface Task {
     avatar?: string;
   };
   taskId?: string;
+  assignee_name?: any;
+  assignee_avatar?: any;
 }
 
 const columns = ["To Do", "In Progress", "Code Review", "Done"];
@@ -57,7 +59,7 @@ export default function Tasks() {
   const fetchTasks = async () => {
     setIsLoading(true);
     try {
-      const res = await axios.get<Task[]>("http://127.0.0.1:8000/tasks/");
+      const res = await axios.get<Task[]>(`${import.meta.env.VITE_BACKEND_URL}/tasks/`);
       const enhancedData = res.data.map((task) => {
         const normalizedStatus =
           task.status?.toLowerCase() === "in progress"

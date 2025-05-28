@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Comment } from '../types/submission';
+import { Comment } from '../../types/submission';
 import NewCommentModal from './NewCommentModal';
 import axios from 'axios';
 

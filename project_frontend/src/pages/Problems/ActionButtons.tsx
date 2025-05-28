@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import axios from 'axios';
-import { TestCase } from '../types/problem';
+import { TestCase } from '@/types/problem';
 
 interface ActionButtonsProps {
   code: string;
