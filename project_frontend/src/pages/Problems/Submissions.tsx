@@ -1,5 +1,5 @@
 import { CheckCircle2, XCircle, Code2 } from 'lucide-react';
-import { Submission } from '../types/submission';
+import { Submission } from '@/types/submission';
 
 interface SubmissionsProps {
   submissions: Submission[];

@@ -1,12 +1,12 @@
 import React, { useRef, useState, useEffect } from "react";
-import SpaceBackground from "../components/SpaceBackground";
-import { edges } from "../data/edges";
-import { nodes } from "../data/nodes";
-import FloatingBot from "../components/FloatingBot";
-import PlatformInfo from "../components/PlatformInfo";
+import SpaceBackground from "./SpaceBackground";
+import { edges } from "./data/edges";
+import { nodes } from "./data/nodes";
+import FloatingBot from "./FloatingBot";
+import PlatformInfo from "./PlatformInfo";
 
 const getImage = (name: string) =>
-  new URL(`../images/platforms/${name}`, import.meta.url).href;
+  new URL(`../../images/platforms/${name}`, import.meta.url).href;
 
 const clamp = (value: number, min: number, max: number) =>
   Math.max(min, Math.min(value, max));

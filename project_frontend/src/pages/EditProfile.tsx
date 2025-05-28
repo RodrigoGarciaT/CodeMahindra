@@ -44,7 +44,7 @@ useEffect(() => {
     const token = localStorage.getItem("token");
     console.log("Token enviado:", token);
 
-    const res = await fetch("http://localhost:8000/user/me", {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/me/`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -112,7 +112,7 @@ useEffect(() => {
       // Replace with actual API call
       const token = localStorage.getItem("token")
 
-      const res = await fetch("http://localhost:8000/user/me", {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/me/`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Resizable } from "re-resizable";
-import Sidebar from '../components/Sidebar';
-import ProblemStatement from '../components/ProblemStatement';
-import CodeEditor from '../components/CodeEditor';
-import ActionButtons from '../components/ActionButtons';
-import Submissions from '../components/Submissions';
-import Leaderboard from '../components/Leaderboard';
-import Discussions from '../components/Discussions';
+import Sidebar from './Sidebar';
+import ProblemStatement from './ProblemStatement';
+import CodeEditor from './CodeEditor';
+import ActionButtons from './ActionButtons';
+import Submissions from './Submissions';
+import Leaderboard from './Leaderboard';
+import Discussions from './Discussions';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
-import { Comment, Submission } from '../types/submission';
-import { Provider } from '@radix-ui/react-tooltip';
+import { Comment, Submission } from '../../types/submission';
+//import { Provider } from '@radix-ui/react-tooltip';
 
 const Problems = () => {
   const employeeId = 'f683124d-6fc7-4586-8590-86573f5aa66e'
