@@ -8,9 +8,11 @@ from database import get_db
 from models.employee import Employee
 import os
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+# Esquema para obtener el token
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
-SECRET_KEY = os.getenv("SECRET_KEY", "mysecret")  # Usa tu clave secreta real
+# Clave secreta y algoritmo de codificación
+SECRET_KEY = os.getenv("SECRET_KEY", "mysecret")  # Usa tu clave real en producción
 ALGORITHM = "HS256"
 
 def get_current_employee(
@@ -25,13 +27,13 @@ def get_current_employee(
 
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: str = payload.get("sub")
-        if user_id is None:
+        user_email: str = payload.get("sub")
+        if user_email is None:
             raise credentials_exception
     except JWTError:
         raise credentials_exception
 
-    user = db.query(Employee).filter(Employee.id == user_id).first()
+    user = db.query(Employee).filter(Employee.email == user_email).first()
     if user is None:
         raise credentials_exception
     return user

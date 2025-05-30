@@ -1,4 +1,4 @@
-# Byte-compiled / optimized / DLL files
+# Byte-compiled / optimized / DLL files (Python)
 __pycache__/
 *.py[cod]
 *.so
@@ -9,16 +9,32 @@ env/
 cm-env/
 backend/cm-env/
 
-# Node.js dependencies
-node_modules/
-
-# VSCode settings
+# VSCode config files
 .vscode/
 
 # Environment variable files
 .env
 backend/.env
+backend/.env
 
+# OS-specific files
 # OS-specific files
 .DS_Store
 Thumbs.db
+
+# Node.js dependencies
+node_modules/
+
+# Build outputs (por si usas Next.js, Vite, etc.)
+dist/
+build/
+.out/
+.next/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE config (opcional)
+.idea/

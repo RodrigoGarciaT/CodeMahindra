@@ -15,7 +15,7 @@ class Task(Base):
     affectedmodule = Column(String(255))
     tag = Column(String(255))
     reward = Column(Integer)
-    employee_id = Column(UUID(as_uuid=True), ForeignKey("employees.id"))
+    employee_id = Column(UUID(as_uuid=True), ForeignKey("Employee.id"))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     # 🆕 Información adicional

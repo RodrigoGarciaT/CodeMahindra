@@ -19,10 +19,8 @@ def get_employee_by_id(employee_id: UUID, db: Session) -> Employee:
     return employee
 
 def create_employee(employee_data: EmployeeCreate, db: Session) -> Employee:
-    # Hashear la contraseña antes de guardar
     hashed_password = pwd_context.hash(employee_data.password)
-    
-    # Crear el objeto de Employee manualmente
+
     new_employee = Employee(
         email=employee_data.email,
         password=hashed_password,
@@ -50,8 +48,19 @@ def update_employee(employee_id: UUID, employee_data: EmployeeUpdate, db: Sessio
     employee = db.query(Employee).filter(Employee.id == employee_id).first()
     if not employee:
         raise HTTPException(status_code=404, detail="Employee not found")
-    for key, value in employee_data.dict(exclude_unset=True).items():
+
+    update_data = employee_data.dict(exclude_unset=True)
+
+    # Protegemos campo jira_api_token (solo actualizable desde su endpoint)
+    update_data.pop("jira_api_token", None)
+
+    # Si incluye contraseña nueva, hashearla
+    if "password" in update_data and update_data["password"]:
+        update_data["password"] = pwd_context.hash(update_data["password"].get_secret_value())
+
+    for key, value in update_data.items():
         setattr(employee, key, value)
+
     db.commit()
     db.refresh(employee)
     return employee
