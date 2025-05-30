@@ -17,6 +17,8 @@ class ProblemBase(BaseModel):
     solution: Optional[str] = None
     language: Optional[str]
     was_graded: Optional[bool] = False
+    successful_submissions: Optional[int] = 0
+    total_submissions: Optional[int] = 0
 
 class ProblemCreate(BaseModel):
     reward: int
