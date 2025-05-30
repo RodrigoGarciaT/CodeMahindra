@@ -8,7 +8,7 @@ export default function GoogleButton() {
   // Aquí defines la función handleGoogleResponse
   const handleGoogleResponse = async (response: any) => {
     try {
-      const res = await fetch("http://localhost:8000/auth/google", {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/google`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
