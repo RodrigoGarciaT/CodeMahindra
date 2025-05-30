@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 
-const PullRequest: React.FC = () => {
+const PullRequestTest: React.FC = () => {
   const { id } = useParams(); // Get the 'id' parameter from the URL
 
   return (
@@ -14,4 +14,4 @@ const PullRequest: React.FC = () => {
   );
 };
 
-export default PullRequest;
+export default PullRequestTest;

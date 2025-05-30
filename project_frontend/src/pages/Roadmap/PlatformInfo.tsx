@@ -19,7 +19,7 @@ const clamp = (value: number, min: number, max: number) =>
   Math.max(min, Math.min(value, max));
 
 const getImage = (name: string) =>
-  new URL(`../images/platforms/${name}`, import.meta.url).href;
+  new URL(`../../images/platforms/${name}`, import.meta.url).href;
 
 const PlatformInfo: React.FC<Props> = ({ platform, onClose, setDraggingEnabled, setZoomEnabled }) => {
   const sidebarRef = useRef<HTMLDivElement>(null);

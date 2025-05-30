@@ -107,7 +107,7 @@ const mockSuggestions: Suggestion[] = [
 
 const ITEMS_PER_PAGE = 10;
 
-const Code: React.FC = () => {
+const CodeTest: React.FC = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -230,4 +230,4 @@ const Code: React.FC = () => {
   );
 };
 
-export default Code;
+export default CodeTest;
