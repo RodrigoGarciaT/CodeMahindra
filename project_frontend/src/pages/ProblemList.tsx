@@ -20,6 +20,7 @@ const ProblemList: React.FC = () => {
   const [totalProblems, setTotalProblems] = useState(0); // Total number of problems in the API
   const [activeProblems, setActiveProblems] = useState<ProblemListData[]>([]); // active challenge problems
   const [currentSlide, setCurrentSlide] = useState(0);
+  console.log(problems)
   // Fetch problems from API when the component mounts
   useEffect(() => {
     const fetchProblems = async () => {
@@ -40,7 +41,6 @@ const ProblemList: React.FC = () => {
         console.error('Error fetching problems:', error);
       }
     };
-  
     fetchProblems();
   }, []);
   
@@ -221,7 +221,7 @@ const ProblemList: React.FC = () => {
                       <td className={`py-4 px-4 ${getDifficultyColor(problem.difficulty)}`}>
                         {problem.difficulty}
                       </td>
-                      <td className="py-4 px-4">{problem.acceptance ? `${problem.acceptance}%` : 'N/A'}</td>
+                      <td className="py-4 px-4">{problem.acceptance !== -1 ? `${(problem.acceptance * 100).toFixed(2)}%` : 'N/A'}</td>
                     </tr>
                   ))}
                 </tbody>
