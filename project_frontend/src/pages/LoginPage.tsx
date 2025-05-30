@@ -116,6 +116,20 @@ const LoginPage: React.FC = () => {
   
       // Guardar el token en el almacenamiento local o en un estado global
       localStorage.setItem("token", data.access_token);
+
+      // Hacer una solicitud para obtener el perfil del usuario
+      const userRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!userRes.ok) {
+        throw new Error("No se pudo obtener el perfil del usuario.");
+      }
+
+      const userData = await userRes.json();
+      localStorage.setItem("user_id", userData.id); // Guardar el ID en localStorage
   
       // Redirigir a la página principal o a donde desees
       window.location.href = "/dashboard" // Cambia esto según tu flujo de navegación

@@ -20,7 +20,7 @@ const ProblemList: React.FC = () => {
   const [totalProblems, setTotalProblems] = useState(0); // Total number of problems in the API
   const [activeProblems, setActiveProblems] = useState<ProblemListData[]>([]); // active challenge problems
   const [currentSlide, setCurrentSlide] = useState(0);
-  const employeeId = 'f683124d-6fc7-4586-8590-86573f5aa66e'
+  const employeeId = localStorage.getItem("user_id")
   console.log(problems)
   // Fetch problems from API when the component mounts
   useEffect(() => {

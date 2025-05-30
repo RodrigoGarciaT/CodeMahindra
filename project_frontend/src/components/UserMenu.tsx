@@ -23,6 +23,7 @@ const UserMenu = () => {
 useEffect(() => {
       const token = localStorage.getItem("token");
       console.log("Token en localStorage:", token);
+      console.log("user id: ", localStorage.getItem("user_id"));
 
       if (!token) {
         console.error("No hay token en localStorage");
