@@ -33,6 +33,7 @@ class Employee(Base):
     team = relationship("Team", back_populates="employees")
     xp_history = relationship("EmployeeXPHistory", back_populates="employee", cascade="all, delete")
     purchase_products = relationship("PurchaseProduct", back_populates="employee", cascade="all, delete")
+    problems = relationship("EmployeeProblem", back_populates="employee")
 
 
     

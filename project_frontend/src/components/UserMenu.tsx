@@ -23,13 +23,14 @@ const UserMenu = () => {
 useEffect(() => {
       const token = localStorage.getItem("token");
       console.log("Token en localStorage:", token);
+      console.log("user id: ", localStorage.getItem("user_id"));
 
       if (!token) {
         console.error("No hay token en localStorage");
         return;
       }
     
-      axios.get(`http://localhost:8000/user/me`, {
+      axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

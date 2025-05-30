@@ -29,7 +29,7 @@ import CodeDashboard from './pages/Code/CodeDashboard/Page';
 import Commits from './pages/Code/Commits/Page';
 import PullRequests from './pages/Code/PullRequests/Page';
 import RecommendedResources from './pages/Code/RecommendedResources/Page';
-
+import BotStore from './pages/Home/BotStore';
 // 1. Layout que incluye la Navbar
 function LayoutConNavbar() {
   return (
@@ -83,6 +83,8 @@ function App() {
               <Route path="/RecommendedResources" element={<RecommendedResources />} />
             </Route>
 
+            <Route path="/bot-store" element={<BotStore />} />
+          
           </Route>
         </Routes>
       </Router>

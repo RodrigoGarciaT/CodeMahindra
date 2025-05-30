@@ -13,7 +13,7 @@ import { Comment, Submission } from '../../types/submission';
 //import { Provider } from '@radix-ui/react-tooltip';
 
 const Problems = () => {
-  const employeeId = 'f683124d-6fc7-4586-8590-86573f5aa66e'
+  const employeeId = localStorage.getItem("user_id")
   // const employeeId = "a5ecea3a-05d9-44f6-9465-695349143c75"
   // const employeeId = "0749c2ab-674c-497b-a2bd-e04229bc2de6"
   const [code, setCode] = useState('// Your code here');
@@ -130,14 +130,14 @@ const Problems = () => {
                   problemId={problemId} 
                   comments={comments}
                   setComments={setComments}
-                  employeeId={employeeId}
+                  employeeId={employeeId || ""}
                 />
               )}
             </div>
           </Resizable>
           <div className="flex-1 flex flex-col">
             <CodeEditor code={code} onChange={setCode} selectedLanguage={selectedLanguage} setSelectedLanguage={setSelectedLanguage}  />
-            <ActionButtons code={code} problemId={problemId} employeeId={employeeId} language={selectedLanguage}  />
+            <ActionButtons code={code} problemId={problemId} employeeId={employeeId || ""} language={selectedLanguage}  />
           </div>
         </div>
       </div>
