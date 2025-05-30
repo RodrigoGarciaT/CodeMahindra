@@ -20,3 +20,5 @@ class Problem(Base):
     solution = Column(Text)
     language = Column(Text, nullable=False)
     was_graded = Column(Boolean, nullable=False, server_default='false')
+    successful_submissions = Column(Integer, default=0)
+    total_submissions = Column(Integer, default=0)
