@@ -13,12 +13,17 @@ from fastapi.responses import JSONResponse
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from fastapi import HTTPException
+import requests as http_requests
+from fastapi.responses import RedirectResponse
 
 
 router = APIRouter()
 
 class GoogleToken(BaseModel):
     credential: str
+
+class GithubToken(BaseModel):
+    code: str
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -73,7 +78,7 @@ def verify_google_token(token: str):
     
     except ValueError:
         raise HTTPException(status_code=400, detail="Token de Google inválido")
-    
+
 @router.post("/register", response_model=EmployeeOut)
 async def register_employee(employee: EmployeeCreate):
     try:
@@ -148,7 +153,11 @@ def google_auth(data: GoogleToken, db: Session = Depends(get_db)):
             profilePicture=google_data.get("profile_picture"),
         )
         user = create_employee(db, new_user)
-
+    else:
+        # 👇 **ACTUALIZAR FOTO SI YA EXISTE**
+        if google_data.get("profile_picture") and user.profilePicture != google_data.get("profile_picture"):
+            user.profilePicture = google_data.get("profile_picture")
+            db.commit()
 
     token = create_access_token(data={
         "sub": user.email,

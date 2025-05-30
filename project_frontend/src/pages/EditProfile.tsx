@@ -1,5 +1,4 @@
 import type React from "react"
-
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { jwtDecode } from "jwt-decode"
@@ -42,7 +41,7 @@ useEffect(() => {
     const token = localStorage.getItem("token");
     console.log("Token enviado:", token);
 
-    const res = await fetch("http://localhost:8000/user/me", {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -57,7 +56,7 @@ useEffect(() => {
     setUser({
       firstName: data.firstName,
       lastName: data.lastName,
-      email: data.email,
+      sub: data.email,
       nationality: data.nationality || "",
       experience: data.experience || 0,
       coins: data.coins || 0,
@@ -74,7 +73,6 @@ useEffect(() => {
   fetchUser()
 }, [])
 
-=======
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -110,7 +108,7 @@ useEffect(() => {
       // Replace with actual API call
       const token = localStorage.getItem("token")
 
-      const res = await fetch("http://localhost:8000/user/me", {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

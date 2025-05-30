@@ -27,6 +27,7 @@ import ManageProblems from './pages/ManageProblems';
 import EditProfile from './pages/EditProfile';
 import PurchaseManager from './pages/PurchaseManager';
 
+
 // 1. Layout que incluye la Navbar
 function LayoutConNavbar() {
   return (
@@ -73,6 +74,8 @@ function App() {
             <Route path="/Profile" element={<ProfilePage />} />
             <Route path="/profile/view" element={<EditProfile />} />
             <Route path ='/manage-purchase' element = {<PurchaseManager/>} />
+
+
           </Route>
         </Routes>
       </Router>
