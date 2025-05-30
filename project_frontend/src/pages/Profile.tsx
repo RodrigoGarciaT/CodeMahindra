@@ -11,6 +11,16 @@ import { useNavigate } from "react-router-dom"
 import ReactCountryFlag from "react-country-flag";
 import CountryName from "./Home/CountryName";
 
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+} from "recharts";
+
 export default function ProfilePage() {
     const [activeTab, setActiveTab] = useState("current");
     interface User {
@@ -49,6 +59,26 @@ export default function ProfilePage() {
       .catch((err) => {
         console.error("Error al obtener el perfil", err.response?.data || err.message);
       });
+    }, []);
+
+    const [xpHistory, setXpHistory] = useState<{ date: string; experience: number }[]>([]);
+
+    useEffect(() => {
+      const userId = localStorage.getItem("user_id");
+      if (!userId) return;
+
+      axios
+        .get(`${import.meta.env.VITE_BACKEND_URL}/xp-history/employee/${userId}`)
+        .then((res) => {
+          const formatted = res.data.map((entry: any) => ({
+            date: new Date(entry.date).toLocaleDateString(), // e.g., "5/30/2025"
+            experience: entry.experience,
+          }));
+          setXpHistory(formatted);
+        })
+        .catch((err) => {
+          console.error("Error fetching XP history", err);
+        });
     }, []);
 
     return (
@@ -126,17 +156,46 @@ export default function ProfilePage() {
           {/* Right column - Charts and stats */}
           <div className="space-y-6">
             {/* Line chart */}
-            <Card className="bg-[#E6E7E8] p-4">
-              <div className="flex justify-end">
-                <div className="rounded border border-gray-700 px-2 py-1 text-xs">Only rated</div>
-              </div>
-              <div className="h-[200px] w-full">
-                {/* Placeholder for line chart */}
-                <div className="h-full w-full rounded bg-[#222] p-2">
-                  <div className="h-full w-full bg-gradient-to-b from-purple-500/30 via-green-500/30 to-transparent rounded"></div>
+            {xpHistory && xpHistory.length > 0 ? (
+              <Card className="bg-[#E6E7E8] p-4">
+                <div className="mb-2">
+                  <h2 className="text-lg font-semibold text-gray-800">Rating Chart</h2>
+                  <p className="text-sm text-gray-600">
+                    This chart shows the rating progression over time for each dimension.
+                  </p>
                 </div>
-              </div>
-            </Card>
+                <div className="h-[200px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={xpHistory}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="date" tick={{ fontSize: 10 }} />
+                      <YAxis />
+                      <Tooltip />
+                      <Line
+                        type="monotone"
+                        dataKey="experience"
+                        stroke="#10B981"
+                        strokeWidth={2}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </Card>
+            ) : (
+              <Card className="bg-[#E6E7E8] p-4">
+                <div className="mb-2">
+                  <h2 className="text-lg font-semibold text-gray-800">Rating Chart</h2>
+                  <p className="text-sm text-gray-600">
+                    This chart shows the rating progression over time for each dimension.
+                  </p>
+                </div>
+                <div className="text-center text-gray-600 text-sm">
+                  No data available to display the chart.
+                </div>
+              </Card>
+            )}
+
+
 
             {/* Bar chart */}
             <Card className="bg-[#E6E7E8] p-4">
