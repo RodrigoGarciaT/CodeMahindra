@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   GitCommitHorizontal,
   CheckCircle,
@@ -8,7 +8,7 @@ import {
   Link2
 } from "lucide-react";
 
-const commitsGroupedTest = {
+const commitsGrouped = {
   "May 27, 2025": [
     {
       message: "Merge branch 'main' of https://github.com/RodrigoGarciaT/CodeMahindra",
@@ -71,20 +71,6 @@ const commitsGroupedTest = {
   ]
 };
 
-type Commit = {
-  message: string;
-  author: string;
-  date: string;
-  retro: string;
-  hash: string;
-  verified: boolean;
-};
-
-type CommitsGrouped = {
-  [date: string]: Commit[];
-};
-
-
 function getRetroBadge(type: string) {
   const commonClasses =
     "px-2 py-1 rounded-md text-xs font-semibold inline-flex items-center gap-1";
@@ -102,22 +88,6 @@ function getRetroBadge(type: string) {
 
 export default function Commits() {
   const [branch] = useState("main");
-
-  const [commitsGrouped, setCommitsGrouped] = useState<CommitsGrouped>({});
-
-  useEffect(() => {
-    const fetchCommits = async () => {
-      try {
-        const res = await fetch("http://127.0.0.1:8000/commits");
-        const data = await res.json();
-        setCommitsGrouped(data);
-      } catch (error) {
-        console.error("Error fetching commits:", error);
-      }
-    };
-
-    fetchCommits();
-  }, []);
 
   return (
     <div className="p-6">
@@ -143,7 +113,7 @@ export default function Commits() {
           <div key={date}>
             <h2 className="text-sm text-gray-400 font-semibold mb-2">Commits on {date}</h2>
             <div className="space-y-3">
-              {commits.map((commit: Commit, index) => (
+              {commits.map((commit, index) => (
                 <div
                   key={index}
                   className="bg-[#161b22] p-4 rounded-md border border-[#30363d] text-sm"

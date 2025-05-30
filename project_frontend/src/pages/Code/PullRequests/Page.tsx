@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-
 import {
   GitPullRequest,
   Settings,
@@ -83,15 +81,6 @@ const pullRequests = [
   }
 ];
 
-interface PullRequest {
-  title: string;
-  number: number;
-  author: string;
-  date: string;
-  retro: string;
-  comments: number;
-}
-
 function RetroBadge({ retro }: { retro: string }) {
   const common = "px-2 py-1 rounded-md text-xs font-medium inline-flex items-center gap-1";
   switch (retro) {
@@ -107,22 +96,6 @@ function RetroBadge({ retro }: { retro: string }) {
 }
 
 export default function PullRequests() {
-  const [pullRequests, setPullRequests] = useState<PullRequest[]>([]);
-
-  useEffect(() => {
-    const fetchPRs = async () => {
-      try {
-        const res = await fetch("http://127.0.0.1:8000/pull-requests");
-        const data = await res.json();
-        setPullRequests(data);
-      } catch (error) {
-        console.error("Error fetching pull requests:", error);
-      }
-    };
-
-    fetchPRs();
-  }, []);
-
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Pull Requests</h1>

@@ -24,11 +24,6 @@ import ManageUsers from './pages/ManageUsers';
 import ManageProblems from './pages/ManageProblems';
 import EditProfile from './pages/EditProfile';
 import PurchaseManager from './pages/PurchaseManager';
-import BotStore from './pages/Home/BotStore';import CodeLayout from './pages/Code/CodeLayout';
-import CodeDashboard from './pages/Code/CodeDashboard/Page';
-import Commits from './pages/Code/Commits/Page';
-import PullRequests from './pages/Code/PullRequests/Page';
-import RecommendedResources from './pages/Code/RecommendedResources/Page';
 
 // 1. Layout que incluye la Navbar
 function LayoutConNavbar() {
@@ -75,16 +70,6 @@ function App() {
             <Route path="/Profile" element={<ProfilePage />} />
             <Route path="/profile/view" element={<EditProfile />} />
             <Route path ='/manage-purchase' element = {<PurchaseManager/>} />
-            <Route path="/bot-store" element={<BotStore />} />
-          
-
-            <Route element={<CodeLayout />}>
-              <Route path="/CodeDashboard" element={<CodeDashboard />} />
-              <Route path="/Commits" element={<Commits />} />
-              <Route path="/PullRequests" element={<PullRequests />} />
-              <Route path="/RecommendedResources" element={<RecommendedResources />} />
-            </Route>
-
           </Route>
         </Routes>
       </Router>
