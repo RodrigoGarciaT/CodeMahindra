@@ -29,7 +29,7 @@ useEffect(() => {
         return;
       }
     
-      axios.get(`http://localhost:8000/user/me`, {
+      axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
