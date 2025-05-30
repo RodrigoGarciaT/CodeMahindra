@@ -52,39 +52,36 @@ export default function Tasks() {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [jiraModalOpen, setJiraModalOpen] = useState(true);
+  const [jiraModalOpen, setJiraModalOpen] = useState(false);
   const [jiraEmail, setJiraEmail] = useState("");
   const [jiraToken, setJiraToken] = useState("");
+  const [isTokenReady, setIsTokenReady] = useState(false);
 
   const fetchTasks = async () => {
+    if (!isTokenReady) return;
+    
     setIsLoading(true);
     try {
       const res = await axios.get<Task[]>(`${import.meta.env.VITE_BACKEND_URL}/tasks/`);
       const enhancedData = res.data.map((task) => {
-        const normalizedStatus =
-          task.status?.toLowerCase() === "in progress"
-            ? "In Progress"
-            : task.status?.toLowerCase() === "code review"
-            ? "Code Review"
-            : task.status?.toLowerCase() === "done"
-            ? "Done"
-            : "To Do";
+        const normalizedStatus = 
+          task.status?.toLowerCase() === "in progress" ? "In Progress" :
+          task.status?.toLowerCase() === "code review" ? "Code Review" :
+          task.status?.toLowerCase() === "done" ? "Done" : "To Do";
 
         return {
           ...task,
           status: normalizedStatus,
           taskId: `TIS-${task.id}`,
-          assignee: task.assignee_name
-            ? {
-                name: task.assignee_name,
-                avatar: task.assignee_avatar || "/placeholder.svg",
-              }
-            : undefined,
+          assignee: task.assignee_name ? {
+            name: task.assignee_name,
+            avatar: task.assignee_avatar || "/placeholder.svg",
+          } : undefined,
         };
       });
       setTasks(enhancedData);
     } catch (err) {
-      console.error("❌ Error loading tasks:", err);
+      console.error("Error loading tasks:", err);
     } finally {
       setIsLoading(false);
     }
@@ -96,13 +93,22 @@ export default function Tasks() {
     if (savedEmail && savedToken) {
       setJiraEmail(savedEmail);
       setJiraToken(savedToken);
-      setJiraModalOpen(false);
+    } else {
+      setJiraModalOpen(true);
     }
   }, []);
 
   useEffect(() => {
-    if (!jiraModalOpen) fetchTasks();
-  }, [jiraModalOpen]);
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      setIsTokenReady(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isTokenReady) fetchTasks();
+  }, [isTokenReady]);
 
   const groupByStatus = (status: string) =>
     tasks.filter((task) => task.status.toLowerCase() === status.toLowerCase());
@@ -143,16 +149,36 @@ export default function Tasks() {
       alert("Please enter both Jira email and token");
       return;
     }
+
     try {
-      await axios.put("http://127.0.0.1:8000/employees/jira-auth", {
-        jira_email: jiraEmail,
-        jira_api_token: jiraToken,
-      });
+      const token = localStorage.getItem("access_token");
+      const response = await axios.put(
+        "http://127.0.0.1:8000/employees/jira-auth",
+        {
+          jira_email: jiraEmail.trim(),
+          jira_api_token: jiraToken.trim(),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
       localStorage.setItem("jira_email", jiraEmail);
       localStorage.setItem("jira_api_token", jiraToken);
       setJiraModalOpen(false);
-    } catch (err) {
-      alert("Error setting Jira credentials.");
+      fetchTasks();
+      
+      console.log("Jira credentials saved:", response.data);
+    } catch (err: any) {
+      console.error("Error details:", {
+        status: err.response?.status,
+        data: err.response?.data,
+        headers: err.response?.headers,
+      });
+      alert(`Error: ${err.response?.data?.detail || err.message}`);
     }
   };
 
@@ -192,7 +218,6 @@ export default function Tasks() {
         </div>
       </Dialog>
 
-      {/* Resto del dashboard */}
       <div className="max-w-[1600px] mx-auto p-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-slate-100">Task Management</h1>
@@ -283,7 +308,6 @@ export default function Tasks() {
           })}
         </div>
 
-        {/* Modal de Detalle */}
         <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-50">
           <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
           <div className="fixed inset-0 flex items-center justify-center p-4">
