@@ -8,7 +8,18 @@ import flag from "../images/robot_male_1.svg";
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"
-import CountryName from "../pages/Home/CountryName";
+import ReactCountryFlag from "react-country-flag";
+import CountryName from "./Home/CountryName";
+
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+} from "recharts";
 
 export default function ProfilePage() {
     const [activeTab, setActiveTab] = useState("current");
@@ -71,89 +82,6 @@ export default function ProfilePage() {
         });
     }, []);
 
-    const [ratingHistory, setRatingHistory] = useState<string[]>([]);
-
-    useEffect(() => {
-      const userId = localStorage.getItem("user_id");
-      if (!userId) return;
-
-      axios
-        .get(`${import.meta.env.VITE_BACKEND_URL}/solutions/employee/${userId}`)
-        .then((res) => {
-          const sortedSolutions = res.data
-            .filter((sol: any) => sol.status === "Accepted")
-            .sort((a: any, b: any) => new Date(a.submissionDate).getTime() - new Date(b.submissionDate).getTime());
-
-            const datesOnly = sortedSolutions.map((sol: any) =>
-              new Date(sol.submissionDate).toLocaleDateString()
-            );
-
-          setRatingHistory(datesOnly);
-        })
-        .catch((err) => {
-          console.error("Error fetching rating history", err);
-        });
-    }, []);
-
-    const [difficultyData, setDifficultyData] = useState<{ Easy: number; Medium: number; Hard: number } | null>(null);
-
-    useEffect(() => {
-      const userId = localStorage.getItem("user_id");
-      if (!userId) return;
-      axios
-        .get(`${import.meta.env.VITE_BACKEND_URL}/employees/solved-difficulty/${userId}`)
-        .then((res) => {
-          setDifficultyData(res.data);
-        })
-        .catch((err) => {
-          console.error("Error fetching difficulty data", err);
-        });
-    }, []);
-    const chartHeightPx = 90;
-    console.log("this is the data: ", difficultyData);
-    const allZero =
-    difficultyData !== null &&
-    Object.values(difficultyData).every((v) => v === 0);
-
-    const dateCounts: { [key: string]: number } = {};
-
-    ratingHistory.forEach((dateStr) => {
-      const parsedDate = parse(dateStr, 'M/d/yyyy', new Date());
-      const formattedDate = format(parsedDate, 'yyyy-MM-dd');
-      dateCounts[formattedDate] = (dateCounts[formattedDate] || 0) + 1;
-    });
-
-    const currentYear = new Date().getFullYear();
-    
-    // Extract years
-  const years = useMemo(() => {
-    const yearSet = new Set(
-      ratingHistory.map((dateStr) => new Date(dateStr).getFullYear())
-    );
-    return Array.from(yearSet).sort((a, b) => b - a);
-  }, [ratingHistory]);
-
-  const [selectedYear, setSelectedYear] = useState<number>(
-    years[0] ?? new Date().getFullYear()
-  );
-
-  // Filter heatmap data for selected year
-  const heatmapValues = useMemo(() => {
-    const counts: Record<string, number> = {};
-
-    ratingHistory.forEach((dateStr) => {
-      const date = new Date(dateStr);
-      if (date.getFullYear() === selectedYear) {
-        const key = formatDate(date);
-        counts[key] = (counts[key] || 0) + 1;
-      }
-    });
-
-    return Object.entries(counts).map(([date, count]) => ({ date, count }));
-  }, [ratingHistory, selectedYear]);
-  const startDate = `${selectedYear}-01-01`;
-  const endDate = `${selectedYear}-12-31`;
-    
     return (
       <div className="min-h-screen bg-[#363B41] text-black">
         <div className="container mx-auto px-4 py-6">
@@ -262,7 +190,46 @@ export default function ProfilePage() {
                   <p className="text-sm text-gray-600">
                     This chart shows the rating progression over time for each dimension.
                   </p>
+            {xpHistory && xpHistory.length > 0 ? (
+              <Card className="bg-[#E6E7E8] p-4">
+                <div className="mb-2">
+                  <h2 className="text-lg font-semibold text-gray-800">Rating Chart</h2>
+                  <p className="text-sm text-gray-600">
+                    This chart shows the rating progression over time for each dimension.
+                  </p>
                 </div>
+                <div className="h-[200px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={xpHistory}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="date" tick={{ fontSize: 10 }} />
+                      <YAxis />
+                      <Tooltip />
+                      <Line
+                        type="monotone"
+                        dataKey="experience"
+                        stroke="#10B981"
+                        strokeWidth={2}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </Card>
+            ) : (
+              <Card className="bg-[#E6E7E8] p-4">
+                <div className="mb-2">
+                  <h2 className="text-lg font-semibold text-gray-800">Rating Chart</h2>
+                  <p className="text-sm text-gray-600">
+                    This chart shows the rating progression over time for each dimension.
+                  </p>
+                </div>
+                <div className="text-center text-gray-600 text-sm">
+                  No data available to display the chart.
+                </div>
+              </Card>
+            )}
+
+
                 <div className="text-center text-gray-600 text-sm">
                   No data available to display the chart.
                 </div>
