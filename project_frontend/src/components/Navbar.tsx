@@ -13,17 +13,17 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const navItems = [
-    { path: '/home', label: 'Inicio', icon: <Home className="h-4 w-4 mr-1" /> },
-    { path: '/problems', label: 'Problemas', icon: <BookOpen className="h-4 w-4 mr-1" /> },
+    { path: '/home', label: 'Inicio', icon: <Home className="h-4 w-4 mr-1" />, includes: ["/home", "/profile", "/team"] },
+    { path: '/problems', label: 'Problemas', icon: <BookOpen className="h-4 w-4 mr-1" />, includes: ["/problems", "/roadmap", "/problemList/problem"] },
     { path: '/tasks', label: 'Tareas', icon: <ListTodo className="h-4 w-4 mr-1" /> },
-    { path: '/code', label: 'Código', icon: <Code2 className="h-4 w-4 mr-1" /> },
+    { path: '/CodeDashboard', label: 'Código', icon: <Code2 className="h-4 w-4 mr-1" />, includes: ["/CodeDashboard", "/Commits", "/PullRequests", "/RecommendedResources"] },
     { path: '/ranking', label: 'Ranking', icon: <Trophy className="h-4 w-4 mr-1" /> },
     { path: '/store', label: 'Tienda', icon: <ShoppingBag className="h-4 w-4 mr-1" /> },
     { path: '/admin', label: 'Admin', icon: <Settings className="h-4 w-4 mr-1" /> },
   ];
 
-  const getLinkClass = (path: string) =>
-    location.pathname === path
+  const getLinkClass = (includes: string[]) =>
+    includes.some((p) => location.pathname.startsWith(p))
       ? 'flex items-center px-4 py-2 rounded-full bg-red-600 text-white font-medium shadow'
       : 'flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-red-100 transition';
 
@@ -49,8 +49,8 @@ const Navbar = () => {
 
         {/* Navegación Desktop */}
         <div className="hidden md:flex items-center space-x-2">
-          {navItems.map(({ path, label, icon }) => (
-            <Link key={path} to={path} className={getLinkClass(path)}>
+          {navItems.map(({ path, label, icon, includes }) => (
+            <Link key={path} to={path} className={getLinkClass(includes || [path])}>
               {icon}
               {label}
             </Link>
@@ -77,8 +77,8 @@ const Navbar = () => {
       {/* Menú Mobile */}
       {menuOpen && (
         <div className="md:hidden px-4 pb-4 flex flex-col space-y-2">
-          {navItems.map(({ path, label, icon }) => (
-            <Link key={path} to={path} className={getLinkClass(path)} onClick={() => setMenuOpen(false)}>
+          {navItems.map(({ path, label, icon, includes }) => (
+            <Link key={path} to={path} className={getLinkClass(includes || [path])}>
               {icon}
               {label}
             </Link>
