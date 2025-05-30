@@ -339,6 +339,14 @@ async def get_test_case_results(submission: Submission, db: Session) -> List[Tes
         db
     )
     
+    # 6. Update problem statistics
+    problem = db.query(Problem).filter(Problem.id == submission.problem_id).first()
+    if problem:
+        problem.total_submissions = (problem.total_submissions or 0) + 1
+        if status == "Accepted":
+            problem.successful_submissions = (problem.successful_submissions or 0) + 1
+        db.commit()
+    
     return results
 
 def get_problem_leaderboard_data(problem_id: int, db: Session) -> List[dict]:
