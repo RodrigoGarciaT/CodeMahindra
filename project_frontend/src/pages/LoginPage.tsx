@@ -118,7 +118,6 @@ const LoginPage: React.FC = () => {
   
       // Guardar el token en el almacenamiento local o en un estado global
       localStorage.setItem("token", data.access_token);
-
       // Hacer una solicitud para obtener el perfil del usuario
       const userRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
         headers: {
@@ -134,7 +133,6 @@ const LoginPage: React.FC = () => {
       localStorage.setItem("user_id", userData.id); // Guardar el ID en localStorage
 
       
-  
       // Redirigir a la página principal o a donde desees
       window.location.href = "/home" // Cambia esto según tu flujo de navegación
     } catch (error) {
@@ -158,11 +156,16 @@ const LoginPage: React.FC = () => {
       const user = jwtDecode(token);
       localStorage.setItem("user", JSON.stringify(user));
       console.log("Usuario autenticado desde GitHub:", user);
+
+      if ("github_username" in user) {
+      console.log("Nombre de usuario de GitHub:", user.github_username);
+      }
     } catch (error) {
       console.error("Error al decodificar token:", error);
     }
 
     window.location.href = "/home";
+    
   }
 
   return (
