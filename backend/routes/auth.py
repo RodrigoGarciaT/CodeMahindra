@@ -222,6 +222,7 @@ def github_callback(code: str, db: Session = Depends(get_db)):
         headers={"Authorization": f"token {access_token}"}
     )
     user_data = user_response.json()
+    github_username = user_data.get("login")
 
     # Obtener correos del usuario
     emails_response = external_requests.get(
@@ -271,7 +272,8 @@ def github_callback(code: str, db: Session = Depends(get_db)):
         "coins": user.coins,
         "profilePicture": user.profilePicture,
         "position_id": user.position_id,
-        "team_id": user.team_id
+        "team_id": user.team_id,
+        "github_username": github_username
     })
     
     # Redirigir al frontend
