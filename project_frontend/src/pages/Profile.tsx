@@ -21,6 +21,7 @@ import {
   CartesianGrid,
 } from "recharts";
 
+
 export default function ProfilePage() {
     const [activeTab, setActiveTab] = useState("current");
     interface User {
@@ -108,6 +109,26 @@ useEffect(() => {
 }, []);
 
     console.log(ratingHistory)
+    const [difficultyData, setDifficultyData] = useState<{ Easy: number; Medium: number; Hard: number } | null>(null);
+
+    useEffect(() => {
+      const userId = localStorage.getItem("user_id");
+      if (!userId) return;
+      axios
+        .get(`${import.meta.env.VITE_BACKEND_URL}/employees/solved-difficulty/${userId}`)
+        .then((res) => {
+          setDifficultyData(res.data);
+        })
+        .catch((err) => {
+          console.error("Error fetching difficulty data", err);
+        });
+    }, []);
+    const chartHeightPx = 90;
+    console.log("this is the data: ", difficultyData);
+    const allZero =
+    difficultyData !== null &&
+    Object.values(difficultyData).every((v) => v === 0);
+    
     return (
       <div className="min-h-screen bg-[#363B41] text-black">
         <div className="container mx-auto px-4 py-6">

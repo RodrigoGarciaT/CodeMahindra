@@ -94,3 +94,7 @@ def update_admin_status(
 @router.get("/solved-difficulty/{employee_id}")
 def get_solved_difficulty(employee_id: UUID, db: Session = Depends(get_db)):
     return get_difficulty_counts_by_employee(employee_id, db)
+
+@router.get("/solved-difficulty/{employee_id}")
+def get_solved_difficulty(employee_id: UUID, db: Session = Depends(get_db)):
+    return get_difficulty_counts_by_employee(employee_id, db)
