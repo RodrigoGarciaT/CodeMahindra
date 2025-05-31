@@ -30,6 +30,8 @@ import Commits from './pages/Code/Commits/Page';
 import PullRequests from './pages/Code/PullRequests/Page';
 import RecommendedResources from './pages/Code/RecommendedResources/Page';
 import BotStore from './pages/Home/BotStore';
+import CommitFeedback from './pages/Code/Commits/CommitFeedback/Page';
+
 // 1. Layout que incluye la Navbar
 function LayoutConNavbar() {
   return (
@@ -81,6 +83,7 @@ function App() {
               <Route path="/Commits" element={<Commits />} />
               <Route path="/PullRequests" element={<PullRequests />} />
               <Route path="/RecommendedResources" element={<RecommendedResources />} />
+              <Route path="/CommitFeedback" element={<CommitFeedback/>} />
             </Route>
 
             <Route path="/bot-store" element={<BotStore />} />
