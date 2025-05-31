@@ -82,6 +82,32 @@ export default function ProfilePage() {
         });
     }, []);
 
+    const [ratingHistory, setRatingHistory] = useState<{ date: string; rating: number }[]>([]);
+
+useEffect(() => {
+  const userId = localStorage.getItem("user_id");
+  if (!userId) return;
+
+  axios
+    .get(`${import.meta.env.VITE_BACKEND_URL}/solutions/employee/${userId}`)
+    .then((res) => {
+      const sortedSolutions = res.data
+        .filter((sol: any) => sol.status === "Accepted")
+        .sort((a: any, b: any) => new Date(a.submissionDate).getTime() - new Date(b.submissionDate).getTime());
+
+      const formatted = sortedSolutions.map((sol: any, index: number) => ({
+        date: new Date(sol.submissionDate).toLocaleDateString(),
+        rating: sol.testCasesPassed,
+      }));
+
+      setRatingHistory(formatted);
+    })
+    .catch((err) => {
+      console.error("Error fetching rating history", err);
+    });
+}, []);
+
+    console.log(ratingHistory)
     return (
       <div className="min-h-screen bg-[#363B41] text-black">
         <div className="container mx-auto px-4 py-6">
