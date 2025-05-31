@@ -253,7 +253,8 @@ def github_callback(code: str, db: Session = Depends(get_db)):
             lastName=last_name,
             nationality="No especificado",
             phoneNumber="0000000000",
-            profilePicture=user_data.get("avatar_url")
+            profilePicture=user_data.get("avatar_url"),
+            github_username=github_username 
         )
         user = create_employee(db, new_user)
 
