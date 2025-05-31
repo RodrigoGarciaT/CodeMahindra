@@ -37,6 +37,20 @@ function GoogleLoginButton() {
         localStorage.setItem("token", data.access_token);
         localStorage.setItem("user", JSON.stringify(data.user));
 
+        // Hacer una solicitud para obtener el perfil del usuario
+      const userRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
+        headers: {
+          Authorization: `Bearer ${data.access_token}`,
+        },
+      });
+      console.log("this is token", data.access_token)
+      if (!userRes.ok) {
+        throw new Error("No se pudo obtener el perfil del usuario.");
+      }
+
+      const userData = await userRes.json();
+      localStorage.setItem("user_id", userData.id); // Guardar el ID en localStorage
+
         // Aquí redirigimos siempre a /home después de login exitoso
         navigate("/home");
       } else {
