@@ -132,6 +132,8 @@ const LoginPage: React.FC = () => {
 
       const userData = await userRes.json();
       localStorage.setItem("user_id", userData.id); // Guardar el ID en localStorage
+
+      
   
       // Redirigir a la página principal o a donde desees
       window.location.href = "/home" // Cambia esto según tu flujo de navegación
