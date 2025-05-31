@@ -9,21 +9,6 @@ import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"
 import CountryName from "../pages/Home/CountryName";
-import CalendarHeatmap from 'react-calendar-heatmap';
-import 'react-calendar-heatmap/dist/styles.css';
-import { parse, format } from 'date-fns';
-
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-} from "recharts";
-
-const formatDate = (date: Date) => date.toISOString().split("T")[0];
 
 export default function ProfilePage() {
     const [activeTab, setActiveTab] = useState("current");
@@ -51,6 +36,7 @@ export default function ProfilePage() {
         return;
       }
     
+      axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
       axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -172,6 +158,7 @@ export default function ProfilePage() {
       <div className="min-h-screen bg-[#363B41] text-black">
         <div className="container mx-auto px-4 py-6">
           <div className="mb-6 flex items-center">
+            <Link to="/" className="mr-4">
             <Link to="/" className="mr-4">
               <ArrowLeft className="text-white h-6 w-6" />
             </Link>
