@@ -19,7 +19,7 @@ class Employee(Base):
     firstName = Column(String(255))
     lastName = Column(String(255))
     birthDate = Column(Date)
-    profilePicture = Column(String, nullable=True)  # ✅ Debe estar definido así
+    profilePicture = Column(String, nullable=True)
     email = Column(String(255), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
     isAdmin = Column(Boolean, default=False)
@@ -35,9 +35,7 @@ class Employee(Base):
     purchase_products = relationship("PurchaseProduct", back_populates="employee", cascade="all, delete")
     problems = relationship("EmployeeProblem", back_populates="employee")
 
-
-    
     # Campos para autenticación con Jira
-    jira_email = Column(String(255))
-    jira_api_token = Column(String(255))
-
+    jira_email = Column(String(255), nullable=True)
+    jira_api_token = Column(String(255), nullable=True)
+    jira_domain = Column(String(255), nullable=True)
