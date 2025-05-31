@@ -1,5 +1,5 @@
 import GoogleButton from "@/components/google-button"
-import GitHubButton from "@/components/github-button"
+import GitHubButton from "@/components/Github-button"
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
