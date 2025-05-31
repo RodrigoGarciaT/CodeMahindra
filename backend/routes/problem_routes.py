@@ -1,6 +1,9 @@
+from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException
 from typing import List
 from sqlalchemy.orm import Session
+from models.problem import Problem
+from models.employee_problem import EmployeeProblem
 from database import get_db
 from controllers.problem_controller import (
     get_all_problems,
@@ -52,3 +55,27 @@ def grade_problem_endpoint(
     db: Session = Depends(get_db)
 ):
     return grade_problem(problem_id, db)
+
+
+@router.get("/problemList/{employee_id}")
+def get_problem_list_with_status(employee_id: UUID, db: Session = Depends(get_db)):
+    problems = db.query(Problem).all()
+
+    # Get all problem UUIDs that this employee has solved
+    solved_problem_ids = db.query(EmployeeProblem.problem_id).filter(
+        EmployeeProblem.employee_id == employee_id
+    ).all()
+
+    solved_problem_ids = {pid for (pid,) in solved_problem_ids}
+
+    result = []
+    for problem in problems:
+        # Copy all columns except SQLAlchemy internal keys
+        problem_data = {k: v for k, v in problem.__dict__.items() if not k.startswith("_")}
+        
+        # Add status field
+        problem_data["status"] = "solved" if problem.id in solved_problem_ids else "not solved"
+        
+        result.append(problem_data)
+
+    return result

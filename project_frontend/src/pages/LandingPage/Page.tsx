@@ -203,14 +203,18 @@ export default function LandingPage() {
           />
 
           <div className="relative z-10 flex flex-col-reverse md:flex-row items-center justify-between h-full max-w-6xl mx-auto px-6">
-            
+  
             <motion.img
               src={getImage("CodeBox.png")}
               alt="Ilustración de programación"
               initial={{ y: 0 }}
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              whileHover={{ scale: 1.05, rotate: 2 }}
+              animate={{ y: -12 }}
+              transition={{
+                duration: 2.5,
+                repeat: Infinity,
+                repeatType: "mirror",
+                ease: "easeInOut"
+              }}
               className="max-w-xs md:max-w-sm drop-shadow-lg"
             />
 

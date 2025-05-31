@@ -12,6 +12,7 @@ from controllers.employee_controller import (
     set_admin_status,
     update_employee,
     delete_employee,
+    get_difficulty_counts_by_employee
 )
 from schemas.employee import AdminStatusUpdate, EmployeeCreate, EmployeeUpdate, EmployeeOut
 from dependencies import get_current_employee
@@ -68,3 +69,7 @@ def update_jira_credentials(
     db.commit()
     db.refresh(current_user)
     return {"message": "Jira credentials saved"}
+
+@router.get("/solved-difficulty/{employee_id}")
+def get_solved_difficulty(employee_id: UUID, db: Session = Depends(get_db)):
+    return get_difficulty_counts_by_employee(employee_id, db)

@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
+from models.employee_problem import EmployeeProblem
 from models.solution import Solution
 from schemas.solution import SolutionCreate, SolutionUpdate, Submission
 from schemas.testcase import TestCaseOut, TestCaseResult
@@ -347,6 +348,43 @@ async def get_test_case_results(submission: Submission, db: Session) -> List[Tes
             problem.successful_submissions = (problem.successful_submissions or 0) + 1
         db.commit()
     
+    # 7. If Accepted, insert into Employee_Problem if not already present
+    if status == "Accepted":
+        exists = db.query(EmployeeProblem).filter_by(
+            employee_id=submission.employee_id,
+            problem_id=submission.problem_id
+        ).first()
+        if not exists:
+            new_record = EmployeeProblem(
+                employee_id=submission.employee_id,
+                problem_id=submission.problem_id
+            )
+            db.add(new_record)
+            try:
+                db.commit()
+            except Exception as e:
+                db.rollback()
+                print("Integrity error:", e)
+                raise HTTPException(status_code=400, detail="Invalid foreign key: employee or problem does not exist.")
+            # db.commit
+            # pass
+    
+    '''
+    if status == "Accepted":
+        pass
+        exists = db.query(EmployeeProblem).filter_by(
+            employee_id=submission.employee_id,
+            problem_id=submission.problem_id
+        ).first()
+
+        if not exists:
+            pass
+            new_record = EmployeeProblem(
+                employee_id=submission.employee_id,
+                problem_id=submission.problem_id
+            )
+            db.add(new_record)
+            db.commit()'''
     return results
 
 def get_problem_leaderboard_data(problem_id: int, db: Session) -> List[dict]:
