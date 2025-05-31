@@ -12,12 +12,13 @@ class EmployeeBase(BaseModel):
     lastName: Optional[str]       = None
     birthDate: Optional[date]     = None
     profilePicture: Optional[str] = None
-    email: EmailStr
+    email: Optional[EmailStr] = None
     isAdmin: Optional[bool]       = False
     coins: Optional[int]          = 0
     phoneNumber: Optional[str]    = None
     position_id: Optional[int]    = None
     team_id: Optional[int]        = None
+    github_username: Optional[str] = None 
 
     # 🆕 Campos para autenticación con Jira
     jira_email: Optional[str]     = None
@@ -26,13 +27,14 @@ class EmployeeBase(BaseModel):
 
 
 class EmployeeCreate(EmployeeBase):
-    email: EmailStr
+    email: Optional[EmailStr] = None
     password: str
     firstName: str                = "Google User"
     lastName: str
     nationality: str              = "No especificado"
     phoneNumber: str              = "0000000000"
     profilePicture: Optional[str] = None
+    github_username: Optional[str] = None 
     jira_email: Optional[str]     = None
     jira_api_token: Optional[str] = None
     jira_domain: Optional[str]    = None
@@ -54,6 +56,7 @@ class EmployeeUpdate(BaseModel):
     # 🆕 Campos para autenticación con Jira
     jira_email: Optional[str]     = None
     jira_api_token: Optional[str] = None
+    github_username: Optional[str] = None 
     jira_domain: Optional[str]    = None
 
 
