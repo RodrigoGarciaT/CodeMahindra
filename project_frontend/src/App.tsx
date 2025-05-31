@@ -30,9 +30,8 @@ import Commits from './pages/Code/Commits/Page';
 import PullRequests from './pages/Code/PullRequests/Page';
 import RecommendedResources from './pages/Code/RecommendedResources/Page';
 import BotStore from './pages/Home/BotStore';
-import { AuthProvider } from "./contexts/AuthContext";
-import ProtectedRoute from "./components/ProtectedRoute";
-import AdminRoute from "./components/AdminRoute";
+import CommitFeedback from './pages/Code/Commits/CommitFeedback/Page';
+
 // 1. Layout que incluye la Navbar
 function LayoutConNavbar() {
   return (
@@ -109,6 +108,17 @@ function App() {
             <Route path="/Profile" element={<ProfilePage />} />
             <Route path="/profile/view" element={<EditProfile />} />
             <Route path ='/manage-purchase' element = {<PurchaseManager/>} />
+
+            <Route element={<CodeLayout />}>
+              <Route path="/CodeDashboard" element={<CodeDashboard />} />
+              <Route path="/Commits" element={<Commits />} />
+              <Route path="/PullRequests" element={<PullRequests />} />
+              <Route path="/RecommendedResources" element={<RecommendedResources />} />
+              <Route path="/CommitFeedback" element={<CommitFeedback/>} />
+            </Route>
+
+            <Route path="/bot-store" element={<BotStore />} />
+          
           </Route>
         </Routes>
       </Router>
