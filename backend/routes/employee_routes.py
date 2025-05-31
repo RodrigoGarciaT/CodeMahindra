@@ -13,6 +13,7 @@ from controllers.employee_controller import (
     set_admin_status,
     update_employee,
     delete_employee,
+    get_difficulty_counts_by_employee
 )
 from schemas.employee import AdminStatusUpdate, EmployeeCreate, EmployeeUpdate, EmployeeOut
 from dependencies import get_current_employee
@@ -79,3 +80,7 @@ def delete_existing_employee(employee_id: UUID, db: Session = Depends(get_db)):
 @router.patch("/{employee_id}/admin-status", response_model=EmployeeOut)
 def update_admin_status(employee_id: UUID, status_update: AdminStatusUpdate, db: Session = Depends(get_db)):
     return set_admin_status(employee_id, status_update.is_admin, db)
+
+@router.get("/solved-difficulty/{employee_id}")
+def get_solved_difficulty(employee_id: UUID, db: Session = Depends(get_db)):
+    return get_difficulty_counts_by_employee(employee_id, db)
