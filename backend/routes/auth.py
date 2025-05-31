@@ -268,7 +268,7 @@ def github_callback(code: str, db: Session = Depends(get_db)):
         "position_id": user.position_id,
         "team_id": user.team_id
     })
-
+    
     # Redirigir al frontend
     return RedirectResponse(
         url="http://code-mahindra-w4lk.vercel.app/login?" + urllib.parse.urlencode({
