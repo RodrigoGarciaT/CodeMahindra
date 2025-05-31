@@ -122,10 +122,10 @@ const LoginPage: React.FC = () => {
       // Hacer una solicitud para obtener el perfil del usuario
       const userRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${data.access_token}`,
         },
       });
-
+      console.log("this is token", data.access_token)
       if (!userRes.ok) {
         throw new Error("No se pudo obtener el perfil del usuario.");
       }
