@@ -143,7 +143,7 @@ useEffect(() => {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      // In a real app, you would upload the file to a server
+      // In a real app, you would upload the file to a server 
       // and get back a URL to the uploaded image
       const reader = new FileReader()
       reader.onload = () => {
