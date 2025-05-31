@@ -20,6 +20,7 @@ import {
   CartesianGrid,
 } from "recharts";
 
+
 export default function ProfilePage() {
     const [activeTab, setActiveTab] = useState("current");
     interface User {
@@ -106,6 +107,26 @@ useEffect(() => {
 }, []);
 
     console.log(ratingHistory)
+    const [difficultyData, setDifficultyData] = useState<{ Easy: number; Medium: number; Hard: number } | null>(null);
+
+    useEffect(() => {
+      const userId = localStorage.getItem("user_id");
+      if (!userId) return;
+      axios
+        .get(`${import.meta.env.VITE_BACKEND_URL}/employees/solved-difficulty/${userId}`)
+        .then((res) => {
+          setDifficultyData(res.data);
+        })
+        .catch((err) => {
+          console.error("Error fetching difficulty data", err);
+        });
+    }, []);
+    const chartHeightPx = 90;
+    console.log("this is the data: ", difficultyData);
+    const allZero =
+    difficultyData !== null &&
+    Object.values(difficultyData).every((v) => v === 0);
+    
     return (
       <div className="min-h-screen bg-[#363B41] text-black">
         <div className="container mx-auto px-4 py-6">
@@ -226,24 +247,48 @@ useEffect(() => {
             <Card className="bg-[#E6E7E8] p-4">
               <div className="mb-2 flex items-center">
                 <h3 className="text-sm font-medium">Problem Ratings</h3>
-                <div className="ml-auto flex items-center">
-                  <div className="mr-2 h-3 w-3 rounded bg-gray-400"></div>
-                  <span className="text-xs text-gray-400">Problems Solved</span>
-                </div>
               </div>
-              <div className="h-[150px] w-full">
-                {/* Placeholder for bar chart */}
-                <div className="flex h-full w-full items-end justify-between">
-                  {[80, 12, 12, 10, 8, 10, 35, 8, 15, 18, 5, 3, 2, 1, 1].map((height, i) => (
-                    <div
-                      key={i}
-                      className={`w-[5%] ${i === 6 ? "bg-green-500" : "bg-gray-400"}`}
-                      style={{ height: `${height}%` }}
-                    ></div>
-                  ))}
-                </div>
+              <div className="relative h-[120px] w-full">
+                {difficultyData && !allZero ? (
+                  <div className="flex h-full w-full items-end justify-between">
+                    {["Easy", "Medium", "Hard"].map((level) => {
+                      const value = difficultyData[level as keyof typeof difficultyData];
+                      const max = Math.max(...Object.values(difficultyData));
+                      const height = max === 0 ? 0 : (value / max) * chartHeightPx;
+
+                      const barColor =
+                        level === "Easy"
+                          ? "bg-green-500"
+                          : level === "Medium"
+                          ? "bg-yellow-500"
+                          : "bg-red-500";
+
+                      return (
+                        <div
+                          key={level}
+                          className="flex flex-col items-center justify-end w-[30%] group relative"
+                        >
+                          <div
+                            className={`w-full rounded-t ${barColor} cursor-default`}
+                            style={{ height: `${height}px` }}
+                          ></div>
+                          {/* Tooltip */}
+                          <div className="absolute bottom-[110%] mb-1 hidden group-hover:block px-2 py-1 text-xs text-white bg-black rounded">
+                            {value} {value === 1 ? "problem" : "problems"}
+                          </div>
+                          <span className="mt-2 text-sm text-gray-700">{level}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="text-center text-gray-600 text-sm">
+                    No difficulty data available.
+                  </div>
+                )}
               </div>
             </Card>
+
 
             {/* Activity calendar */}
             <Card className="bg-[#E6E7E8] p-4">
