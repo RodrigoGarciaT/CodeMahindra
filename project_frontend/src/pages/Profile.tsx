@@ -10,6 +10,9 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom"
 import ReactCountryFlag from "react-country-flag";
 import CountryName from "./Home/CountryName";
+import CalendarHeatmap from 'react-calendar-heatmap';
+import 'react-calendar-heatmap/dist/styles.css';
+import { parse, format } from 'date-fns';
 
 import {
   LineChart,
@@ -21,6 +24,7 @@ import {
   CartesianGrid,
 } from "recharts";
 
+const formatDate = (date: Date) => date.toISOString().split("T")[0];
 
 export default function ProfilePage() {
     const [activeTab, setActiveTab] = useState("current");
@@ -83,32 +87,30 @@ export default function ProfilePage() {
         });
     }, []);
 
-    const [ratingHistory, setRatingHistory] = useState<{ date: string; rating: number }[]>([]);
+    const [ratingHistory, setRatingHistory] = useState<string[]>([]);
 
-useEffect(() => {
-  const userId = localStorage.getItem("user_id");
-  if (!userId) return;
+    useEffect(() => {
+      const userId = localStorage.getItem("user_id");
+      if (!userId) return;
 
-  axios
-    .get(`${import.meta.env.VITE_BACKEND_URL}/solutions/employee/${userId}`)
-    .then((res) => {
-      const sortedSolutions = res.data
-        .filter((sol: any) => sol.status === "Accepted")
-        .sort((a: any, b: any) => new Date(a.submissionDate).getTime() - new Date(b.submissionDate).getTime());
+      axios
+        .get(`${import.meta.env.VITE_BACKEND_URL}/solutions/employee/${userId}`)
+        .then((res) => {
+          const sortedSolutions = res.data
+            .filter((sol: any) => sol.status === "Accepted")
+            .sort((a: any, b: any) => new Date(a.submissionDate).getTime() - new Date(b.submissionDate).getTime());
 
-      const formatted = sortedSolutions.map((sol: any, index: number) => ({
-        date: new Date(sol.submissionDate).toLocaleDateString(),
-        rating: sol.testCasesPassed,
-      }));
+            const datesOnly = sortedSolutions.map((sol: any) =>
+              new Date(sol.submissionDate).toLocaleDateString()
+            );
 
-      setRatingHistory(formatted);
-    })
-    .catch((err) => {
-      console.error("Error fetching rating history", err);
-    });
-}, []);
+          setRatingHistory(datesOnly);
+        })
+        .catch((err) => {
+          console.error("Error fetching rating history", err);
+        });
+    }, []);
 
-    console.log(ratingHistory)
     const [difficultyData, setDifficultyData] = useState<{ Easy: number; Medium: number; Hard: number } | null>(null);
 
     useEffect(() => {
@@ -128,6 +130,45 @@ useEffect(() => {
     const allZero =
     difficultyData !== null &&
     Object.values(difficultyData).every((v) => v === 0);
+
+    const dateCounts: { [key: string]: number } = {};
+
+    ratingHistory.forEach((dateStr) => {
+      const parsedDate = parse(dateStr, 'M/d/yyyy', new Date());
+      const formattedDate = format(parsedDate, 'yyyy-MM-dd');
+      dateCounts[formattedDate] = (dateCounts[formattedDate] || 0) + 1;
+    });
+
+    const currentYear = new Date().getFullYear();
+    
+    // Extract years
+  const years = useMemo(() => {
+    const yearSet = new Set(
+      ratingHistory.map((dateStr) => new Date(dateStr).getFullYear())
+    );
+    return Array.from(yearSet).sort((a, b) => b - a);
+  }, [ratingHistory]);
+
+  const [selectedYear, setSelectedYear] = useState<number>(
+    years[0] ?? new Date().getFullYear()
+  );
+
+  // Filter heatmap data for selected year
+  const heatmapValues = useMemo(() => {
+    const counts: Record<string, number> = {};
+
+    ratingHistory.forEach((dateStr) => {
+      const date = new Date(dateStr);
+      if (date.getFullYear() === selectedYear) {
+        const key = formatDate(date);
+        counts[key] = (counts[key] || 0) + 1;
+      }
+    });
+
+    return Object.entries(counts).map(([date, count]) => ({ date, count }));
+  }, [ratingHistory, selectedYear]);
+  const startDate = `${selectedYear}-01-01`;
+  const endDate = `${selectedYear}-12-31`;
     
     return (
       <div className="min-h-screen bg-[#363B41] text-black">
