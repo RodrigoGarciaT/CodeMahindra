@@ -5,11 +5,14 @@ import { Card } from "../components/card";
 import profilePic from "../images/robot_male_1.svg"; // Asegúrate de tener esta imagen
 import coinIcon from "../images/coin.svg";
 import flag from "../images/robot_male_1.svg";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"
 import ReactCountryFlag from "react-country-flag";
 import CountryName from "./Home/CountryName";
+import CalendarHeatmap from 'react-calendar-heatmap';
+import 'react-calendar-heatmap/dist/styles.css';
+import { parse, format } from 'date-fns';
 
 import {
   LineChart,
@@ -21,6 +24,7 @@ import {
   CartesianGrid,
 } from "recharts";
 
+const formatDate = (date: Date) => date.toISOString().split("T")[0];
 
 export default function ProfilePage() {
     const [activeTab, setActiveTab] = useState("current");
@@ -82,32 +86,30 @@ export default function ProfilePage() {
         });
     }, []);
 
-    const [ratingHistory, setRatingHistory] = useState<{ date: string; rating: number }[]>([]);
+    const [ratingHistory, setRatingHistory] = useState<string[]>([]);
 
-useEffect(() => {
-  const userId = localStorage.getItem("user_id");
-  if (!userId) return;
+    useEffect(() => {
+      const userId = localStorage.getItem("user_id");
+      if (!userId) return;
 
-  axios
-    .get(`${import.meta.env.VITE_BACKEND_URL}/solutions/employee/${userId}`)
-    .then((res) => {
-      const sortedSolutions = res.data
-        .filter((sol: any) => sol.status === "Accepted")
-        .sort((a: any, b: any) => new Date(a.submissionDate).getTime() - new Date(b.submissionDate).getTime());
+      axios
+        .get(`${import.meta.env.VITE_BACKEND_URL}/solutions/employee/${userId}`)
+        .then((res) => {
+          const sortedSolutions = res.data
+            .filter((sol: any) => sol.status === "Accepted")
+            .sort((a: any, b: any) => new Date(a.submissionDate).getTime() - new Date(b.submissionDate).getTime());
 
-      const formatted = sortedSolutions.map((sol: any, index: number) => ({
-        date: new Date(sol.submissionDate).toLocaleDateString(),
-        rating: sol.testCasesPassed,
-      }));
+            const datesOnly = sortedSolutions.map((sol: any) =>
+              new Date(sol.submissionDate).toLocaleDateString()
+            );
 
-      setRatingHistory(formatted);
-    })
-    .catch((err) => {
-      console.error("Error fetching rating history", err);
-    });
-}, []);
+          setRatingHistory(datesOnly);
+        })
+        .catch((err) => {
+          console.error("Error fetching rating history", err);
+        });
+    }, []);
 
-    console.log(ratingHistory)
     const [difficultyData, setDifficultyData] = useState<{ Easy: number; Medium: number; Hard: number } | null>(null);
 
     useEffect(() => {
@@ -127,6 +129,45 @@ useEffect(() => {
     const allZero =
     difficultyData !== null &&
     Object.values(difficultyData).every((v) => v === 0);
+
+    const dateCounts: { [key: string]: number } = {};
+
+    ratingHistory.forEach((dateStr) => {
+      const parsedDate = parse(dateStr, 'M/d/yyyy', new Date());
+      const formattedDate = format(parsedDate, 'yyyy-MM-dd');
+      dateCounts[formattedDate] = (dateCounts[formattedDate] || 0) + 1;
+    });
+
+    const currentYear = new Date().getFullYear();
+    
+    // Extract years
+  const years = useMemo(() => {
+    const yearSet = new Set(
+      ratingHistory.map((dateStr) => new Date(dateStr).getFullYear())
+    );
+    return Array.from(yearSet).sort((a, b) => b - a);
+  }, [ratingHistory]);
+
+  const [selectedYear, setSelectedYear] = useState<number>(
+    years[0] ?? new Date().getFullYear()
+  );
+
+  // Filter heatmap data for selected year
+  const heatmapValues = useMemo(() => {
+    const counts: Record<string, number> = {};
+
+    ratingHistory.forEach((dateStr) => {
+      const date = new Date(dateStr);
+      if (date.getFullYear() === selectedYear) {
+        const key = formatDate(date);
+        counts[key] = (counts[key] || 0) + 1;
+      }
+    });
+
+    return Object.entries(counts).map(([date, count]) => ({ date, count }));
+  }, [ratingHistory, selectedYear]);
+  const startDate = `${selectedYear}-01-01`;
+  const endDate = `${selectedYear}-12-31`;
     
     return (
       <div className="min-h-screen bg-[#363B41] text-black">
@@ -292,64 +333,38 @@ useEffect(() => {
 
 
             {/* Activity calendar */}
-            <Card className="bg-[#E6E7E8] p-4">
-              <div className="mb-4 flex items-center justify-between">
-                <div className="flex items-center">
-                  <span className="mr-2 text-lg font-medium">65</span>
-                  <span className="text-sm text-gray-400">submissions in the past one year</span>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center">
-                    <span className="mr-1 text-xs text-gray-400">Total active days:</span>
-                    <span className="text-xs">12</span>
-                  </div>
-                  <div className="flex items-center">
-                    <span className="mr-1 text-xs text-gray-400">Max streak:</span>
-                    <span className="text-xs">2</span>
-                  </div>
-                  <div className="relative">
-                    <button
-                      className={`rounded border px-2 py-1 text-xs ${activeTab === "current" ? "bg-gray-400" : ""}`}
-                      onClick={() => setActiveTab("current")}
-                    >
-                      Current
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div className="h-[100px] w-full">
-                {/* Placeholder for activity calendar */}
-                <div className="grid h-full w-full grid-cols-12 gap-1">
-                  {Array.from({ length: 12 }).map((_, monthIndex) => (
-                    <div key={monthIndex} className="flex flex-col space-y-1">
-                      {Array.from({ length: 5 }).map((_, weekIndex) => (
-                        <div
-                          key={weekIndex}
-                          className={`h-3 w-3 rounded-sm ${
-                            Math.random() > 0.85 ? "bg-green-500" : Math.random() > 0.95 ? "bg-green-700" : "bg-gray-400"
-                          }`}
-                        ></div>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="mt-2 flex justify-between text-xs text-gray-400">
-                <span>Feb</span>
-                <span>Mar</span>
-                <span>Apr</span>
-                <span>May</span>
-                <span>Jun</span>
-                <span>Jul</span>
-                <span>Aug</span>
-                <span>Sep</span>
-                <span>Oct</span>
-                <span>Nov</span>
-                <span>Dec</span>
-                <span>Jan</span>
-                <span>Feb</span>
-              </div>
-            </Card>
+            <div className="p-4 bg-[#F9FAFB] rounded-xl shadow-sm">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold text-gray-700">Activity Calendar</h2>
+        <select
+          className="text-sm px-2 py-1 border border-gray-300 rounded-md"
+          value={selectedYear}
+          onChange={(e) => setSelectedYear(Number(e.target.value))}
+        >
+          {years.map((year) => (
+            <option key={year} value={year}>
+              {year}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="overflow-x-auto">
+        <CalendarHeatmap
+          startDate={startDate}
+          endDate={endDate}
+          values={heatmapValues}
+          classForValue={(value) => {
+            if (!value || value.count === 0) return "fill-gray-200";
+            if (value.count === 1) return "fill-green-200";
+            if (value.count === 2) return "fill-green-400";
+            return "fill-green-600";
+          }}
+          titleForValue={(value) =>
+            value ? `${value.date}: ${value.count} submission(s)` : "No submissions"
+          }
+        />
+      </div>
+    </div>
           </div>
         </div>
       </div>
