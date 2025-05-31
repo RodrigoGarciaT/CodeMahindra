@@ -38,7 +38,6 @@ class Employee(Base):
     # Usuario de Github
     github_username = Column(String(255), nullable=True)
 
-
     # Campos para autenticación con Jira
     jira_email = Column(String(255), nullable=True)
     jira_api_token = Column(String(255), nullable=True)
