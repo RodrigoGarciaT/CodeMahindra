@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom"
 import { jwtDecode } from "jwt-decode"
 import { ArrowLeft, User, Mail, Phone, Flag, Briefcase, Coins, Upload, Loader2, Check, X } from "lucide-react"
 import ReactCountryFlag from "react-country-flag";
+import axios from "axios"
 
 interface DecodedToken {
   firstName: string
@@ -140,21 +141,35 @@ useEffect(() => {
   }
 }
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      // In a real app, you would upload the file to a server 
-      // and get back a URL to the uploaded image
-      const reader = new FileReader()
-      reader.onload = () => {
-        setUser((prev) => ({
-          ...prev,
-          profilePicture: reader.result as string,
-        }))
-      }
-      reader.readAsDataURL(file)
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const cloudName = import.meta.env.VITE_CLOUD_NAME;
+    const uploadPreset = import.meta.env.VITE_UPLOAD_PRESET;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", uploadPreset);
+
+    try {
+      const response = await axios.post<{ secure_url: string }>(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        formData
+      );
+
+      const imageURL = response.data.secure_url;
+
+      setUser((prev) => ({
+        ...prev,
+        profilePicture: imageURL,
+      }));
+    } catch (error) {
+      console.error("Image upload failed:", error);
+      alert("Image upload failed. Please try again.");
     }
-  }
+  };
+
 
 const initials = user
     ? `${user.firstName?.charAt(0) || ""}${user.lastName?.charAt(0) || ""}`.toUpperCase()
