@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List
 from sqlalchemy.orm import Session
 from uuid import UUID
+from pydantic import BaseModel, Field
 
 from database import get_db
 
@@ -16,9 +17,41 @@ from controllers.employee_controller import (
 from schemas.employee import AdminStatusUpdate, EmployeeCreate, EmployeeUpdate, EmployeeOut
 from dependencies import get_current_employee
 from models.employee import Employee
-from pydantic import BaseModel
 
 router = APIRouter(prefix="/employees", tags=["Employees"])
+
+# --- Jira Credentials Storage (moverlo antes de las rutas con /{employee_id}) ---
+
+class JiraCredentials(BaseModel):
+    jira_email:     str = Field(..., example="usuario@empresa.com")
+    jira_api_token: str = Field(..., example="abcdef1234567890")
+    jira_domain:    str = Field(..., example="midominio.atlassian.net")
+
+@router.put(
+    "/jira-auth",
+    summary="Guardar credenciales de Jira",
+    status_code=status.HTTP_204_NO_CONTENT
+)
+def update_jira_credentials(
+    creds: JiraCredentials,
+    db: Session = Depends(get_db),
+    current_user: Employee = Depends(get_current_employee),
+):
+    """
+    Guarda o actualiza las credenciales de Jira (email, token y dominio)
+    para el empleado autenticado.
+    """
+    if not current_user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    current_user.jira_email     = creds.jira_email
+    current_user.jira_api_token = creds.jira_api_token
+    current_user.jira_domain    = creds.jira_domain
+
+    db.add(current_user)
+    db.commit()
+    return
+
 
 # --- CRUD Endpoints ---
 
@@ -41,30 +74,8 @@ def update_existing_employee(employee_id: UUID, employee: EmployeeUpdate, db: Se
 @router.delete("/{employee_id}", status_code=204)
 def delete_existing_employee(employee_id: UUID, db: Session = Depends(get_db)):
     delete_employee(employee_id, db)
-    return {"detail": "Employee deleted successfully"}
+    return
 
-# New PATCH route to update admin status
 @router.patch("/{employee_id}/admin-status", response_model=EmployeeOut)
 def update_admin_status(employee_id: UUID, status_update: AdminStatusUpdate, db: Session = Depends(get_db)):
     return set_admin_status(employee_id, status_update.is_admin, db)
-
-# --- Jira Credentials Storage ---
-
-class JiraCredentials(BaseModel):
-    jira_email: str
-    jira_api_token: str
-
-@router.put("/jira-auth", summary="Store Jira API credentials")
-def update_jira_credentials(
-    creds: JiraCredentials,
-    db: Session = Depends(get_db),
-    current_user: Employee = Depends(get_current_employee),
-):
-    if not current_user:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-
-    current_user.jira_email = creds.jira_email
-    current_user.jira_api_token = creds.jira_api_token
-    db.commit()
-    db.refresh(current_user)
-    return {"message": "Jira credentials saved"}

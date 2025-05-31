@@ -22,6 +22,13 @@ class TaskBase(BaseModel):
     assignee_name: Optional[str] = None
     assignee_avatar: Optional[str] = None
 
+    # 🆕 Clave de issue de Jira
+    jira_issue_key: Optional[str] = Field(None, alias="jira_issue_key")
+
+    class Config:
+        populate_by_name = True
+        from_attributes = True
+
 class TaskCreate(TaskBase):
     pass
 
@@ -43,6 +50,13 @@ class TaskUpdate(BaseModel):
     reporter: Optional[str] = None
     assignee_name: Optional[str] = None
     assignee_avatar: Optional[str] = None
+
+    # 🆕 Clave de issue de Jira (solo lectura/exposición)
+    jira_issue_key: Optional[str] = Field(None, alias="jira_issue_key")
+
+    class Config:
+        populate_by_name = True
+        from_attributes = True
 
 class TaskOut(TaskBase):
     id: int
