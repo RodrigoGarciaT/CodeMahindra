@@ -48,8 +48,10 @@ def read_current_user(current_user: Employee = Depends(get_current_user)):
         "coins": current_user.coins,
         "profilePicture": current_user.profilePicture,
         "nationality":current_user.nationality,
-        "experience":current_user.experience,
-        "id": current_user.id
+        "experience":current_user.experience, 
+        "id": current_user.id,
+        "team_id": current_user.team_id
+        
     }
 @router.put("/user/me")
 def update_current_user(

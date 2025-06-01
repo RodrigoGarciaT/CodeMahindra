@@ -76,7 +76,7 @@ function App() {
             <Route path="/store/manage" element={<AdminRoute><StoreManagement /></AdminRoute>} />
             <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/team" element={<ProtectedRoute><TeamPage /></ProtectedRoute>} />
+            <Route path="/team/:teamId" element={<ProtectedRoute><TeamPage /></ProtectedRoute>} />
             <Route path="/test" element={<ProtectedRoute><ImageUploaderCloudinary /></ProtectedRoute>} />
             <Route path="/Profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
             <Route path="/profile/view" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
