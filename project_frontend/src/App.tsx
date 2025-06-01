@@ -24,7 +24,15 @@ import ManageUsers from './pages/ManageUsers';
 import ManageProblems from './pages/ManageProblems';
 import EditProfile from './pages/EditProfile';
 import PurchaseManager from './pages/PurchaseManager';
-
+import CodeLayout from './pages/Code/CodeLayout';
+import CodeDashboard from './pages/Code/CodeDashboard/Page';
+import Commits from './pages/Code/Commits/Page';
+import PullRequests from './pages/Code/PullRequests/Page';
+import RecommendedResources from './pages/Code/RecommendedResources/Page';
+import BotStore from './pages/Home/BotStore';
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
 // 1. Layout que incluye la Navbar
 function LayoutConNavbar() {
   return (
@@ -38,6 +46,7 @@ function LayoutConNavbar() {
 function App() {
   return (
     <CartProvider>
+      <AuthProvider>
       <Router>
         <Routes>
           {/* 2. Ruta que NO muestra la Navbar (LandingPage) */}
@@ -49,6 +58,36 @@ function App() {
 
           {/* 3. Ruta con Navbar */}
           <Route element={<LayoutConNavbar />}>
+          
+            <Route path="/home" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+            <Route path="/manage-users" element={<AdminRoute><ManageUsers /></AdminRoute>} />
+            <Route path="/manage-problems" element={<AdminRoute><ManageProblems /></AdminRoute>} />
+            <Route path="/problemList" element={<ProtectedRoute><ProblemList /></ProtectedRoute>} />
+            <Route path="/roadmap" element={<ProtectedRoute><Roadmap /></ProtectedRoute>} />
+            <Route path="/problemList/problem/:problemId" element={<ProtectedRoute><Problems /></ProtectedRoute>} />
+            <Route path="/problems" element={<ProtectedRoute><ProblemList /></ProtectedRoute>} />
+            <Route path="/problems/create" element={<ProtectedRoute><CreateProblem /></ProtectedRoute>} />
+            <Route path="/tasks" element={<ProtectedRoute><Tasks /></ProtectedRoute>} />
+            <Route path="/ranking" element={<ProtectedRoute><Ranking /></ProtectedRoute>} />
+            <Route path="/store" element={<ProtectedRoute><Store /></ProtectedRoute>} />
+            <Route path="/store/manage" element={<AdminRoute><StoreManagement /></AdminRoute>} />
+            <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/team" element={<ProtectedRoute><TeamPage /></ProtectedRoute>} />
+            <Route path="/test" element={<ProtectedRoute><ImageUploaderCloudinary /></ProtectedRoute>} />
+            <Route path="/Profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+            <Route path="/profile/view" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
+            <Route path="/manage-purchase" element={<ProtectedRoute><PurchaseManager /></ProtectedRoute>} />
+
+            <Route element={<ProtectedRoute><CodeLayout /></ProtectedRoute>}>
+              <Route path="/CodeDashboard" element={<CodeDashboard />} />
+              <Route path="/Commits" element={<Commits />} />
+              <Route path="/PullRequests" element={<PullRequests />} />
+              <Route path="/RecommendedResources" element={<RecommendedResources />} />
+            </Route>
+
+            <Route path="/bot-store" element={<ProtectedRoute><BotStore /></ProtectedRoute>} />
           
             <Route path="/home" element={<Dashboard />} />
             <Route path="/admin" element={<AdminDashboard />} />
@@ -73,6 +112,7 @@ function App() {
           </Route>
         </Routes>
       </Router>
+      </AuthProvider>
     </CartProvider>
   );
 }
