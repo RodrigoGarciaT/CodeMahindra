@@ -33,6 +33,8 @@ import BotStore from './pages/Home/BotStore';
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
+import CommitFeedback from './pages/Code/Commits/CommitFeedback/Page';
+
 // 1. Layout que incluye la Navbar
 function LayoutConNavbar() {
   return (
@@ -85,6 +87,7 @@ function App() {
               <Route path="/Commits" element={<Commits />} />
               <Route path="/PullRequests" element={<PullRequests />} />
               <Route path="/RecommendedResources" element={<RecommendedResources />} />
+              <Route path="/CommitFeedback" element={<CommitFeedback/>} />
             </Route>
 
             <Route path="/bot-store" element={<ProtectedRoute><BotStore /></ProtectedRoute>} />
