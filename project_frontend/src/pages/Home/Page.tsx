@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import CountryName from "./CountryName"; // ajusta la ruta según tu estructura
+import CountryName from "../Home/CountryName"; // ajusta la ruta según tu estructura
 
 import { Bot, Flag, Star, ChevronRight, Users, Database, FileStack as Stack, Link2, Trees as Tree, FileSearch, Package, Share2, MousePointer2, Search, Layout, Clock, GitCompare, Workflow, BrainCircuit, LineChart, Binary, Calculator, ArrowLeft } from 'lucide-react';
 import type { Bot as BotType } from './BotStore';
+import { useTeamMembers } from '@/hooks/useTeamMembers';
+
 
 interface Achievement {
   id: string;
@@ -164,13 +166,15 @@ const achievements: Achievement[] = [
 
 function Dashboard() {
   const navigate = useNavigate();
-  const [user, setUser] = useState({
+const [user, setUser] = useState({
   photo: '',
   firstName: '',
   lastName: '',
   experience: 0, 
   nationality: '',
-  profilePicture:'',
+  profilePicture: '',
+  team_id: null,
+   
 });
 
 
@@ -191,6 +195,7 @@ function Dashboard() {
             experience: data.experience,
             nationality: data.nationality,
             profilePicture: data.profilePicture,
+            team_id: data.team_id, 
           });
         })
         .catch(err => console.error(err));
@@ -281,6 +286,12 @@ const [selectedAchievement, setSelectedAchievement] = useState<Achievement | nul
       </div>
     );
   }
+
+  const { members, loading } = useTeamMembers(user?.team_id || '');
+
+  const totalExp = members.reduce((sum, m) => sum + (m.coins ?? 0), 0);
+  const teamLevel = Math.floor(totalExp / 2000); // Ajusta esta lógica si usas otra
+  const teamName = members.length > 0 ? `Equipo de ${members[0].firstName}` : "Tu equipo"
 
   return (
     <div className="min-h-screen bg-[#363B41] text-black p-6">
@@ -411,45 +422,71 @@ const [selectedAchievement, setSelectedAchievement] = useState<Achievement | nul
         <div className="bg-white rounded-lg p-6 shadow-sm md:col-span-2">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold">Equipo</h2>
-            <button 
+            <button
               className="text-red-500 hover:text-red-600"
-              onClick={() => navigate('/team')}
+              onClick={() => {
+                if (user?.team_id) {
+                  navigate(`/team/${user.team_id}`);
+                } else {
+                  alert("Este usuario no está asignado a ningún equipo.");
+                }
+              }}
             >
               Ver más
             </button>
           </div>
-          
-          <div className="mb-4">
+
+          {/* Nombre real del equipo */}
+          <div className="mb-3">
             <h3 className="font-semibold flex items-center gap-2 mb-2">
               <Users className="w-4 h-4" />
-              Los fieles y Edsel
+              {teamName}
             </h3>
-            <div className="flex justify-between text-sm mb-2">
-              <span>Nivel 5</span>
-              <span>9462 exp</span>
+            <div className="flex justify-between text-xs mb-1">
+              <span>Nivel {Math.floor(totalExp / 2000)}</span>
+              <span>{totalExp} exp</span>
             </div>
             <div className="w-full bg-gray-100 rounded-full h-2">
-              <div className="bg-red-500 h-2 rounded-full w-3/4"></div>
+              <div
+                className="bg-red-500 h-2 rounded-full"
+                style={{ width: `${Math.min((totalExp % 2000) / 2000 * 100, 100)}%` }}
+              ></div>
             </div>
           </div>
 
-          <div className="space-y-4">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="bg-gray-50 p-4 rounded-lg flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <img 
-                    src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=150&h=150&fit=crop" 
-                    alt="Team member" 
-                    className="w-10 h-10 rounded-full"
+          {/* Miembros dinámicos */}
+          <div className="space-y-2">
+            {members.map((member) => (
+              <div
+                key={member.id}
+                className="bg-gray-50 p-4 rounded-lg flex items-center justify-between gap-4"
+              >
+                {/* Columna 1: Foto + Nombre */}
+                <div className="flex items-center gap-3 w-1/3">
+                  <img
+                    src={member.profilePicture || "https://via.placeholder.com/40"}
+                    alt={`${member.firstName} ${member.lastName}`}
+                    className="w-10 h-10 rounded-full object-cover"
                   />
-                  <span>Davis Curtis</span>
+                  <span className="font-medium">{member.firstName} {member.lastName}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Flag className="w-4 h-4" />
-                  <span>Nivel 5</span>
-                  <span className="text-gray-500">9462 exp</span>
+
+                {/* Columna 2: País + bandera */}
+                <div className="w-1/4 text-sm text-gray-500">
+                  <CountryName code={member.nationality ?? ""} />
+                </div>
+
+                {/* Columna 3: Nivel */}
+                <div className="w-1/6 flex items-center gap-1 justify-center">
+                  <span className="font-medium">Nivel {member.level ?? 1}</span>
+                </div>
+
+                {/* Columna 4: Exp */}
+                <div className="w-1/6 text-right text-gray-500">
+                  {member.coins ?? 0} exp
                 </div>
               </div>
+
             ))}
           </div>
         </div>

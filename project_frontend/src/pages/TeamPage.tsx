@@ -2,6 +2,10 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, ResponsiveContainer } from 'recharts';
+import { useParams } from "react-router-dom";
+import { useTeamMembers } from "../hooks/useTeamMembers";
+
+
 
 const lineChartData = [
   { name: 'Jan 2024', value: 1200 },
@@ -23,6 +27,27 @@ const barChartData = [
 
 function ProfileAndTeamPage() {
   const navigate = useNavigate();
+  const { teamId } = useParams();
+
+  if (!teamId) {
+    return <div className="text-white p-8">No se proporcionó teamId en la URL.</div>;
+  }
+
+  type TeamMember = {
+    id: string;
+    firstName: string;
+    lastName: string;
+    profilePicture?: string;
+    coins?: number;
+    level?: number;
+  };
+
+  const { members, loading } = useTeamMembers(teamId || "") as {
+    members: TeamMember[];
+    loading: boolean;
+  };
+
+  console.log("Renderizando TeamPage", { teamId, members });
 
   return (
     <div className="min-h-screen bg-[#363B41]"> {/* Fondo gris para toda la página */}
@@ -64,27 +89,30 @@ function ProfileAndTeamPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td className="border px-4 py-2">Davis Curtis</td>
-                    <td className="border px-4 py-2">9462</td>
-                    <td className="border px-4 py-2">Nivel 5</td>
-                  </tr>
-                  <tr>
-                    <td className="border px-4 py-2">Davis Curtis</td>
-                    <td className="border px-4 py-2">9462</td>
-                    <td className="border px-4 py-2">Nivel 5</td>
-                  </tr>
-                  <tr>
-                    <td className="border px-4 py-2">Davis Curtis</td>
-                    <td className="border px-4 py-2">9462</td>
-                    <td className="border px-4 py-2">Nivel 5</td>
-                  </tr>
-                  <tr>
-                    <td className="border px-4 py-2">Davis Curtis</td>
-                    <td className="border px-4 py-2">9462</td>
-                    <td className="border px-4 py-2">Nivel 5</td>
-                  </tr>
+                  {loading ? (
+                    <tr>
+                      <td colSpan={3} className="text-center py-4">Cargando...</td>
+                    </tr>
+                  ) : members.length === 0 ? (
+                    <tr>
+                      <td colSpan={3} className="text-center py-4">No hay miembros en este equipo.</td>
+                    </tr>
+                  ) : (
+                    members.map((member) => (
+                      <tr key={member.id}>
+                        <td className="border px-4 py-2 flex items-center gap-2">
+                          {member.profilePicture && (
+                            <img src={member.profilePicture} alt="foto" className="w-6 h-6 rounded-full" />
+                          )}
+                          {member.firstName} {member.lastName}
+                        </td>
+                        <td className="border px-4 py-2">{member.coins ?? 0}</td>
+                        <td className="border px-4 py-2">Nivel {member.level ?? 1}</td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
+
               </table>
             </div>
           </div>
