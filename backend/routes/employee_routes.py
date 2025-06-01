@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List
 from sqlalchemy.orm import Session
 from uuid import UUID
+from pydantic import BaseModel, Field
+
 from database import get_db
-
-
 from controllers.employee_controller import (
     get_all_employees,
     get_employee_by_id,
@@ -13,7 +13,7 @@ from controllers.employee_controller import (
     update_employee,
     delete_employee,
     get_difficulty_counts_by_employee,
-    get_employees_by_team_id
+    get_employees_by_team_id,
 )
 from schemas.employee import AdminStatusUpdate, EmployeeCreate, EmployeeUpdate, EmployeeOut
 from dependencies import get_current_employee
@@ -22,7 +22,7 @@ from models.employee import Employee
 router = APIRouter(prefix="/employees", tags=["Employees"])
 
 #
-# 1) Primero definimos el endpoint estático exacto: /employees/jira-auth
+# 1) Endpoint para guardar credenciales de Jira (“jira-auth”)
 #
 class JiraCredentials(BaseModel):
     jira_email:     str = Field(..., example="usuario@empresa.com")
@@ -44,7 +44,7 @@ def update_jira_credentials(
     para el empleado autenticado.
     """
     if not current_user:
-        raise HTTPException(status_code=401, detail="Not authenticated")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
 
     current_user.jira_email     = creds.jira_email
     current_user.jira_api_token = creds.jira_api_token
@@ -56,7 +56,7 @@ def update_jira_credentials(
 
 
 #
-# 2) A continuación, las rutas CRUD “genéricas” que usan {employee_id}
+# 2) Rutas CRUD “genéricas” que usan {employee_id}
 #
 @router.get("/", response_model=List[EmployeeOut])
 def list_employees(db: Session = Depends(get_db)):
@@ -66,7 +66,7 @@ def list_employees(db: Session = Depends(get_db)):
 def retrieve_employee(employee_id: UUID, db: Session = Depends(get_db)):
     return get_employee_by_id(employee_id, db)
 
-@router.post("/", response_model=EmployeeOut, status_code=201)
+@router.post("/", response_model=EmployeeOut, status_code=status.HTTP_201_CREATED)
 def create_new_employee(employee: EmployeeCreate, db: Session = Depends(get_db)):
     return create_employee(employee, db)
 
@@ -78,7 +78,7 @@ def update_existing_employee(
 ):
     return update_employee(employee_id, employee, db)
 
-@router.delete("/{employee_id}", status_code=204)
+@router.delete("/{employee_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_existing_employee(employee_id: UUID, db: Session = Depends(get_db)):
     delete_employee(employee_id, db)
     return
@@ -95,14 +95,12 @@ def update_admin_status(
 def get_solved_difficulty(employee_id: UUID, db: Session = Depends(get_db)):
     return get_difficulty_counts_by_employee(employee_id, db)
 
-@router.get("/solved-difficulty/{employee_id}")
-def get_solved_difficulty(employee_id: UUID, db: Session = Depends(get_db)):
-    return get_difficulty_counts_by_employee(employee_id, db)
-
+#
+# 3) Nueva ruta para obtener empleados por team_id
+#
 @router.get("/by-team/{team_id}", response_model=List[EmployeeOut])
 def get_employees_by_team(team_id: int, db: Session = Depends(get_db)):
     employees = get_employees_by_team_id(team_id, db)
     if not employees:
-        raise HTTPException(status_code=404, detail="No employees found for this team")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No employees found for this team")
     return employees
-

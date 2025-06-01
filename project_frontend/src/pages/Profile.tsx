@@ -8,8 +8,8 @@ import flag from "../images/robot_male_1.svg";
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"
+import CountryName from "../pages/Home/CountryName";
 import ReactCountryFlag from "react-country-flag";
-import CountryName from "./Home/CountryName";
 import CalendarHeatmap from 'react-calendar-heatmap';
 import 'react-calendar-heatmap/dist/styles.css';
 import { parse, format } from 'date-fns';
@@ -52,7 +52,6 @@ export default function ProfilePage() {
         return;
       }
     
-      axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
       axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -277,46 +276,7 @@ export default function ProfilePage() {
                   <p className="text-sm text-gray-600">
                     This chart shows the rating progression over time for each dimension.
                   </p>
-            {xpHistory && xpHistory.length > 0 ? (
-              <Card className="bg-[#E6E7E8] p-4">
-                <div className="mb-2">
-                  <h2 className="text-lg font-semibold text-gray-800">Rating Chart</h2>
-                  <p className="text-sm text-gray-600">
-                    This chart shows the rating progression over time for each dimension.
-                  </p>
                 </div>
-                <div className="h-[200px] w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={xpHistory}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="date" tick={{ fontSize: 10 }} />
-                      <YAxis />
-                      <Tooltip />
-                      <Line
-                        type="monotone"
-                        dataKey="experience"
-                        stroke="#10B981"
-                        strokeWidth={2}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </Card>
-            ) : (
-              <Card className="bg-[#E6E7E8] p-4">
-                <div className="mb-2">
-                  <h2 className="text-lg font-semibold text-gray-800">Rating Chart</h2>
-                  <p className="text-sm text-gray-600">
-                    This chart shows the rating progression over time for each dimension.
-                  </p>
-                </div>
-                <div className="text-center text-gray-600 text-sm">
-                  No data available to display the chart.
-                </div>
-              </Card>
-            )}
-
-
                 <div className="text-center text-gray-600 text-sm">
                   No data available to display the chart.
                 </div>

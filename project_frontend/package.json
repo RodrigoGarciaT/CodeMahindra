@@ -26,7 +26,6 @@
     "axios": "^1.8.4",
     "caniuse-lite": "^1.0.30001715",
     "chart.js": "^4.4.9",
-    "chart.js": "^4.4.9",
     "class-variance-authority": "^0.7.1",
     "date-fns": "^4.1.0",
     "jwt-decode": "^4.0.0",
@@ -45,7 +44,6 @@
     "react-router-dom": "^6.22.2",
     "react-split": "^2.0.14",
     "react-syntax-highlighter": "^15.6.1",
-    "recharts": "^2.15.3",
     "recharts": "^2.15.3",
     "remark-gfm": "^4.0.1"
   },

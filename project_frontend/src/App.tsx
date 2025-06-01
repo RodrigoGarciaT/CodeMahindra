@@ -30,6 +30,9 @@ import Commits from './pages/Code/Commits/Page';
 import PullRequests from './pages/Code/PullRequests/Page';
 import RecommendedResources from './pages/Code/RecommendedResources/Page';
 import BotStore from './pages/Home/BotStore';
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
 import CommitFeedback from './pages/Code/Commits/CommitFeedback/Page';
 
 // 1. Layout que incluye la Navbar
@@ -84,40 +87,10 @@ function App() {
               <Route path="/Commits" element={<Commits />} />
               <Route path="/PullRequests" element={<PullRequests />} />
               <Route path="/RecommendedResources" element={<RecommendedResources />} />
-            </Route>
-
-            <Route path="/bot-store" element={<ProtectedRoute><BotStore /></ProtectedRoute>} />
-          
-            <Route path="/home" element={<Dashboard />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/manage-users" element={<ManageUsers />} />
-            <Route path="/manage-problems" element={<ManageProblems />} />
-            <Route path="/problemList" element={<ProblemList />} />
-            <Route path="/roadmap" element={<Roadmap/>} />
-            <Route path="/problemList/problem/:problemId" element={<Problems />} />
-            <Route path="/problems" element={<ProblemList />} />
-            <Route path="/problems/create" element={<CreateProblem />} />
-            <Route path="/tasks" element={<Tasks />} />
-            <Route path="/ranking" element={<Ranking />} />
-            <Route path="/store" element={<Store />} />
-            <Route path="/store/manage" element={<StoreManagement />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/team" element={<TeamPage />} />
-            <Route path="/test" element={<ImageUploaderCloudinary />} />
-            <Route path="/Profile" element={<ProfilePage />} />
-            <Route path="/profile/view" element={<EditProfile />} />
-            <Route path ='/manage-purchase' element = {<PurchaseManager/>} />
-
-            <Route element={<CodeLayout />}>
-              <Route path="/CodeDashboard" element={<CodeDashboard />} />
-              <Route path="/Commits" element={<Commits />} />
-              <Route path="/PullRequests" element={<PullRequests />} />
-              <Route path="/RecommendedResources" element={<RecommendedResources />} />
               <Route path="/CommitFeedback" element={<CommitFeedback/>} />
             </Route>
 
-            <Route path="/bot-store" element={<BotStore />} />
+            <Route path="/bot-store" element={<ProtectedRoute><BotStore /></ProtectedRoute>} />
           
           </Route>
         </Routes>
