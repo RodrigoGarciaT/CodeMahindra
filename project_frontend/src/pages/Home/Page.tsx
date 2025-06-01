@@ -319,11 +319,10 @@ const [selectedAchievement, setSelectedAchievement] = useState<Achievement | nul
       <div className="flex items-center gap-2"> {/* Ajustado gap-2 para mejor espaciado con la bandera */}
         <span className="font-semibold">{user?.firstName} {user?.lastName}</span>
             {user?.nationality ? (
-              // AQUÍ ES EL CAMBIO PRINCIPAL
-                <CountryName nationality={user.nationality} className="w-5 h-auto" /> // Ajusta className según necesites para CountryName
-                ) : (
-                  <span className="text-sm text-gray-500">Nacionalidad no disponible</span>
-                )}
+                <CountryName code={user.nationality} />
+              ) : (
+                <span className="text-sm text-gray-500">Nacionalidad no disponible</span>
+              )}
               </div>
             </div>
           </div>
