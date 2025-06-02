@@ -38,7 +38,7 @@ def get_comments_by_problemid(problem_id: int, db: Session) -> List[CommentOut]:
             problem_id=comment.problem_id,
             firstName=comment.employee.firstName if comment.employee.firstName else "",
             lastName=comment.employee.lastName if comment.employee.lastName else "",
-            profilePicture=comment.employee.profileEpic if comment.employee.profileEpic else "https://st.depositphotos.com/2218212/2938/i/450/depositphotos_29387653-stock-photo-facebook-profile.jpg"
+            profilePicture=comment.employee.profilePicture if comment.employee.profilePicture else "https://st.depositphotos.com/2218212/2938/i/450/depositphotos_29387653-stock-photo-facebook-profile.jpg"
         )
         for comment in comments
     ]

@@ -392,7 +392,7 @@ def get_problem_leaderboard_data(problem_id: int, db: Session) -> List[dict]:
     ranked_solutions = (
         db.query(
             Solution,
-            Employee.profileEpic,
+            Employee.profilePicture,
             Employee.firstName,
             Employee.lastName,
             label("rank", func.row_number().over(
@@ -412,7 +412,7 @@ def get_problem_leaderboard_data(problem_id: int, db: Session) -> List[dict]:
     # Select only the top-ranked (best) solution per employee
     best_solutions = (
         db.query(
-            ranked_solutions.c.profileEpic,
+            ranked_solutions.c.profilePicture,
             ranked_solutions.c.firstName,
             ranked_solutions.c.lastName,
             ranked_solutions.c.testCasesPassed,
