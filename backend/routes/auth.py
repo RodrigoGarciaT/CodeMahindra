@@ -280,7 +280,8 @@ def github_callback(code: str, db: Session = Depends(get_db)):
     # Redirigir al frontend con el token
     return RedirectResponse(
         url="http://code-mahindra-w4lk.vercel.app/login?" + urllib.parse.urlencode({
-            "token": token
+            "token": token,
+            "user_id": str(user.id)
         })
     )
 
