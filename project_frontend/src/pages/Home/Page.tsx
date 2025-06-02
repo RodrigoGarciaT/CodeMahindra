@@ -304,7 +304,7 @@ const [selectedAchievement, setSelectedAchievement] = useState<Achievement | nul
 
   const { members, loading } = useTeamMembers(user?.team_id || '');
 
-  const totalExp = members.reduce((sum, m) => sum + (m.coins ?? 0), 0);
+  const totalExp = members.reduce((sum, m) => sum + (m.experience ?? 0), 0);
   const teamLevel = Math.floor(totalExp / 2000); // Ajusta esta lógica si usas otra
   const teamName = fetchedTeamName || (members.length > 0 ? `Equipo de ${members[0].firstName}` : "Tu equipo");
 
@@ -354,18 +354,23 @@ const [selectedAchievement, setSelectedAchievement] = useState<Achievement | nul
           </div>
         </div>
 
-          <div className="space-y-4">
-            <h3 className="font-semibold">Progreso</h3>
-            <div>
-              <div className="flex justify-between text-sm mb-2">
-                <span>Nivel 5</span>
-                <span>{user?.experience} exp</span>
-              </div>
-              <div className="w-full bg-gray-100 rounded-full h-2">
-                <div className="bg-red-500 h-2 rounded-full" style={{ width: `${Math.min(Number(user?.experience) / 15000 * 100, 100)}%` }}></div>
-              </div>
+        <div className="space-y-4">
+          <h3 className="font-semibold">Progreso</h3>
+          <div>
+            <div className="flex justify-between text-sm mb-2">
+              <span>Nivel {Math.floor((user?.experience ?? 0) / 1000)}</span>
+              <span>{user?.experience ?? 0} XP</span>
+            </div>
+            <div className="w-full bg-gray-100 rounded-full h-2">
+              <div
+                className="bg-red-500 h-2 rounded-full"
+                style={{
+                  width: `${((user?.experience ?? 0) % 1000) / 10}%` // 0–999 XP → 0%–99.9%
+                }}
+              ></div>
             </div>
           </div>
+        </div>
         </div>
 
         {/* Weekly Challenges Section */}
@@ -470,23 +475,24 @@ const [selectedAchievement, setSelectedAchievement] = useState<Achievement | nul
         ) : (
           <>
             {/* Nombre del equipo + progreso */}
-            <div className="mb-3">
-              <h3 className="font-semibold flex items-center gap-2 mb-2">
-                <Users className="w-4 h-4" />
-                {teamName || "Equipo"}
-              </h3>
-              <div className="flex justify-between text-xs mb-1">
-                <span>Nivel {teamLevel}</span>
-                <span>{totalExp} exp</span>
+              <div className="mb-3">
+                <h3 className="font-semibold flex items-center gap-2 mb-2">
+                  <Users className="w-4 h-4" />
+                  {teamName || "Equipo"}
+                </h3>
+                <div className="flex justify-between text-xs mb-1">
+                  <span>Nivel {Math.floor((totalExp ?? 0) / 1000)}</span>
+                  <span>{totalExp ?? 0} exp</span>
+                </div>
+                <div className="w-full bg-gray-100 rounded-full h-2">
+                  <div
+                    className="bg-red-500 h-2 rounded-full"
+                    style={{
+                      width: `${((totalExp ?? 0) % 1000) / 10}%` // 0–999 XP → 0%–99.9%
+                    }}
+                  ></div>
+                </div>
               </div>
-              <div className="w-full bg-gray-100 rounded-full h-2">
-                <div
-                  className="bg-red-500 h-2 rounded-full"
-                  style={{ width: `${Math.min((totalExp % 2000) / 2000 * 100, 100)}%` }}
-                ></div>
-              </div>
-            </div>
-
             {/* Miembros dinámicos */}
             <div className="space-y-2">
               {members.map((member) => (

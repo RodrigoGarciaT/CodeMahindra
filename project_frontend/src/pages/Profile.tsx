@@ -208,9 +208,13 @@ export default function ProfilePage() {
   
                 <div className="mt-6">
                   <h3 className="mb-3 text-lg font-medium">Progreso</h3>
-                  <Progress value={65} className="h-4 bg-gray-700" indicatorClassName="bg-red-500" />
+                  <Progress 
+                    value={((user?.experience ?? 0) % 1000) / 10} 
+                    className="h-4 bg-gray-700" 
+                    indicatorClassName="bg-red-500" 
+                  />
                   <div className="mt-2 flex justify-between">
-                    <span>Nivel 5</span>
+                    <span>Nivel {Math.floor((user?.experience ?? 0) / 1000)}</span>
                     <span>{user?.experience ?? 0} xp</span>
                   </div>
                 </div>

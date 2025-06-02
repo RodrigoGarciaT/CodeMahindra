@@ -487,18 +487,22 @@ const initials = user
           <h2 className="text-lg font-bold mb-6">Progreso</h2>
           <div className="mb-2 flex justify-between items-center">
             <span className="text-sm font-medium">
-              Nivel {user.experience ? Math.floor(user.experience / 2000) + 1 : 5}
+              Nivel {Math.floor((user?.experience ?? 0) / 1000)}
             </span>
-            <span className="text-sm text-gray-500">{user.experience} XP</span>
+            <span className="text-sm text-gray-500">{user?.experience ?? 0} XP</span>
           </div>
+
           <div className="h-3 w-full bg-gray-100 rounded-full overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-red-500 to-red-600 rounded-full"
-              style={{ width: `${user.experience ? (user.experience % 2000) / 20 : 70}%` }}
+              style={{
+                width: `${((user?.experience ?? 0) % 1000) / 10}%`,
+              }}
             ></div>
           </div>
+
           <p className="text-sm text-gray-500 mt-2">
-            Necesitas {user.experience ? 2000 - (user.experience % 2000) : 600} XP más para subir al siguiente nivel
+            Necesitas {1000 - ((user?.experience ?? 0) % 1000)} XP más para subir al siguiente nivel
           </p>
         </div>
       </div>
