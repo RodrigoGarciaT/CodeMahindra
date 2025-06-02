@@ -34,6 +34,8 @@ import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 import CommitFeedback from './pages/Code/Commits/CommitFeedback/Page';
+import CreateTeamPage from "@/pages/CreateTeamPage";
+import JoinTeamPage from "@/pages/JoinTeamPage";
 
 // 1. Layout que incluye la Navbar
 function LayoutConNavbar() {
@@ -81,8 +83,10 @@ function App() {
             <Route path="/Profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
             <Route path="/profile/view" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
             <Route path="/manage-purchase" element={<ProtectedRoute><PurchaseManager /></ProtectedRoute>} />
-
+            <Route path="/teams/create" element={<ProtectedRoute><CreateTeamPage /></ProtectedRoute>} />
+            <Route path="/teams/join" element={<ProtectedRoute><JoinTeamPage /></ProtectedRoute>} />
             <Route element={<ProtectedRoute><CodeLayout /></ProtectedRoute>}>
+
               <Route path="/CodeDashboard" element={<CodeDashboard />} />
               <Route path="/Commits" element={<Commits />} />
               <Route path="/PullRequests" element={<PullRequests />} />
