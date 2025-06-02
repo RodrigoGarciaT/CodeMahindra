@@ -205,20 +205,6 @@ function ProfileAndTeamPage() {
               </table>
             </div>
           </div>
-
-          <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
-            <h2 className="text-xl font-semibold mb-4">Progreso a lo largo del tiempo</h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={lineChartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Line type="monotone" dataKey="value" stroke="#8884d8" />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-
           <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
             <h2 className="text-xl font-semibold mb-4">Clasificación por dificultad</h2>
             {difficultyLoading ? (
