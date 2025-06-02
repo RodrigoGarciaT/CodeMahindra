@@ -33,11 +33,6 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
           alt={product.name}
           className="w-full h-48 object-cover"
         />
-        <div className="absolute top-2 right-2">
-          <button className="p-2 bg-white rounded-full shadow-md hover:bg-gray-100">
-            <Star className="w-5 h-5 text-yellow-500" />
-          </button>
-        </div>
       </div>
       <div className="p-4">
         <h3 className="text-xl font-semibold text-gray-800 mb-2">{product.name}</h3>
