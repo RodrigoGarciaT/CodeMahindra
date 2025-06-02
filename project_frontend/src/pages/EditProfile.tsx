@@ -6,6 +6,7 @@ import { jwtDecode } from "jwt-decode"
 import { ArrowLeft, User, Mail, Phone, Flag, Briefcase, Coins, Upload, Loader2, Check, X } from "lucide-react"
 import ReactCountryFlag from "react-country-flag";
 import axios from "axios"
+import CountryName from "./Home/CountryName"
 
 interface DecodedToken {
   firstName: string
@@ -423,12 +424,7 @@ const initials = user
                       </select>
                       {user.nationality && (
                         <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                          <ReactCountryFlag
-                            countryCode={user.nationality}
-                            svg
-                            style={{ width: "1.5em", height: "1.5em" }}
-                            title={user.nationality}
-                          />
+                          <CountryName code = {user.nationality} showCountryName = {false}/>
                           </div>
                         )} 
                     </div>
