@@ -3,6 +3,8 @@ from collections import defaultdict
 from datetime import datetime
 from dotenv import load_dotenv
 import os
+from fastapi import HTTPException
+from datetime import datetime
 
 load_dotenv()
 
@@ -125,3 +127,30 @@ async def get_pull_requests():
             })
 
     return pull_requests
+
+async def get_user_repos(github_token: str):
+    headers = {
+        "Authorization": f"Bearer {github_token}",
+        "Accept": "application/vnd.github.v3+json"
+    }
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get("https://api.github.com/user/repos?per_page=100", headers=headers)
+
+    if response.status_code != 200:
+        raise HTTPException(status_code=500, detail="Failed to fetch repositories from GitHub")
+
+    repos_data = response.json()
+
+    formatted_repos = []
+    for repo in repos_data:
+        formatted_repos.append({
+            "id": repo["id"],
+            "full_name": repo["full_name"],
+            "description": repo["description"] or "No description",
+            "language": repo["language"] or "Unknown",
+            "updated_at": datetime.strptime(repo["updated_at"], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d"),
+            "visibility": "private" if repo["private"] else "public"
+        })
+
+    return formatted_repos

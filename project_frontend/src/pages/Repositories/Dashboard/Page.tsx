@@ -18,7 +18,7 @@ const qualityData = [
   { name: "Día 7", value: 8 }
 ];
 
-export default function CodeDashboard() {
+export default function Dashboard() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {/* Métricas */}

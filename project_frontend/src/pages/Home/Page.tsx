@@ -162,7 +162,7 @@ const achievements: Achievement[] = [
   },
 ];
 
-function Dashboard() {
+function Home() {
   const navigate = useNavigate();
   const [user, setUser] = useState({
   photo: '',
@@ -476,4 +476,4 @@ const [selectedAchievement, setSelectedAchievement] = useState<Achievement | nul
 }
 
 
-export default Dashboard;
+export default Home;

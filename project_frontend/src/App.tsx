@@ -11,7 +11,7 @@ import ProblemList from './pages/ProblemList';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import TeamPage from './pages/TeamPage';
-import Dashboard from './pages/Home/Page';
+import Home from './pages/Home/Page';
 import LandingPage from './pages/LandingPage/Page';
 import { CartProvider } from './contexts/CartContext';
 import GoogleReg from './pages/GoogleReg';
@@ -24,13 +24,14 @@ import ManageUsers from './pages/ManageUsers';
 import ManageProblems from './pages/ManageProblems';
 import EditProfile from './pages/EditProfile';
 import PurchaseManager from './pages/PurchaseManager';
-import CodeLayout from './pages/Code/CodeLayout';
-import CodeDashboard from './pages/Code/CodeDashboard/Page';
-import Commits from './pages/Code/Commits/Page';
-import PullRequests from './pages/Code/PullRequests/Page';
-import RecommendedResources from './pages/Code/RecommendedResources/Page';
+import ReposLayout from './pages/Repositories/ReposLayout';
+import Dashboard from './pages/Repositories/Dashboard/Page';
+import Commits from './pages/Repositories/Commits/Page';
+import PullRequests from './pages/Repositories/PullRequests/Page';
+import RecommendedResources from './pages/Repositories/RecommendedResources/Page';
 import BotStore from './pages/Home/BotStore';
-import CommitFeedback from './pages/Code/Commits/CommitFeedback/Page';
+import CommitFeedback from './pages/Repositories/Commits/CommitFeedback/Page';
+import ReposListPage from './pages/Repositories/Page';
 
 // 1. Layout que incluye la Navbar
 function LayoutConNavbar() {
@@ -57,7 +58,7 @@ function App() {
           {/* 3. Ruta con Navbar */}
           <Route element={<LayoutConNavbar />}>
           
-            <Route path="/home" element={<Dashboard />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/manage-users" element={<ManageUsers />} />
             <Route path="/manage-problems" element={<ManageProblems />} />
@@ -71,19 +72,19 @@ function App() {
             <Route path="/store" element={<Store />} />
             <Route path="/store/manage" element={<StoreManagement />} />
             <Route path="/cart" element={<Cart />} />
-            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/team" element={<TeamPage />} />
             <Route path="/test" element={<ImageUploaderCloudinary />} />
             <Route path="/Profile" element={<ProfilePage />} />
             <Route path="/profile/view" element={<EditProfile />} />
             <Route path ='/manage-purchase' element = {<PurchaseManager/>} />
+            <Route path ='/repos' element = {<ReposListPage />} />
 
-            <Route element={<CodeLayout />}>
-              <Route path="/CodeDashboard" element={<CodeDashboard />} />
-              <Route path="/Commits" element={<Commits />} />
-              <Route path="/PullRequests" element={<PullRequests />} />
-              <Route path="/RecommendedResources" element={<RecommendedResources />} />
-              <Route path="/CommitFeedback" element={<CommitFeedback/>} />
+            <Route element={<ReposLayout />}>
+              <Route path="/repos/:repoFullName/Dashboard" element={<Dashboard />} />
+              <Route path="/repos/:repoFullName/Commits" element={<Commits />} />
+              <Route path="/repos/:repoFullName/PullRequests" element={<PullRequests />} />
+              <Route path="/repos/:repoFullName/RecommendedResources" element={<RecommendedResources />} />
+              <Route path="/repos/:repoFullName/commits/:sha/feedback" element={<CommitFeedback />} />
             </Route>
 
             <Route path="/bot-store" element={<BotStore />} />

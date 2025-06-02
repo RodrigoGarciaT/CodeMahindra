@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import {
-  Home, Code2, BookOpen, Trophy, ShoppingBag, Bell, ShoppingCart, ListTodo, Settings, Menu
+  Home, Code2, Trophy, ShoppingBag, Bell, ShoppingCart, ListTodo, Settings, Menu, GithubIcon
 } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import UserMenu from './UserMenu';
@@ -13,12 +13,12 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const navItems = [
-    { path: '/home', label: 'Inicio', icon: <Home className="h-4 w-4 mr-1" />, includes: ["/home", "/profile", "/team"] },
-    { path: '/problems', label: 'Problemas', icon: <BookOpen className="h-4 w-4 mr-1" />, includes: ["/problems", "/roadmap", "/problemList/problem"] },
-    { path: '/tasks', label: 'Tareas', icon: <ListTodo className="h-4 w-4 mr-1" /> },
-    { path: '/CodeDashboard', label: 'Código', icon: <Code2 className="h-4 w-4 mr-1" />, includes: ["/CodeDashboard", "/Commits", "/PullRequests", "/RecommendedResources"] },
+    { path: '/home', label: 'Home', icon: <Home className="h-4 w-4 mr-1" />, includes: ["/home", "/profile", "/team"] },
+    { path: '/problems', label: 'Problems', icon: <Code2 className="h-4 w-4 mr-1" />, includes: ["/problems", "/roadmap", "/problemList/problem"] },
+    { path: '/tasks', label: 'Tasks', icon: <ListTodo className="h-4 w-4 mr-1" /> },
+    { path: '/repos', label: 'Repositories', icon: <GithubIcon className="h-4 w-4 mr-1" />, includes: ["/repos", "/Dashboard", "/Commits", "/PullRequests", "/RecommendedResources"] },
     { path: '/ranking', label: 'Ranking', icon: <Trophy className="h-4 w-4 mr-1" /> },
-    { path: '/store', label: 'Tienda', icon: <ShoppingBag className="h-4 w-4 mr-1" /> },
+    { path: '/store', label: 'Store', icon: <ShoppingBag className="h-4 w-4 mr-1" /> },
     { path: '/admin', label: 'Admin', icon: <Settings className="h-4 w-4 mr-1" /> },
   ];
 

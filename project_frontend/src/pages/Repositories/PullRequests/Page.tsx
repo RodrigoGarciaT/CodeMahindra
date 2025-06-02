@@ -9,6 +9,8 @@ import {
   GitCommitHorizontal,
   CheckIcon
 } from "lucide-react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 
 interface PullRequest {
   title: string;
@@ -61,22 +63,38 @@ function PullRequestItem({ pr }: { pr: PullRequest }) {
 }
 
 export default function PullRequests() {
+  const { repoFullName } = useParams();
   const [pullRequests, setPullRequests] = useState<PullRequest[]>([]);
   const [activeTab, setActiveTab] = useState<"open" | "closed">("open");
+  
+  if (!repoFullName) return null;
 
   useEffect(() => {
     const fetchPRs = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:8000/pull-requests");
-        const data = await res.json();
-        setPullRequests(data);
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.error("❌ No token found in localStorage");
+          return;
+        }
+
+        const res = await axios.get("http://127.0.0.1:8000/github/pull-requests", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          params: {
+            repo: repoFullName,
+          },
+        });
+
+        setPullRequests(res.data);
       } catch (error) {
-        console.error("Error fetching pull requests:", error);
+        console.error("❌ Error fetching pull requests:", error);
       }
     };
 
-    fetchPRs();
-  }, []);
+    if (repoFullName) fetchPRs();
+  }, [repoFullName]);
 
   const openPRs = pullRequests.filter(pr => pr.status === "open");
   const closedPRs = pullRequests.filter(pr => pr.status === "closed" || pr.status === "merged");

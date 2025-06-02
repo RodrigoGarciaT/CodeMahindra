@@ -1,7 +1,7 @@
 import LeftSidebar from "./LeftSideBar";
 import { Outlet } from "react-router-dom";
 
-export default function AppLayout() {
+export default function ReposLayout() {
   return (
     <>
       {/* Sidebar fijo */}

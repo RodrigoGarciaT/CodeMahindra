@@ -261,7 +261,7 @@ function BotStore() {
     <div className="min-h-screen bg-[#363B41]">
       <div className="max-w-7xl mx-auto p-6">
         <button
-          onClick={() => navigate('/dashboard')}
+          onClick={() => navigate('/home')}
           className="flex items-center gap-2 bg-white text-black hover:bg-gray-200 p-2 rounded-md mb-6 transition-colors duration-300"
         >
           <ArrowLeft className="w-5 h-5" />
