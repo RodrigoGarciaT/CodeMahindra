@@ -1,10 +1,9 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, ResponsiveContainer } from 'recharts';
 import { useParams } from "react-router-dom";
 import { useTeamMembers } from "../hooks/useTeamMembers";
-
+import { useState, useEffect } from 'react';
 
 
 const lineChartData = [
@@ -40,12 +39,58 @@ function ProfileAndTeamPage() {
     profilePicture?: string;
     coins?: number;
     level?: number;
+    experience?: number;
   };
 
   const { members, loading } = useTeamMembers(teamId || "") as {
     members: TeamMember[];
     loading: boolean;
   };
+
+  const [teamInfo, setTeamInfo] = useState<{ name: string; level: number; experience: number; code: string; } | null>(null);
+  
+  useEffect(() => {
+    const fetchTeamInfo = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/teams/${teamId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!res.ok) throw new Error("Error al cargar la información del equipo");
+        const data = await res.json();
+        setTeamInfo(data);
+      } catch (err) {
+        console.error("Error obteniendo el equipo:", err);
+      }
+    };
+
+    if (teamId) {
+      fetchTeamInfo();
+    }
+  }, [teamId]);
+
+  const leaveTeam = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/teams/${teamId}/leave`, {
+        method: "POST", // o "DELETE" dependiendo de tu backend
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) throw new Error("No se pudo salir del equipo");
+
+      // Redireccionar después de salir
+      navigate("/home");
+    } catch (error) {
+      console.error("Error al salir del equipo:", error);
+      alert("Hubo un error al intentar salir del equipo.");
+    }
+  };
+
 
   console.log("Renderizando TeamPage", { teamId, members });
 
@@ -63,19 +108,26 @@ function ProfileAndTeamPage() {
 
         <div className="mb-8">
           {/* Cambié el color de la palabra "Perfil" a blanco */}
-          <h1 className="text-2xl font-bold mb-6 text-white">Perfil</h1> {/* Se puede cambiar a "Equipo" en la otra pantalla */}
+          <h1 className="text-2xl font-bold mb-6 text-white">Equipo</h1> {/* Se puede cambiar a "Equipo" en la otra pantalla */}
           
           {/* Recuadro de equipo */}
           <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
-            <h2 className="text-xl font-semibold mb-4">Los fieles y Edsel</h2>
+            <h2 className="text-xl font-semibold mb-4">{teamInfo?.name ?? "Nombre del equipo"}</h2>
+            {teamInfo?.code && (
+                <div className="text-sm text-gray-500 mb-2">
+                  Código del equipo: <span className="font-mono bg-gray-100 px-2 py-1 rounded">{teamInfo.code}</span>
+                </div>
+              )}
             <div className="mb-6">
               <div className="flex justify-between text-sm mb-2">
-                <span>Nivel 5</span>
-                <span>9462 exp</span>
+                <span>Nivel del equipo: {teamInfo?.level ?? "?"}</span>
+                <span>Experiencia del equipo: {teamInfo?.experience ?? "?"} XP</span>
               </div>
-              <div className="w-full bg-gray-100 rounded-full h-2">
-                <div className="bg-red-500 h-2 rounded-full w-3/4"></div>
-              </div>
+              <div className="bg-red-500 h-2 rounded-full"
+                  style={{
+                    width: teamInfo ? `${(teamInfo.experience % 1000) / 10}%` : '0%', // Ajusta esta fórmula si necesitas otra lógica
+                  }}
+                ></div>
             </div>
 
             {/* Tabla de equipo */}
@@ -84,7 +136,7 @@ function ProfileAndTeamPage() {
                 <thead className="bg-gray-200">
                   <tr>
                     <th className="px-4 py-2 text-left">Miembro</th>
-                    <th className="px-4 py-2 text-left">Puntos</th>
+                    <th className="px-4 py-2 text-left">XP</th>
                     <th className="px-4 py-2 text-left">Nivel</th>
                   </tr>
                 </thead>
@@ -106,7 +158,7 @@ function ProfileAndTeamPage() {
                           )}
                           {member.firstName} {member.lastName}
                         </td>
-                        <td className="border px-4 py-2">{member.coins ?? 0}</td>
+                        <td className="border px-4 py-2">{member.experience ?? 0}</td>
                         <td className="border px-4 py-2">Nivel {member.level ?? 1}</td>
                       </tr>
                     ))
@@ -177,7 +229,20 @@ function ProfileAndTeamPage() {
               </div>
             </div>
           </div>
+          <div className="flex justify-center mt-10">
+          <button
+            onClick={() => {
+              const confirmLeave = window.confirm("¿Estás seguro de que quieres salir del equipo?");
+              if (confirmLeave) {
+                leaveTeam();
+              }
+            }}
+            className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded"
+          >
+            Salir del equipo
+          </button>
 
+        </div>
         </div>
       </div>
     </div>
@@ -185,3 +250,5 @@ function ProfileAndTeamPage() {
 }
 
 export default ProfileAndTeamPage;
+
+
