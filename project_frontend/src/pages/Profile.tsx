@@ -191,7 +191,9 @@ export default function ProfilePage() {
                         <div className="flex items-center">
                         <h2 className="text-lg font-bold text-black">{user ? `${user.firstName} ${user.lastName}` : "Cargando..."}</h2>
                           {user?.nationality ? (
-                        <CountryName code={user.nationality} />
+                        <div className="pl-4">
+                          <CountryName code={user.nationality} />
+                        </div>
                       ) : (
                         <span>No especificado</span>
                       )}
