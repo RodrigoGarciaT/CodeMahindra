@@ -33,9 +33,7 @@ const ProblemList: React.FC = () => {
         setFilteredProblems(problems);
         setTotalProblems(problems.length);
         setActiveProblems(problems.filter((problem: ProblemListData) => 
-          problem.expirationDate &&
-          problem.expirationDate !== null &&
-          isAfter(new Date(problem.expirationDate), new Date())
+          problem.was_graded == false
         ));
       } catch (error) {
         console.error('Error fetching problems:', error);

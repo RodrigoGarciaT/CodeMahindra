@@ -45,5 +45,6 @@ export interface ProblemListData {
   acceptance: number;  // The acceptance rate for the problem
   name: string;  // The title of the problem
   expirationDate: string; // when it expires
+  was_graded: boolean;
 }
 
