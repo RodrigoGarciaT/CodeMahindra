@@ -6,11 +6,12 @@ import httpx
 from collections import defaultdict
 from datetime import datetime
 
-def get_user_github_credentials(email: str):
+def get_user_github_credentials(user_id: int):
     try:
         conn = get_connection()
         cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        cur.execute('SELECT "github_token", "github_username" FROM "Employee" WHERE "email" = %s', (email,))
+
+        cur.execute('SELECT "github_token", "github_username" FROM "Employee" WHERE "id" = %s', (user_id,))
         row = cur.fetchone()
 
         if not row:
@@ -323,3 +324,33 @@ async def get_commit_feedback(token: str, repo: str, sha: str):
         "files": files_data,
         "file_tree": file_tree
     }
+
+async def fetch_github_branches(token: str, repo: str):
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/vnd.github.v3+json"
+    }
+
+    async with httpx.AsyncClient() as client:
+        repo_url = f"https://api.github.com/repos/{repo}"
+        repo_response = await client.get(repo_url, headers=headers)
+        if repo_response.status_code != 200:
+            raise HTTPException(status_code=repo_response.status_code, detail="Error fetching repo info")
+        repo_data = repo_response.json()
+
+        branches_url = f"https://api.github.com/repos/{repo}/branches"
+        branches_response = await client.get(branches_url, headers=headers)
+        if branches_response.status_code != 200:
+            raise HTTPException(status_code=branches_response.status_code, detail="Error fetching branches")
+        branches_data = branches_response.json()
+        branches = [b["name"] for b in branches_data]
+
+        default_branch = (
+            repo_data.get("default_branch") or
+            (branches[0] if branches else "main")
+        )
+
+        return {
+            "branches": branches,
+            "default_branch": default_branch
+        }

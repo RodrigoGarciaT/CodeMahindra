@@ -16,7 +16,7 @@ const navItems = [
 export default function LeftSidebar() {
   const { repoFullName } = useParams();
 
-  if (!repoFullName) return null; // Por seguridad
+  if (!repoFullName) return null;
 
   return (
     <div className="fixed top-[60px] left-0 w-16 h-[calc(100vh-60px)] bg-gray-900 text-white border-r border-red-700 z-40 flex flex-col items-center py-6 space-y-6 shadow-md">

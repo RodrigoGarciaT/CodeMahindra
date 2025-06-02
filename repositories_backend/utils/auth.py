@@ -21,3 +21,17 @@ def get_email_from_jwt(authorization: str = Header(...)):
         return email
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
+
+def get_user_id_from_jwt(authorization: str = Header(...)) -> str:
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid Authorization header")
+
+    token = authorization.replace("Bearer ", "")
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = payload.get("sub")
+        if not user_id:
+            raise HTTPException(status_code=401, detail="Token missing subject")
+        return user_id
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")

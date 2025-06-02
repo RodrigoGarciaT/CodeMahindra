@@ -38,18 +38,42 @@ function getRetroBadge(type: string) {
 
 export default function Commits() {
   const { repoFullName } = useParams();
-  const [branch, setBranch] = useState("main");
+  const [branch, setBranch] = useState<string | null>(null);
   const [commitsGrouped, setCommitsGrouped] = useState<CommitsGrouped>({});
   const [showDropdown, setShowDropdown] = useState(false);
   const [search, setSearch] = useState("");
-  const [branches] = useState(["main", "Paradise"]);
+  const [branches, setBranches] = useState<string[]>([]);
 
   if (!repoFullName) return null;
 
   useEffect(() => {
+    const fetchBranches = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const res = await axios.get("http://127.0.0.1:8000/github/branches", {
+          params: { repo: repoFullName },
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        const { branches, default_branch } = res.data;
+        setBranches(branches);
+        setBranch(default_branch);
+      } catch (err) {
+        console.error("❌ Error fetching branches:", err);
+        setBranches(["main"]);
+        setBranch("main");
+      }
+    };
+
+    if (repoFullName) fetchBranches();
+  }, [repoFullName]);
+
+  useEffect(() => {
     const fetchCommits = async () => {
       try {
-        const token = localStorage.getItem("token"); // o de donde lo estés guardando
+        const token = localStorage.getItem("token");
         if (!token) {
           console.error("❌ No token found in localStorage");
           return;
@@ -71,7 +95,7 @@ export default function Commits() {
       }
     };
 
-    if (repoFullName) fetchCommits();
+    if (repoFullName && branch) fetchCommits();
   }, [repoFullName, branch]);
 
   return (
@@ -81,11 +105,14 @@ export default function Commits() {
       <div className="flex gap-3 mb-6">
         <div className="relative">
           <button
+            disabled={!branch}
             onClick={() => setShowDropdown(!showDropdown)}
-            className="bg-[#1c2128] text-sm px-4 py-2 rounded-md border border-[#30363d] flex items-center gap-2"
+            className={`text-sm px-4 py-2 rounded-md border flex items-center gap-2
+              ${!branch ? "opacity-50 cursor-not-allowed" : "hover:bg-[#21262d]"}
+              bg-[#1c2128] border-[#30363d] transition-colors`}
           >
             <GitBranch size={16} />
-            {branch}
+            {branch ? branch : <span className="italic text-gray-200">Cargando...</span>}
             <span className="text-gray-400">▼</span>
           </button>
 
