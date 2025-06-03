@@ -517,12 +517,12 @@ const [selectedAchievement, setSelectedAchievement] = useState<Achievement | nul
 
                   {/* Columna 3: Nivel */}
                   <div className="w-1/6 flex items-center gap-1 justify-center">
-                    <span className="font-medium">Nivel {member.level ?? 1}</span>
+                    <span className="font-medium">Nivel {Math.floor((member.experience ?? 0) / 1000)}</span>
                   </div>
 
                   {/* Columna 4: Exp */}
                   <div className="w-1/6 text-right text-gray-500">
-                    {member.coins ?? 0} exp
+                    {member.experience ?? 0} exp
                   </div>
                 </div>
               ))}
