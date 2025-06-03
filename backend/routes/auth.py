@@ -260,7 +260,7 @@ def github_callback(code: str, db: Session = Depends(get_db)):
             profilePicture=user_data.get("avatar_url"),
             github_username=github_username,
         )
-        user = create_employee(new_user, db)
+        user = create_employee(db, new_user)
 
     # Generar JWT con los datos del usuario
     token = create_access_token(data={
