@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ChevronRight, Check, Zap } from 'lucide-react';
 import { motion, useAnimation } from 'framer-motion';
 import Toast from '@/components/Toast';
+
 export interface Bot {
   id: string;
   name: string;
@@ -33,12 +34,11 @@ function BotStore() {
   const [bots, setBots] = useState<Bot[]>([]);
   const [selectedBot, setSelectedBot] = useState<Bot | null>(null);
   const [isPurchasing, setIsPurchasing] = useState(false);
-  const [purchaseError, setPurchaseError] = useState<string | null>(null);
-  const [purchaseSuccess, setPurchaseSuccess] = useState<string | null>(null);
-  const selectedBotControls = useAnimation();
+  const [isEquipping, setIsEquipping] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastSuccess, setToastSuccess] = useState(false);
+  const selectedBotControls = useAnimation();
 
   useEffect(() => {
     const fetchBots = async () => {
@@ -58,13 +58,10 @@ function BotStore() {
   const handlePurchase = async (bot: Bot) => {
     if (bot.owns) {
       showToastMessage("Ya posees este bot", false);
-      setPurchaseError("Ya posees este bot");
       return;
     }
 
     setIsPurchasing(true);
-    setPurchaseError(null);
-    setPurchaseSuccess(null);
 
     try {
       const employeeId = localStorage.getItem("user_id");
@@ -93,13 +90,51 @@ function BotStore() {
       }
 
       showToastMessage("¡Bot comprado con éxito!", true);
-      setPurchaseSuccess("¡Bot comprado con éxito!");
     } catch (error) {
       console.error('Purchase error:', error);
       showToastMessage(error instanceof Error ? error.message : 'Failed to purchase bot', false);
-      setPurchaseError(error instanceof Error ? error.message : 'Failed to purchase bot');
     } finally {
       setIsPurchasing(false);
+    }
+  };
+
+  const handleEquip = async (bot: Bot) => {
+    if (!bot.owns) return;
+    if (bot.isEquipped) return;
+
+    setIsEquipping(true);
+
+    try {
+      const employeeId = localStorage.getItem("user_id");
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/employee-bots/${employeeId}/${bot.id}/equip`,
+        { method: 'POST' }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to equip bot');
+      }
+
+      // Update local state to reflect equip changes
+      setBots(prevBots => prevBots.map(b => ({
+        ...b,
+        isEquipped: b.id === bot.id // Equip selected bot, unequip others
+      })));
+
+      if (selectedBot) {
+        setSelectedBot({
+          ...selectedBot,
+          isEquipped: selectedBot.id === bot.id
+        });
+      }
+
+      showToastMessage(`¡Bot ${bot.name} equipado!`, true);
+    } catch (error) {
+      console.error('Equip error:', error);
+      showToastMessage(error instanceof Error ? error.message : 'Failed to equip bot', false);
+    } finally {
+      setIsEquipping(false);
     }
   };
 
@@ -107,13 +142,12 @@ function BotStore() {
     setToastMessage(message);
     setToastSuccess(success);
     setShowToast(true);
-    setTimeout(() => setShowToast(false), 5000); // Auto-hide after 5 seconds
+    setTimeout(() => setShowToast(false), 5000);
   };
 
   const closeToast = () => {
     setShowToast(false);
   };
-
 
   useEffect(() => {
     if (selectedBot) {
@@ -125,13 +159,13 @@ function BotStore() {
 
   return (
     <div className="min-h-screen bg-[#363B41]">
-      {/* Add the Toast component near the top of your return */}
       <Toast 
         show={showToast} 
         success={toastSuccess} 
         msg={toastMessage} 
         onClose={closeToast} 
       />
+
       <div className="max-w-7xl mx-auto p-6">
         <button
           onClick={() => navigate('/dashboard')}
@@ -154,8 +188,12 @@ function BotStore() {
                   variants={botCardVariants}
                   onClick={() => setSelectedBot(bot)}
                   className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all duration-300 ${
-                    selectedBot?.id === bot.id ? 'border-blue-500 shadow-lg shadow-blue-500/50' : 'border-gray-700'
-                  } ${bot.owns ? 'border-green-500' : ''}`}
+                    selectedBot?.id === bot.id 
+                      ? 'border-blue-500 shadow-lg shadow-blue-500/50' 
+                      : 'border-gray-700'
+                  } ${bot.owns ? 'border-green-500' : ''} ${
+                    bot.isEquipped ? 'border-yellow-400 shadow-lg shadow-yellow-400/50' : ''
+                  }`}
                 >
                   {bot.owns && (
                     <div className="absolute top-2 right-2 bg-green-500 rounded-full p-1 z-10">
@@ -170,7 +208,7 @@ function BotStore() {
                   <motion.img
                     src={bot.image}
                     alt={bot.name}
-                    className={`w-full h-full object-cover ${bot.owns ? 'opacity-80' : ''}`}
+                    className={`w-full h-full object-cover ${bot.owns ? '' : 'grayscale'}`}
                     variants={botImageVariants}
                     whileHover="hover"
                   />
@@ -202,6 +240,12 @@ function BotStore() {
                         <span>Ya posees este bot</span>
                       </div>
                     )}
+                    {selectedBot.isEquipped && (
+                      <div className="flex items-center gap-1 mt-1 text-yellow-400 text-sm">
+                        <Zap className="w-4 h-4" />
+                        <span>Actualmente equipado</span>
+                      </div>
+                    )}
                   </div>
                   <span className="text-2xl font-bold text-green-400">{selectedBot.price} puntos</span>
                 </div>
@@ -211,9 +255,12 @@ function BotStore() {
                     <motion.img
                       src={selectedBot.image}
                       alt={selectedBot.name}
-                      className="w-full h-full object-cover"
+                      className={`w-full h-full object-cover ${selectedBot.owns ? '' : 'grayscale'}`}
                       whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
                     />
+                    {selectedBot.isEquipped && (
+                      <div className="absolute inset-0 bg-yellow-400/20 border-2 border-yellow-400 rounded-lg pointer-events-none" />
+                    )}
                   </div>
 
                   <div className="flex-1">
@@ -221,24 +268,47 @@ function BotStore() {
                     <div className="bg-gradient-to-r from-blue-500/50 to-purple-500/50 p-4 rounded-lg text-white">
                       <p>{selectedBot.description}</p>
                     </div>
-                    <motion.button
-                      onClick={() => handlePurchase(selectedBot)}
-                      disabled={isPurchasing || selectedBot.owns}
-                      className={`mt-6 w-full text-white py-3 px-6 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-lg ${
-                        isPurchasing 
-                          ? 'bg-gray-500 cursor-not-allowed' 
-                          : selectedBot.owns
-                            ? 'bg-blue-500 cursor-default'
-                            : 'bg-green-500 hover:bg-green-600 hover:shadow-green-500/50'
-                      }`}
-                      whileHover={!isPurchasing && !selectedBot.owns ? { scale: 1.05 } : {}}
-                    >
-                      {isPurchasing 
-                        ? 'Procesando...' 
-                        : selectedBot.owns 
-                          ? 'Bot adquirido' 
-                          : 'Comprar Bot'}
-                    </motion.button>
+
+                    <div className="flex flex-col gap-4 mt-6">
+                      <motion.button
+                        onClick={() => handlePurchase(selectedBot)}
+                        disabled={isPurchasing || selectedBot.owns}
+                        className={`w-full text-white py-3 px-6 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-lg ${
+                          isPurchasing 
+                            ? 'bg-gray-500 cursor-not-allowed' 
+                            : selectedBot.owns
+                              ? 'bg-blue-500 cursor-default'
+                              : 'bg-green-500 hover:bg-green-600 hover:shadow-green-500/50'
+                        }`}
+                        whileHover={!isPurchasing && !selectedBot.owns ? { scale: 1.05 } : {}}
+                      >
+                        {isPurchasing 
+                          ? 'Procesando...' 
+                          : selectedBot.owns 
+                            ? 'Bot adquirido' 
+                            : 'Comprar Bot'}
+                      </motion.button>
+                      {selectedBot.owns && (
+                        <motion.button
+                          onClick={() => handleEquip(selectedBot)}
+                          disabled={isEquipping || selectedBot.isEquipped}
+                          className={`w-full text-white py-3 px-6 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-lg ${
+                            isEquipping
+                              ? 'bg-gray-500 cursor-not-allowed'
+                              : selectedBot.isEquipped
+                                ? 'bg-yellow-500 cursor-default'
+                                : 'bg-yellow-400 hover:bg-yellow-500 hover:shadow-yellow-400/50'
+                          }`}
+                          whileHover={!isEquipping && !selectedBot.isEquipped ? { scale: 1.05 } : {}}
+                        >
+                          {isEquipping
+                            ? 'Procesando...'
+                            : selectedBot.isEquipped
+                              ? 'Equipado'
+                              : 'Equipar Bot'}
+                        </motion.button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </>

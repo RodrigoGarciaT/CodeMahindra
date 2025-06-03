@@ -114,3 +114,33 @@ def buy_bots(employee_id: UUID, bots_to_buy: List[BotPurchase], db: Session) -> 
     db.commit()
 
     return list(bots)
+
+
+class BotOut(BaseModel):
+    id: int
+    name: str
+    description: str
+    price: int
+    image: str
+    owns: bool = False
+    isEquipped: bool = False
+
+    class Config:
+        orm_mode = True
+        
+def get_equipped_bot(employee_id: UUID, db: Session) -> Bot:
+    equipped_bot = (
+        db.query(Bot)
+        .join(EmployeeBot, EmployeeBot.bot_id == Bot.id)
+        .filter(EmployeeBot.employee_id == employee_id)
+        .filter(EmployeeBot.isEquipped == True)
+        .first()
+    )
+    
+    if not equipped_bot:
+        raise HTTPException(
+            status_code=404, 
+            detail="No bot currently equipped by this employee"
+        )
+    
+    return equipped_bot

@@ -176,6 +176,29 @@ const [user, setUser] = useState({
   team_id: null,
    
 });
+  const [equippedBot, setEquippedBot] = useState<BotType | null>(null);
+  useEffect(() => {
+    const fetchEquippedBot = async () => {
+      try {
+        const employeeId = localStorage.getItem("user_id");
+        if (!employeeId) return;
+        
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/bots/employee/${employeeId}/equipped`
+        );
+        
+        if (response.ok) {
+          const data = await response.json();
+          setEquippedBot(data);
+        }
+      } catch (error) {
+        console.error("Error fetching equipped bot:", error);
+      }
+    };
+  
+    fetchEquippedBot();
+  }, []);
+
 
 
   useEffect(() => {
@@ -394,48 +417,50 @@ const [selectedAchievement, setSelectedAchievement] = useState<Achievement | nul
           </div>
         </div>
 
-        {/* Bot Section */}
-        <div
-          className="bg-white rounded-lg p-6 shadow-sm cursor-pointer hover:shadow-lg transition-shadow"
-          onClick={() => navigate('/bot-store')}
-        >
-          <div className="text-center">
-            <h2 className="text-xl font-bold mb-4">
-              {purchasedBot ? purchasedBot.name : 'Bot Mahindra'}
-            </h2>
-            {purchasedBot ? (
-              <div>
-                <img
-                  src={purchasedBot.imageUrl}
-                  alt={purchasedBot.name}
-                  className="w-32 h-32 mx-auto object-cover rounded-lg mb-4"
-                />
-                <div className="flex justify-center gap-1 mb-2">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-4 h-4 ${
-                        i < purchasedBot.proficiency ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
-                      }`}
-                    />
-                  ))}
-                </div>
-                <div className="space-y-2">
-                  {purchasedBot.abilities.slice(0, 2).map((ability, index) => (
-                    <div
-                      key={index}
-                      className="bg-gray-100 p-2 rounded text-sm"
-                    >
-                      {ability}
-                    </div>
-                  ))}
-                </div>
+      {/* Bot Section */}
+      <div
+        className="bg-white rounded-lg p-6 shadow-sm cursor-pointer hover:shadow-lg transition-shadow"
+        onClick={() => navigate('/bot-store')}
+      >
+        <div className="text-center">
+          <h2 className="text-xl font-bold mb-4">
+            {equippedBot ? equippedBot.name : purchasedBot ? purchasedBot.name : 'Bot Mahindra'}
+          </h2>
+
+          {equippedBot ? (
+            <div>
+              <img
+                src={equippedBot.image}
+                alt={equippedBot.name}
+                className="w-32 h-32 mx-auto object-cover rounded-lg mb-4"
+              />
+              <div className="bg-gray-100 p-2 rounded text-sm mb-2">
+                {equippedBot.description}
               </div>
-            ) : (
-              <Bot className="w-32 h-32 mx-auto text-gray-400" />
-            )}
-          </div>
+              <div className="text-xs text-green-600 font-medium">
+                EQUIPADO
+              </div>
+            </div>
+          ) : purchasedBot ? (
+            <div>
+              <img
+                src={purchasedBot.image}
+                alt={purchasedBot.name}
+                className="w-32 h-32 mx-auto object-cover rounded-lg mb-4"
+              />
+              <div className="bg-gray-100 p-2 rounded text-sm mb-2">
+                {purchasedBot.description}
+              </div>
+              <div className="text-xs text-gray-500">
+                No equipado
+              </div>
+            </div>
+          ) : (
+            <Bot className="w-32 h-32 mx-auto text-gray-400" />
+          )}
         </div>
+      </div>
+
 
 
       {/* Team Section */}

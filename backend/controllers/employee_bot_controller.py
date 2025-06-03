@@ -52,3 +52,24 @@ def delete_employee_bot(employee_id: UUID, bot_id: int, db: Session):
         raise HTTPException(status_code=404, detail="Employee-Bot not found")
     db.delete(eb)
     db.commit()
+
+def equip_employee_bot(employee_id: UUID, bot_id: int, db: Session) -> EmployeeBot:
+    # First unequip any currently equipped bot
+    db.query(EmployeeBot).filter(
+        EmployeeBot.employee_id == employee_id,
+        EmployeeBot.isEquipped == True
+    ).update({"isEquipped": False})
+    
+    # Now equip the new bot
+    eb = db.query(EmployeeBot).filter(
+        EmployeeBot.employee_id == employee_id,
+        EmployeeBot.bot_id == bot_id
+    ).first()
+    
+    if not eb:
+        raise HTTPException(status_code=404, detail="Employee-Bot not found")
+    
+    eb.isEquipped = True
+    db.commit()
+    db.refresh(eb)
+    return eb

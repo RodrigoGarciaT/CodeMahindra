@@ -13,7 +13,8 @@ from controllers.bot_controller import (
     create_bot,
     update_bot,
     delete_bot,
-    buy_bots
+    buy_bots,
+    get_equipped_bot
 )
 from schemas.bot import BotCreate, BotUpdate, BotOut
 
@@ -83,3 +84,14 @@ def list_bots_with_employee_status(
         })
     
     return enhanced_bots
+
+@router.get("/employee/{employee_id}/equipped", response_model=BotOut)
+def get_equipped_bot_for_employee(
+    employee_id: UUID,
+    db: Session = Depends(get_db)
+):
+    """
+    Get the currently equipped bot for a specific employee.
+    Returns 404 if no bot is currently equipped.
+    """
+    return get_equipped_bot(employee_id, db)
