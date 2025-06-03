@@ -333,12 +333,13 @@ async def get_test_case_results(submission: Submission, db: Session) -> List[Tes
             code=submission.source_code,
             executionTime=max_execution_time,
             memory=max_memory,
-            inTeam=False,
+            inTeam=submission.inTeam,
             language=submission.language,
             testCasesPassed=passed_count
         ),
         db
     )
+    print("this is the solution team: ", submission.inTeam)
     
     # 6. Update problem statistics
     problem = db.query(Problem).filter(Problem.id == submission.problem_id).first()

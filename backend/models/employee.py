@@ -14,7 +14,7 @@ class Employee(Base):
         default='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkshh0IMgSA8yw_1JFALVsXFojVdR88C05Fw&s'
     )
     nationality = Column(String(255))
-    experience = Column(Integer)
+    experience = Column(Integer, default=0)
     level = Column(Integer)
     firstName = Column(String(255))
     lastName = Column(String(255))
