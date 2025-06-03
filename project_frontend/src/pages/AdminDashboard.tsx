@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Store, PlusCircle, Users, BookOpen } from 'lucide-react';
+import DifficultyBarChart from '@/components/DifficultyBarChart';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -117,15 +118,7 @@ const AdminDashboard = () => {
               </div>
             </div>
           </div>
-
-          <div className="bg-gray-800 rounded-lg p-6">
-            <h3 className="text-lg font-semibold mb-4">Recent Activity</h3>
-            <div className="space-y-2">
-              <div className="text-sm text-gray-300">New problem created</div>
-              <div className="text-sm text-gray-300">User report submitted</div>
-              <div className="text-sm text-gray-300">Store item updated</div>
-            </div>
-          </div>
+          <DifficultyBarChart />
 
           <div className="bg-gray-800 rounded-lg p-6">
             <h3 className="text-lg font-semibold mb-4">System Status</h3>

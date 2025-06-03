@@ -57,6 +57,24 @@ def get_system_status(db: Session = Depends(get_db)):
         "api": "Healthy",
     }
 
+@router.get("/difficulty-stats")
+def get_difficulty_stats(db: Session = Depends(get_db)):
+    # Query to count the number of problems solved by difficulty
+    results = (
+        db.query(Problem.difficulty, func.count(Problem.id))
+        .join(Problem.employees)  # Correct relationship name
+        .group_by(Problem.difficulty)
+        .all()
+    )
+
+    # Initialize counts
+    difficulty_counts = {"Easy": 0, "Medium": 0, "Hard": 0}
+
+    # Populate counts from query results
+    for difficulty, count in results:
+        difficulty_counts[difficulty] = count
+
+    return difficulty_counts
     
 @router.get("/", response_model=List[EmployeeOut])
 def list_employees(db: Session = Depends(get_db)):
