@@ -1,7 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from typing import List
+from sqlalchemy import func, text
 from sqlalchemy.orm import Session
 from uuid import UUID
+from models.product import Product
+from models.bot import Bot
+from models.problem import Problem
 from database import get_db
 
 
@@ -24,6 +28,36 @@ router = APIRouter(prefix="/employees", tags=["Employees"])
 
 # --- CRUD Endpoints ---
 
+@router.get("/platform-statistics")
+def get_platform_statistics(db: Session = Depends(get_db)):
+    total_users = db.query(Employee).count()
+    active_problems = db.query(Problem).filter(Problem.was_graded == False).count()
+    store_items = db.query(Product).count()
+    total_submissions = db.query(func.sum(Problem.total_submissions)).scalar() or 0
+
+    return {
+        "totalUsers": total_users,
+        "activeProblems": active_problems,
+        "storeItems": store_items,
+        "totalSubmissions": total_submissions
+    }
+    
+@router.get("/system-status", summary="Returns system health status")
+def get_system_status(db: Session = Depends(get_db)):
+    try:
+        db.execute(text("SELECT 1"))
+        db_status = "Connected"
+    except Exception as e:
+        print("Database health check failed:", str(e))
+        db_status = "Disconnected"
+
+    return {
+        "system_status": "All systems operational" if db_status == "Connected" else "Degraded",
+        "database": db_status,
+        "api": "Healthy",
+    }
+
+    
 @router.get("/", response_model=List[EmployeeOut])
 def list_employees(db: Session = Depends(get_db)):
     return get_all_employees(db)
@@ -81,4 +115,5 @@ def get_employees_by_team(team_id: int, db: Session = Depends(get_db)):
     if not employees:
         raise HTTPException(status_code=404, detail="No employees found for this team")
     return employees
+
 

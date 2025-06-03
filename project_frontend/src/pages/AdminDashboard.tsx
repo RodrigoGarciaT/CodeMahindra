@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Store, PlusCircle, Users, BookOpen } from 'lucide-react';
 
@@ -42,6 +43,29 @@ const AdminDashboard = () => {
       color: 'bg-red-500',
     }
   ];
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    activeProblems: 0,
+    storeItems: 0,
+    totalSubmissions: 0,
+  });
+
+  const [systemStatus, setSystemStatus] = useState({
+    system_status: '',
+    database: '',
+    api: '',
+  });
+  
+  useEffect(() => {
+    axios.get(`${import.meta.env.VITE_BACKEND_URL}/employees/platform-statistics`)
+      .then((res) => setStats(res.data))
+      .catch((err) => console.error('Failed to fetch stats:', err));
+  
+    axios.get(`${import.meta.env.VITE_BACKEND_URL}/employees/system-status`)
+      .then((res) => setSystemStatus(res.data))
+      .catch((err) => console.error('Failed to fetch system status:', err));
+  }, []);
+
 
   return (
     <div className="min-h-screen bg-[#1e1e1e] text-white p-6">
@@ -77,15 +101,19 @@ const AdminDashboard = () => {
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <span>Total Users</span>
-                <span className="text-blue-400">1,234</span>
+                <span className="text-blue-400">{stats.totalUsers}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Active Problems</span>
-                <span className="text-green-400">89</span>
+                <span className="text-green-400">{stats.activeProblems}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Store Items</span>
-                <span className="text-purple-400">45</span>
+                <span className="text-purple-400">{stats.storeItems}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span>Total Submissions</span>
+                <span className="text-yellow-400">{stats.totalSubmissions}</span>
               </div>
             </div>
           </div>
@@ -103,19 +131,20 @@ const AdminDashboard = () => {
             <h3 className="text-lg font-semibold mb-4">System Status</h3>
             <div className="space-y-4">
               <div className="flex items-center">
-                <div className="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
-                <span>All systems operational</span>
+                <div className={`w-2 h-2 rounded-full ${systemStatus.system_status === 'All systems operational' ? 'bg-green-500' : 'bg-yellow-500'} mr-2`}></div>
+                <span>{systemStatus.system_status}</span>
+              </div>
+              <div className="flex items-center">
+                <div className={`w-2 h-2 rounded-full ${systemStatus.database === 'Connected' ? 'bg-green-500' : 'bg-red-500'} mr-2`}></div>
+                <span>Database: {systemStatus.database}</span>
               </div>
               <div className="flex items-center">
                 <div className="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
-                <span>Database: Connected</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
-                <span>API: Healthy</span>
+                <span>API: {systemStatus.api}</span>
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </div>
