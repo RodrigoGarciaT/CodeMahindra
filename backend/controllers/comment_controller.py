@@ -76,7 +76,7 @@ def create_comment(data: CommentCreate, db: Session) -> CommentOut:
         problem_id=new_comment.problem_id,
         firstName=employee.firstName if employee.firstName else "",
         lastName=employee.lastName if employee.lastName else "",  # Fixed here
-        profilePicture=employee.profileEpic if employee.profileEpic else "https://st.depositphotos.com/2218212/2938/i/450/depositphotos_29387653-stock-photo-facebook-profile.jpg"
+        profilePicture=employee.profilePicture if employee.profilePicture else "https://st.depositphotos.com/2218212/2938/i/450/depositphotos_29387653-stock-photo-facebook-profile.jpg"
     )
 
 
