@@ -2,9 +2,12 @@ import { useState, useEffect } from "react";
 import {
   GitCommitHorizontal,
   CheckCircle,
-  Settings,
-  Link2,
-  GitBranch
+  GitBranch,
+  Loader,
+  CheckCheck,
+  CircleSlash,
+  Copy,
+  Check
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
@@ -13,7 +16,7 @@ type Commit = {
   message: string;
   author: string;
   date: string;
-  retro: string;
+  status: string;
   hash: string;
   verified: boolean;
 };
@@ -22,15 +25,34 @@ type CommitsGrouped = {
   [date: string]: Commit[];
 };
 
-function getRetroBadge(type: string) {
+function getRetroBadge(status: string) {
   const base = "text-xs px-2 py-1 rounded-md font-semibold inline-flex items-center gap-1";
-  switch (type) {
-    case "Analizando":
-      return <span className={`${base} bg-[#30363d]`}><Settings size={14} /> Analizando</span>;
-    case "Con retro":
-      return <span className={`${base} bg-green-600`}><CheckCircle size={14} /> Con retro</span>;
-    case "Sin cambios":
-      return <span className={`${base} bg-yellow-700`}><GitCommitHorizontal size={14} /> Sin cambios</span>;
+
+  switch (status) {
+    case "analyzing":
+      return (
+        <span className={`${base} bg-blue-700`}>
+          <Loader size={14} className="animate-spin" />
+          Analyzing
+        </span>
+      );
+
+    case "analyzed":
+      return (
+        <span className={`${base} bg-green-600`}>
+          <CheckCheck size={14} />
+          Analyzed
+        </span>
+      );
+
+    case "not_analyzed":
+      return (
+        <span className={`${base} bg-gray-600`}>
+          <CircleSlash size={14} />
+          Not Analyzed
+        </span>
+      );
+
     default:
       return null;
   }
@@ -43,6 +65,7 @@ export default function Commits() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [search, setSearch] = useState("");
   const [branches, setBranches] = useState<string[]>([]);
+  const [copiedSha, setCopiedSha] = useState<string | null>(null);
 
   if (!repoFullName) return null;
 
@@ -112,7 +135,7 @@ export default function Commits() {
               bg-[#1c2128] border-[#30363d] transition-colors`}
           >
             <GitBranch size={16} />
-            {branch ? branch : <span className="italic text-gray-200">Cargando...</span>}
+            {branch ? branch : <span className="italic text-gray-200">Loading...</span>}
             <span className="text-gray-400">▼</span>
           </button>
 
@@ -192,7 +215,7 @@ export default function Commits() {
                     </div>
 
                     <div className="flex flex-col items-end justify-between gap-2 text-xs">
-                      <div className="flex items-center gap-2">{getRetroBadge(commit.retro)}</div>
+                      <div className="flex items-center gap-2">{getRetroBadge(commit.status)}</div>
                       <div className="flex items-center gap-2 text-gray-400">
                         {commit.verified && (
                           <span className="bg-[#238636] text-white text-[10px] px-2 py-0.5 rounded-full font-medium inline-flex items-center gap-1">
@@ -200,13 +223,33 @@ export default function Commits() {
                             Verified
                           </span>
                         )}
-                        <Link
-                          to={`/repos/${encodeURIComponent(repoFullName)}/commits/${commit.hash}/feedback`}
-                          className="text-gray-300 text-xs px-2 py-1 rounded-md hover:bg-[#30363d] transition-colors font-mono"
-                        >
-                          {commit.hash}
-                        </Link>
-                        <Link2 size={14} />
+                        <div className="flex items-center gap-2 relative">
+                          <Link
+                            to={`/repos/${encodeURIComponent(repoFullName)}/commits/${commit.hash}/feedback`}
+                            className="text-gray-300 text-xs px-2 py-1 rounded-md hover:bg-[#30363d] transition-colors font-mono"
+                          >
+                            {commit.hash.slice(0, 7)}
+                          </Link>
+
+                          <button
+                            onClick={async () => {
+                              await navigator.clipboard.writeText(commit.hash);
+                              setCopiedSha(commit.hash);
+                              setTimeout(() => setCopiedSha(null), 2000);
+                            }}
+                            className="text-gray-400 hover:text-white transition-colors relative group"
+                          >
+                            {copiedSha === commit.hash ? (
+                              <Check size={16} className="text-green-500" />
+                            ) : (
+                              <Copy size={16} />
+                            )}
+
+                            <span className="absolute top-full mt-1 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50">
+                              Copy full SHA for {commit.hash.slice(0, 7)}
+                            </span>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>

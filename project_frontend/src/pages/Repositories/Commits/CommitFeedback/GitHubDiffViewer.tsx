@@ -36,26 +36,7 @@ const GitHubDiffViewer: React.FC<Props> = ({
   files,
   selectedPath,
   stats,
-  feedback = [
-    {
-      filePath: 'backend/routes/employee_routes.py',
-      lineNumber: 70,
-      type: 'delete',
-      comment: '✅ Buena práctica: Se añadió una respuesta clara para el usuario.',
-    },
-    {
-      filePath: 'backend/controllers/employee_controller.py',
-      lineNumber: 85,
-      type: 'insert',
-      comment: '🔍 Sugerencia: Validar que `employee_id` no sea null antes de usarlo.',
-    },
-    {
-      filePath: 'backend/controllers/employee_controller.py',
-      type: 'normal',
-      lineNumber: 2,
-      comment: '📌 Considera dividir esta función para mayor claridad.',
-    },
-  ],
+  feedback = [],
 }) => {
   const [viewType, setViewType] = useState<'unified' | 'split'>('unified');
 

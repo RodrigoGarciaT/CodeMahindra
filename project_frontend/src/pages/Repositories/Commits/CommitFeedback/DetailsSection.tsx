@@ -2,6 +2,13 @@ import { useState } from "react";
 import FileTreeNavigator from "./FileTreeNavigator";
 import GitHubDiffViewer from "./GitHubDiffViewer";
 
+export type FeedbackComment = {
+  filePath: string;
+  lineNumber: number;
+  type: 'insert' | 'delete' | 'normal';
+  comment: string;
+};
+
 type Props = {
   files: any[];
   fileTree: any[];
@@ -11,9 +18,10 @@ type Props = {
     deletions: number;
     total: number;
   };
+  feedback: FeedbackComment[];
 };
 
-export default function DetailsSection({ files, fileTree, stats }: Props) {
+export default function DetailsSection({ files, fileTree, stats, feedback }: Props) {
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
 
   return (
@@ -27,6 +35,7 @@ export default function DetailsSection({ files, fileTree, stats }: Props) {
           files={files}
           selectedPath={selectedPath}
           stats={stats}
+          feedback={feedback}
         />
       </div>
     </div>

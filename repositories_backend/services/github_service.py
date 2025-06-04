@@ -1,4 +1,5 @@
 import psycopg2
+import psycopg2.extras
 from database import get_connection
 from fastapi import HTTPException
 import requests
@@ -93,9 +94,28 @@ async def get_grouped_commits(token: str, repo: str, branch: str, username: str)
             raise HTTPException(status_code=response.status_code, detail="Error fetching commits")
         data = response.json()
 
+    all_shas = [item["sha"] for item in data]
+
+    sha_status_map = {}
+    try:
+        conn = get_connection()
+        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cur.execute(
+            'SELECT sha, status FROM "Commit_Feedback" WHERE sha = ANY(%s)',
+            (all_shas,)
+        )
+        results = cur.fetchall()
+        for row in results:
+            sha_status_map[row["sha"]] = row["status"]
+    except Exception as e:
+        print("❌ Error fetching commit statuses:", e)
+    finally:
+        conn.close()
+
     grouped = defaultdict(list)
 
     for item in data:
+        sha = item["sha"]
         author_login = item["author"]["login"] if item.get("author") else None
         commit_author_name = item["commit"]["author"]["name"]
 
@@ -106,14 +126,16 @@ async def get_grouped_commits(token: str, repo: str, branch: str, username: str)
         date = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%SZ")
         group_key = human_date(date)
 
+        status = sha_status_map.get(sha, "not_analyzed")
+
         grouped[group_key].append({
             "message": item["commit"]["message"],
             "author": author_login or commit_author_name,
             "date": relative_day(date),
-            "retro": "Analizando",
-            "hash": item["sha"][:7],
+            "hash": sha,
             "verified": item["commit"].get("verification", {}).get("verified", False),
-            "branch": branch
+            "branch": branch,
+            "status": status
         })
 
     return dict(grouped)
@@ -136,7 +158,7 @@ async def get_pull_requests(token: str, repo: str, username: str):
         for pr in prs:
             is_author = pr["user"]["login"] == username
 
-            # Obtener reviewers asignados
+            #Get assigned reviewers
             reviewers_url = pr["_links"]["self"]["href"] + "/requested_reviewers"
             reviewers_resp = await client.get(reviewers_url, headers=headers)
             reviewers_data = reviewers_resp.json() if reviewers_resp.status_code == 200 else {}
@@ -165,7 +187,7 @@ async def get_pull_requests(token: str, repo: str, username: str):
                 "author": pr["user"]["login"],
                 "date": date_label,
                 "status": status,
-                "retro": "Analizando",
+                "retro": "Analizando", #Hardcoded
                 "comments": comments_count
             })
 
@@ -197,7 +219,7 @@ def build_file_tree(files):
         for name, data in sorted(node.items()):
             is_file = data["_file"] is not None
             entry = {
-                "name": name,  # 👈 Solo el nombre, sin ruta
+                "name": name,
                 "type": "file" if is_file else "folder",
             }
             if is_file:
@@ -235,14 +257,45 @@ async def get_commit_feedback(token: str, repo: str, sha: str):
     )
     stats = data.get("stats", {})
 
+    summary = "This commit has not been analyzed yet."
+    feedback = []
+    status = "not_analyzed"
+    recommended_resources = []
+    created_at = None
+    analyzed_at = None
+    quality = None
+
+    try:
+        conn = get_connection()
+        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cur.execute(
+            'SELECT summary, feedback, status, recommended_resources, created_at, analyzed_at, quality FROM "Commit_Feedback" WHERE sha = %s',
+            (sha,)
+        )
+        row = cur.fetchone()
+        if row:
+            summary = row["summary"]
+            feedback = row["feedback"] if isinstance(row["feedback"], list) else []
+            recommended_resources = row.get("recommended_resources", []) if isinstance(row.get("recommended_resources"), list) else []
+            status = row["status"]
+            created_at = row.get("created_at")
+            analyzed_at = row.get("analyzed_at")
+            quality = row.get("quality")
+    except Exception as e:
+        print("❌ Error fetching Commit_Feedback:", e)
+    finally:
+        conn.close()
+
     return {
         "info": {
             "title": title,
             "date": date_str,
             "author": author_data.get("name", ""),
             "avatar": data.get("author", {}).get("avatar_url", ""),
-            "branch": "main", #hardcoded
-            "quality": "8.7/10" #hardcoded
+            "branch": "main", #Hardcoded
+            "created_at": created_at,
+            "analyzed_at": analyzed_at,
+            "quality": quality
         },
         "stats": {
             "files_changed": len(data.get("files", [])),
@@ -250,77 +303,10 @@ async def get_commit_feedback(token: str, repo: str, sha: str):
             "deletions": stats.get("deletions", 0),
             "total": stats.get("total", 0)
         },
-        "summary": ( #hardcoded
-            "Este código está horrible, tiene memory leaks, mezcla lenguaje python con Cobol y C++. "
-            "Despidan a quien programó esta cosa. XD XD XD dosakndjsakkkkkkkkkkkkkkkkdnkjq kjidnwjknqdjknwkjqndkjwnkqdjwnkjdnjwkqnjkdnjk\n"
-            "BLA BLA BLA MUCHO TEXTO ahhhhhhhhhhhh hhhhhhhhhh hhhhhhhhhhhhhh hhhhhhhhhh hhhhhhhhhhhhhhh\n"
-            "Recomendaciones que te doy, sisisis probando probando 1 2 3 1 2 3 probando ahhhhh hhhhhhhhhhhhhhhhi\n"
-            "Más texto. SIUUUUUU UUUUUUUUUUUUUU UUUUUUUUU UUUUUUUU UUUUUU UUUUUUUU"
-        ),
-        "recommended_resources": [ #hardcoded
-            {
-                "title": "Common React Mistakes",
-                "image": "https://png.pngtree.com/background/20210714/original/pngtree-abstract-red-technology-background-picture-image_1240372.jpg",
-                "link": "https://www.example.com/resource"
-            },
-            {
-                "title": "Clean Code Principles",
-                "image": "https://png.pngtree.com/background/20210714/original/pngtree-abstract-red-technology-background-picture-image_1240372.jpg",
-                "link": "https://www.example.com/resource"
-            },
-            {
-                "title": "Common React Mistakes",
-                "image": "https://png.pngtree.com/background/20210714/original/pngtree-abstract-red-technology-background-picture-image_1240372.jpg",
-                "link": "https://www.example.com/resource"
-            },
-            {
-                "title": "Clean Code Principles",
-                "image": "https://png.pngtree.com/background/20210714/original/pngtree-abstract-red-technology-background-picture-image_1240372.jpg",
-                "link": "https://www.example.com/resource"
-            },
-
-            {
-                "title": "Common React Mistakes",
-                "image": "https://png.pngtree.com/background/20210714/original/pngtree-abstract-red-technology-background-picture-image_1240372.jpg",
-                "link": "https://www.example.com/resource"
-            },
-            {
-                "title": "Clean Code Principles",
-                "image": "https://png.pngtree.com/background/20210714/original/pngtree-abstract-red-technology-background-picture-image_1240372.jpg",
-                "link": "https://www.example.com/resource"
-            },
-            {
-                "title": "Common React Mistakes",
-                "image": "https://png.pngtree.com/background/20210714/original/pngtree-abstract-red-technology-background-picture-image_1240372.jpg",
-                "link": "https://www.example.com/resource"
-            },
-            {
-                "title": "Clean Code Principles",
-                "image": "https://png.pngtree.com/background/20210714/original/pngtree-abstract-red-technology-background-picture-image_1240372.jpg",
-                "link": "https://www.example.com/resource"
-            },
-            {
-                "title": "Common React Mistakes",
-                "image": "https://png.pngtree.com/background/20210714/original/pngtree-abstract-red-technology-background-picture-image_1240372.jpg",
-                "link": "https://www.example.com/resource"
-            },
-            {
-                "title": "Clean Code Principles",
-                "image": "https://png.pngtree.com/background/20210714/original/pngtree-abstract-red-technology-background-picture-image_1240372.jpg",
-                "link": "https://www.example.com/resource"
-            },
-
-            {
-                "title": "Common React Mistakes",
-                "image": "https://png.pngtree.com/background/20210714/original/pngtree-abstract-red-technology-background-picture-image_1240372.jpg",
-                "link": "https://www.example.com/resource"
-            },
-            {
-                "title": "Clean Code Principles",
-                "image": "https://png.pngtree.com/background/20210714/original/pngtree-abstract-red-technology-background-picture-image_1240372.jpg",
-                "link": "https://www.example.com/resource"
-            }
-        ],
+        "summary": summary,
+        "feedback": feedback,
+        "status": status,
+        "recommended_resources": recommended_resources,
         "files": files_data,
         "file_tree": file_tree
     }

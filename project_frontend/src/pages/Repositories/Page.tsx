@@ -21,11 +21,11 @@ export default function ReposListPage() {
     const fetchRepos = async () => {
       try {
         const token = localStorage.getItem("token");
-        console.log("🔐 Token encontrado en localStorage:", token);
+        console.log("🔐 Token found in localStorage:", token);
 
         if (!token) {
-          console.warn("⚠️ No se encontró token. Redirigiendo al login...");
-          navigate("/"); // redirige al login si no hay token
+          console.warn("⚠️ Token not found. Redirecting to login...");
+          navigate("/");
           return;
         }
 
@@ -36,21 +36,21 @@ export default function ReposListPage() {
           },
         });
 
-        console.log("📤 Request enviada a backend con headers:", {
+        console.log("📤 Request sent to backend with headers:", {
           Authorization: `Bearer ${token}`,
         });
 
         if (!res.ok) {
           const text = await res.text();
-          console.error("❌ Error en la respuesta del backend:", text);
-          throw new Error("Error al obtener los repositorios");
+          console.error("❌ Error in backend response:", text);
+          throw new Error("Failed to fetch repositories");
         }
 
         const data: Repo[] = await res.json();
-        console.log("✅ Repos recibidos:", data);
+        console.log("✅ Repositories received:", data);
         setRepos(data);
       } catch (err: any) {
-        console.error("💥 Error al hacer fetch:", err.message);
+        console.error("💥 Fetch error:", err.message);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -62,10 +62,10 @@ export default function ReposListPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0d1117] to-[#111827] text-white px-6 py-10">
-      <h1 className="text-3xl font-bold mb-8 text-center">Repositorios disponibles</h1>
+      <h1 className="text-3xl font-bold mb-8 text-center">Repositories</h1>
 
       {loading ? (
-        <p className="text-center text-gray-400">Cargando repositorios...</p>
+        <p className="text-center text-gray-400">Loading repositories...</p>
       ) : error ? (
         <p className="text-center text-red-400">❌ {error}</p>
       ) : (
@@ -86,10 +86,10 @@ export default function ReposListPage() {
               <p className="text-sm text-gray-400 mb-2">{repo.description}</p>
               <div className="flex justify-between text-xs text-gray-500">
                 <span className="bg-gray-800 px-2 py-0.5 rounded-full">{repo.language}</span>
-                <span>{repo.visibility === "private" ? "Privado" : "Público"}</span>
+                <span>{repo.visibility === "private" ? "Private" : "Public"}</span>
               </div>
               <div className="text-right text-[11px] text-gray-600 mt-1">
-                Actualizado: {repo.updated_at}
+                Updated: {repo.updated_at}
               </div>
             </Link>
           ))}

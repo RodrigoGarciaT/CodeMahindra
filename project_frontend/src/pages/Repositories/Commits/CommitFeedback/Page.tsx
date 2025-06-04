@@ -4,6 +4,9 @@ import {
   User,
   GitBranch,
   Star,
+  Loader,
+  CheckCheck,
+  CircleSlash
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import DetailsSection from "./DetailsSection";
@@ -11,12 +14,18 @@ import CommitRecommendedResources from "./CommitRecommendedResources";
 import CommitSummary from "./CommitSummary";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import axios from "axios";
-//import GitHubDiffViewer from "./GitHubDiffViewer";
 
 type Resource = {
   title: string;
   image: string;
   link: string;
+};
+
+export type FeedbackComment = {
+  filePath: string;
+  lineNumber: number;
+  type: 'insert' | 'delete' | 'normal';
+  comment: string;
 };
 
 type CommitFeedbackData = {
@@ -25,8 +34,12 @@ type CommitFeedbackData = {
   author: string;
   avatar: string;
   branch: string;
-  quality: string;
+  created_at?: string;
+  analyzed_at?: string;
+  quality?: number;
   summary: string;
+  status: string;
+  feedback: FeedbackComment[];
   resources: Resource[];
   stats: {
     files_changed: number;
@@ -37,6 +50,40 @@ type CommitFeedbackData = {
   files: any[];
   file_tree: any[];
 };
+
+function getStatusBadge(status: string) {
+  console.log(status)
+  const base = "text-xs px-2 py-1 rounded-md font-semibold inline-flex items-center gap-1";
+
+  switch (status) {
+    case "analyzing":
+      return (
+        <span className={`${base} bg-blue-700`}>
+          <Loader size={14} className="animate-spin" />
+          Analyzing
+        </span>
+      );
+
+    case "analyzed":
+      return (
+        <span className={`${base} bg-green-600`}>
+          <CheckCheck size={14} />
+          Analyzed
+        </span>
+      );
+
+    case "not_analyzed":
+      return (
+        <span className={`${base} bg-gray-600`}>
+          <CircleSlash size={14} />
+          Not Analyzed
+        </span>
+      );
+
+    default:
+      return null;
+  }
+}
 
 
 export default function CommitFeedback() {
@@ -71,14 +118,17 @@ export default function CommitFeedback() {
           branch: branch,
           quality: raw.info.quality,
           summary: raw.summary,
-          resources: raw.recommended_resources,
+          resources: Array.isArray(raw.recommended_resources) ? raw.recommended_resources : [],
           avatar: raw.info.avatar,
           stats: raw.stats,
           files: raw.files,
           file_tree: raw.file_tree,
+          status: raw.status,
+          feedback: Array.isArray(raw.feedback) ? raw.feedback : [],
         };
 
         setData(parsed);
+        console.log(parsed.resources)
       } catch (error) {
         console.error("❌ Error fetching commit details:", error);
       }
@@ -97,7 +147,7 @@ export default function CommitFeedback() {
           <ArrowLeft
             size={20}
             className="cursor-pointer text-white hover:text-blue-400 transition"
-            onClick={() => navigate("/commits")}
+            onClick={() => navigate(-1)}
           />
           <h1 className="text-xl font-bold">{data.title}</h1>
         </div>
@@ -112,7 +162,10 @@ export default function CommitFeedback() {
             <GitBranch size={16} /> {data.branch}
           </div>
           <div className="flex items-center gap-1">
-            <Star size={16} /> <span className="font-semibold">Quality:</span> {data.quality}
+            <Star size={16} /> <span className="font-semibold">Quality:</span> {data.quality}/10
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="font-semibold">Status:</span> {getStatusBadge(data.status)}
           </div>
         </div>
       </div>
@@ -121,7 +174,7 @@ export default function CommitFeedback() {
       <CommitSummary summary={data.summary} />
 
       <h2 className="text-red-500 font-semibold text-sm mb-3 mt-10">Details</h2>
-      <DetailsSection files={data.files} fileTree={data.file_tree} stats={data.stats} />
+      <DetailsSection files={data.files} fileTree={data.file_tree} stats={data.stats} feedback={data.feedback}/>
       {/*
       <GitHubDiffViewer/>
       */}
