@@ -14,4 +14,3 @@ class Product(Base):
     description = Column(Text)
     quantity = Column(Integer)
     purchase_products = relationship("PurchaseProduct", back_populates="product", cascade="all, delete")
-

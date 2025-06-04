@@ -1,265 +1,244 @@
+// src/pages/Home/Dashboard.tsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import CountryName from "../Home/CountryName"; // ajusta la ruta según tu estructura
-
-import { Bot, Flag, Star, ChevronRight, Users, Database, FileStack as Stack, Link2, Trees as Tree, FileSearch, Package, Share2, MousePointer2, Search, Layout, Clock, GitCompare, Workflow, BrainCircuit, LineChart, Binary, Calculator, ArrowLeft } from 'lucide-react';
-import type { Bot as BotType } from './BotStore';
+import CountryName from '../Home/CountryName';
+import {
+  Bot,
+  Star,
+  ChevronRight,
+  Users,
+  ArrowLeft,
+} from 'lucide-react';
+import type { Bot as BotType } from '../BotStore';
 import { useTeamMembers } from '@/hooks/useTeamMembers';
 
+// ——— 1. Definir los tipos que esperamos recibir del backend ———
 
-interface Achievement {
-  id: string;
+/** La forma en que tu backend retorna cada logro “ganado” */
+interface AchievementMini {
+  id: number;
+  key: string;
   name: string;
+  description?: string;
   category: string;
   topic: string;
-  description: string;
-  icon: React.ReactNode;
-  imageUrl?: string;
+  icon?: string; // URL de un icono o null/undefined
 }
 
-const achievements: Achievement[] = [
-  {
-    id: '1',
-    name: 'Maestro/a del Acceso Rápido',
-    category: 'Estructuras de Datos Fundamentales',
-    topic: 'Arrays y Hashing',
-    description: 'Demuestra dominio en el uso eficiente de arrays y tablas hash para almacenar y recuperar datos velozmente.',
-    icon: <Database className="w-8 h-8" />,
-  },
-  {
-    id: '2',
-    name: 'Dominador/a LIFO',
-    category: 'Estructuras de Datos Fundamentales',
-    topic: 'Stack (Pila)',
-    description: 'Utiliza pilas correctamente para resolver problemas de lógica LIFO (Last-In, First-Out).',
-    icon: <Stack className="w-8 h-8" />,
-  },
-  {
-    id: '3',
-    name: 'Navegante de Nodos',
-    category: 'Estructuras de Datos Fundamentales',
-    topic: 'Linked List',
-    description: 'Domina la manipulación y recorrido de listas enlazadas.',
-    icon: <Link2 className="w-8 h-8" />,
-  },
-  {
-    id: '4',
-    name: 'Arquitecto/a Arbóreo/a',
-    category: 'Estructuras de Datos Fundamentales',
-    topic: 'Trees',
-    description: 'Comprende y aplica conceptos de árboles, como recorridos (BFS, DFS) y búsquedas (BST).',
-    icon: <Tree className="w-8 h-8" />,
-  },
-  {
-    id: '5',
-    name: 'Lexicógrafo/a Digital',
-    category: 'Estructuras de Datos Fundamentales',
-    topic: 'Tries',
-    description: 'Implementa o utiliza Tries para resolver problemas de búsqueda de cadenas y prefijos.',
-    icon: <FileSearch className="w-8 h-8" />,
-  },
-  {
-    id: '6',
-    name: 'Guardián/a de la Prioridad',
-    category: 'Estructuras de Datos Fundamentales',
-    topic: 'Heap / Priority Queue',
-    description: 'Aplica montículos o colas de prioridad para gestionar elementos ordenados eficientemente.',
-    icon: <Package className="w-8 h-8" />,
-  },
-  {
-    id: '7',
-    name: 'Cartógrafo/a Conectado/a',
-    category: 'Estructuras de Datos Fundamentales',
-    topic: 'Graphs',
-    description: 'Modela problemas y aplica algoritmos básicos (BFS, DFS) en estructuras de grafos.',
-    icon: <Share2 className="w-8 h-8" />,
-  },
-  {
-    id: '8',
-    name: 'Estratega de Punteros',
-    category: 'Técnicas y Estrategias Algorítmicas',
-    topic: 'Two Pointers',
-    description: 'Optimiza soluciones utilizando la técnica de dos punteros en secuencias.',
-    icon: <MousePointer2 className="w-8 h-8" />,
-  },
-  {
-    id: '9',
-    name: '¡Eureka Ordenado!',
-    category: 'Técnicas y Estrategias Algorítmicas',
-    topic: 'Binary Search',
-    description: 'Implementa y aplica búsqueda binaria para encontrar elementos en espacios ordenados de forma eficiente.',
-    icon: <Search className="w-8 h-8" />,
-  },
-  {
-    id: '10',
-    name: 'Optimizador/a de Ventanas',
-    category: 'Técnicas y Estrategias Algorítmicas',
-    topic: 'Sliding Window',
-    description: 'Resuelve problemas eficientemente procesando subsegmentos con la técnica de ventana deslizante.',
-    icon: <Layout className="w-8 h-8" />,
-  },
-  {
-    id: '11',
-    name: 'Maestro/a de Intervalos',
-    category: 'Técnicas y Estrategias Algorítmicas',
-    topic: 'Intervals',
-    description: 'Domina la lógica para resolver problemas de fusión, solapamiento y gestión de intervalos.',
-    icon: <Clock className="w-8 h-8" />,
-  },
-  {
-    id: '12',
-    name: 'Decisor/a Óptimo Local',
-    category: 'Técnicas y Estrategias Algorítmicas',
-    topic: 'Greedy',
-    description: 'Diseña y aplica algoritmos greedy para encontrar soluciones óptimas (o aproximadas) paso a paso.',
-    icon: <GitCompare className="w-8 h-8" />,
-  },
-  {
-    id: '13',
-    name: 'Explorador/a Exhaustivo/a',
-    category: 'Técnicas y Estrategias Algorítmicas',
-    topic: 'Backtracking',
-    description: 'Utiliza backtracking para explorar sistemáticamente todas las posibles soluciones a un problema complejo.',
-    icon: <Workflow className="w-8 h-8" />,
-  },
-  {
-    id: '14',
-    name: 'Constructor/a de Soluciones Lineales',
-    category: 'Programación Dinámica (DP)',
-    topic: '1-D DP',
-    description: 'Resuelve problemas aplicando programación dinámica con estados que dependen de una sola variable.',
-    icon: <BrainCircuit className="w-8 h-8" />,
-  },
-  {
-    id: '15',
-    name: 'Tejedor/a de Estados',
-    category: 'Programación Dinámica (DP)',
-    topic: '2-D DP',
-    description: 'Domina la programación dinámica en problemas cuyos estados dependen de dos o más variables (tablas).',
-    icon: <LineChart className="w-8 h-8" />,
-  },
-  {
-    id: '16',
-    name: 'Gurú de Grafos',
-    category: 'Tópicos Avanzados y Especializados',
-    topic: 'Advanced Graphs',
-    description: 'Aplica algoritmos avanzados como Dijkstra, Floyd-Warshall, flujo máximo, etc., para resolver problemas complejos de grafos.',
-    icon: <Share2 className="w-8 h-8" />,
-  },
-  {
-    id: '17',
-    name: 'Mago/a Binario/a',
-    category: 'Tópicos Avanzados y Especializados',
-    topic: 'Bit Manipulation',
-    description: 'Utiliza operaciones a nivel de bit para crear soluciones eficientes o resolver problemas específicos.',
-    icon: <Binary className="w-8 h-8" />,
-  },
-  {
-    id: '18',
-    name: 'Geómetra Algorítmico/a',
-    category: 'Tópicos Avanzados y Especializados',
-    topic: 'Math y Geometry',
-    description: 'Resuelve problemas aplicando conceptos y algoritmos matemáticos o geométricos.',
-    icon: <Calculator className="w-8 h-8" />,
-  },
-];
+/** Cada fila de la tabla puente Employee_Achievement tal como tu controlador la envía */
+interface EmployeeAchievementOut {
+  employee_id: string;      // UUID como texto
+  achievement_id: number;
+  obtainedDate: string;     // ISO string, p. ej. "2025-06-01T12:00:00Z"
+  achievement: AchievementMini;
+}
 
-function Dashboard() {
+/** La respuesta completa de /achievements/me */
+interface UserAchievementsResponse {
+  earned: EmployeeAchievementOut[];
+  not_earned: AchievementMini[];
+}
+
+// ——— 2. Componente Dashboard adaptado ———
+
+const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-const [user, setUser] = useState({
-  photo: '',
-  firstName: '',
-  lastName: '',
-  experience: 0, 
-  nationality: '',
-  profilePicture: '',
-  team_id: null,
-   
-});
 
+  // — Estado del usuario (igual que antes) — 
+  const [user, setUser] = useState<{
+    photo: string;
+    firstName: string;
+    lastName: string;
+    experience: number;
+    nationality: string;
+    profilePicture: string;
+    team_id: number | null;
+  }>({
+    photo: '',
+    firstName: '',
+    lastName: '',
+    experience: 0,
+    nationality: '',
+    profilePicture: '',
+    team_id: null,
+  });
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      fetch(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then(res => res.json())
-        .then(data => {
-          setUser({
-            photo: data.photo,
-            firstName: data.firstName,
-            lastName: data.lastName,
-            experience: data.experience,
-            nationality: data.nationality,
-            profilePicture: data.profilePicture,
-            team_id: data.team_id, 
-          });
-        })
-        .catch(err => console.error(err));
-    }
-  }, []);
+  // — Estados para el fetch de logros — 
+  const [earned, setEarned] = useState<EmployeeAchievementOut[]>([]);
+  const [notEarned, setNotEarned] = useState<AchievementMini[]>([]);
+  const [achievementsLoading, setAchievementsLoading] = useState<boolean>(true);
+  const [achievementsError, setAchievementsError] = useState<string | null>(null);
 
+  // — Estados de UI: tile seleccionado y “mostrar todo” — 
+  const [selectedAchievement, setSelectedAchievement] = useState<AchievementMini | null>(null);
+  const [showAllAchievements, setShowAllAchievements] = useState<boolean>(false);
 
-
-
-const [selectedAchievement, setSelectedAchievement] = useState<Achievement | null>(null);
-  const [showAllAchievements, setShowAllAchievements] = useState(false);
+  // — Estado “Bot comprado” (igual que antes) — 
   const [purchasedBot, setPurchasedBot] = useState<BotType | null>(() => {
     const saved = localStorage.getItem('purchasedBots');
     if (saved) {
-      const bots = JSON.parse(saved);
-      return bots.length > 0 ? bots[0] : null;
+      const arr: BotType[] = JSON.parse(saved);
+      return arr.length > 0 ? arr[0] : null;
     }
     return null;
   });
 
-  const initials = user
-    ? `<span class="math-inline">\{user\.firstName?\.charAt\(0\) \|\| ""\}</span>{user.lastName?.charAt(0) || ""}`.toUpperCase()
-    : "?"
+  // ——— 3. useEffect para cargar datos del usuario (user/me) ———
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
 
-  const achievementsByCategory = achievements.reduce((acc, achievement) => {
-    if (!acc[achievement.category]) {
-      acc[achievement.category] = [];
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(res => res.json())
+      .then((data) => {
+        setUser({
+          photo: data.photo ?? '',
+          firstName: data.firstName ?? '',
+          lastName: data.lastName ?? '',
+          experience: data.experience ?? 0,
+          nationality: data.nationality ?? '',
+          profilePicture: data.profilePicture ?? '',
+          team_id: data.team_id ?? null,
+        });
+      })
+      .catch(err => {
+        console.error('Error en fetch /user/me:', err);
+      });
+  }, []);
+
+  // ——— 4. useEffect para cargar los logros (earned + not_earned) ———
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setAchievementsError('No hay token de autenticación');
+      setAchievementsLoading(false);
+      return;
     }
-    acc[achievement.category].push(achievement);
-    return acc;
-  }, {} as Record<string, Achievement[]>);
 
-  const renderAchievement = (achievement: Achievement) => (
+    setAchievementsLoading(true);
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/achievements/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(async res => {
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(`Error ${res.status}: ${text}`);
+        }
+        return res.json() as Promise<UserAchievementsResponse>;
+      })
+      .then((response) => {
+        setEarned(response.earned);
+        setNotEarned(response.not_earned);
+        setAchievementsLoading(false);
+      })
+      .catch(err => {
+        console.error('Error cargando logros:', err);
+        setAchievementsError(err.message);
+        setAchievementsLoading(false);
+      });
+  }, []);
+
+  // ——— 5. Función auxiliar para agrupar un array por categoría ———
+  const groupByCategory = <T extends { category: string }>(list: T[]) => {
+    return list.reduce<Record<string, T[]>>((acc, item) => {
+      const cat = item.category;
+      if (!acc[cat]) acc[cat] = [];
+      acc[cat].push(item);
+      return acc;
+    }, {});
+  };
+
+  // Creamos dos groupBy: earned y notEarned (extraemos el objeto .achievement)
+  const earnedByCategory = groupByCategory(
+    earned.map(ea => ({
+      ...ea.achievement,
+      // le añado un campo synthetic para poder marcar "ganado"
+      _earnedInfo: ea,
+    }))
+  );
+
+  const notEarnedByCategory = groupByCategory(notEarned);
+
+  // ——— 6. Hooks para “equipo” ———
+  const { members, loading: teamLoading } = useTeamMembers(user.team_id ? String(user.team_id) : '');
+  const totalExp = members.reduce((acc, m) => acc + (m.experience ?? 0), 0);
+  const teamLevel = Math.floor(totalExp / 2000);
+  const teamName = members.length > 0
+    ? `Equipo de ${members[0].firstName}`
+    : 'Tu equipo';
+
+  // ——— 7. Renderizado condicional ———
+
+  // Si aún está cargando los logros…
+  if (achievementsLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#363B41]">
+        <p className="text-gray-300">Cargando logros…</p>
+      </div>
+    );
+  }
+
+  // Si hubo un error en fetch de logros…
+  if (achievementsError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#363B41]">
+        <p className="text-red-400">Error cargando logros: {achievementsError}</p>
+      </div>
+    );
+  }
+
+  // ——— 7.1. Función para renderizar cada “tile” de logro ———
+  const renderAchievementTile = (ach: AchievementMini, earnedFlag: boolean) => (
     <div
-      key={achievement.id}
+      key={ach.id + (earnedFlag ? '_earned' : '_not')}
       className="relative group"
-      onMouseEnter={() => setSelectedAchievement(achievement)}
+      onMouseEnter={() => setSelectedAchievement(ach)}
       onMouseLeave={() => setSelectedAchievement(null)}
     >
-      <div className="bg-gray-50 p-4 rounded-lg flex flex-col items-center transform transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg cursor-pointer">
-        {achievement.imageUrl ? (
+      <div
+        className={`
+          bg-gray-50
+          p-4
+          rounded-lg
+          flex flex-col items-center
+          transform transition-all duration-300
+          group-hover:scale-105 group-hover:shadow-lg
+          cursor-pointer
+          ${earnedFlag ? '' : 'opacity-50'}
+        `}
+      >
+        {ach.icon ? (
           <img
-            src={achievement.imageUrl}
-            alt={achievement.name}
-            className="w-12 h-12 mb-3 object-contain"
+            src={ach.icon}
+            alt={ach.name}
+            className="w-8 h-8 mb-3 object-contain"
           />
         ) : (
           <div className="text-gray-400 group-hover:text-red-500 transition-colors mb-3">
-            {achievement.icon}
+            <Star className="w-8 h-8" />
           </div>
         )}
-        <h3 className="text-sm font-medium text-center">{achievement.name}</h3>
+        <h3 className="text-sm font-medium text-center">{ach.name}</h3>
       </div>
 
-      {selectedAchievement?.id === achievement.id && (
+      {selectedAchievement?.id === ach.id && (
         <div className="absolute z-10 bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 bg-white rounded-lg shadow-xl p-4 animate-fade-in">
-          <h3 className="font-bold text-sm mb-1">{achievement.name}</h3>
-          <p className="text-xs text-gray-600 mb-2">{achievement.topic}</p>
-          <p className="text-xs text-gray-500">{achievement.description}</p>
+          <h3 className="font-bold text-sm mb-1">{ach.name}</h3>
+          <p className="text-xs text-gray-600 mb-2">{ach.topic}</p>
+          <p className="text-xs text-gray-500">{ach.description}</p>
         </div>
       )}
     </div>
   );
 
+  // ——— 7.2. Si el usuario solicita “ver todos los logros” ———
   if (showAllAchievements) {
     return (
       <div className="min-h-screen bg-[#363B41] text-black p-6">
@@ -272,12 +251,37 @@ const [selectedAchievement, setSelectedAchievement] = useState<Achievement | nul
             <span>Volver</span>
           </button>
 
-          <div className="space-y-8">
-            {Object.entries(achievementsByCategory).map(([category, categoryAchievements]) => (
-              <div key={category} className="bg-white rounded-lg p-6 shadow-sm">
-                <h2 className="text-xl font-bold mb-6">{category}</h2>
+          {/* — Logros Ganados — */}
+          <div className="mb-12">
+            <h2 className="text-2xl font-bold text-white mb-4">Logros Ganados</h2>
+            {Object.entries(earnedByCategory).length === 0 && (
+              <p className="text-gray-300">No tienes logros ganados aún.</p>
+            )}
+            {Object.entries(earnedByCategory).map(([category, lista]) => (
+              <div key={category} className="bg-white rounded-lg p-6 shadow-sm mb-8">
+                <h3 className="text-xl font-semibold mb-4">{category}</h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                  {categoryAchievements.map(renderAchievement)}
+                  {lista.map((ach: AchievementMini) =>
+                    renderAchievementTile(ach, true)
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* — Logros Pendientes — */}
+          <div>
+            <h2 className="text-2xl font-bold text-white mb-4">Logros Pendientes</h2>
+            {Object.entries(notEarnedByCategory).length === 0 && (
+              <p className="text-gray-300">No hay logros pendientes.</p>
+            )}
+            {Object.entries(notEarnedByCategory).map(([category, lista]) => (
+              <div key={category} className="bg-white rounded-lg p-6 shadow-sm mb-8">
+                <h3 className="text-xl font-semibold mb-4">{category}</h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                  {lista.map((ach: AchievementMini) =>
+                    renderAchievementTile(ach, false)
+                  )}
                 </div>
               </div>
             ))}
@@ -287,16 +291,12 @@ const [selectedAchievement, setSelectedAchievement] = useState<Achievement | nul
     );
   }
 
-  const { members, loading } = useTeamMembers(user?.team_id || '');
-
-  const totalExp = members.reduce((sum, m) => sum + (m.coins ?? 0), 0);
-  const teamLevel = Math.floor(totalExp / 2000); // Ajusta esta lógica si usas otra
-  const teamName = members.length > 0 ? `Equipo de ${members[0].firstName}` : "Tu equipo"
-
+  // ——— 7.3. Pantalla principal del Dashboard (vista previa) ———
   return (
     <div className="min-h-screen bg-[#363B41] text-black p-6">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Profile Section */}
+
+        {/* === PERFIL === */}
         <div className="bg-white rounded-lg p-6 shadow-sm">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold">Perfil</h2>
@@ -307,64 +307,67 @@ const [selectedAchievement, setSelectedAchievement] = useState<Achievement | nul
               Ver más
             </button>
           </div>
-
           <div className="bg-gray-50 p-4 rounded-lg mb-6">
-  <div className="flex items-center gap-4">
-    {user?.profilePicture ? (
-      <div className="w-12 h-12 rounded-full overflow-hidden">
-        <img
-          src={user.profilePicture}
-          alt="Profile"
-          className="w-full h-full object-cover"
-        />
-      </div>
-    ) : (
-      <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center">
-        <span className="text-lg font-semibold text-gray-600">
-          {user?.firstName?.charAt(0) || ""}
-          {user?.lastName?.charAt(0) || ""}
-        </span>
-      </div>
-    )}
-    <div>
-      <div className="flex items-center gap-2"> {/* Ajustado gap-2 para mejor espaciado con la bandera */}
-        <span className="font-semibold">{user?.firstName} {user?.lastName}</span>
-            {user?.nationality ? (
-                <CountryName code={user.nationality} />
+            <div className="flex items-center gap-4">
+              {user.profilePicture ? (
+                <div className="w-12 h-12 rounded-full overflow-hidden">
+                  <img
+                    src={user.profilePicture}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
               ) : (
-                <span className="text-sm text-gray-500">Nacionalidad no disponible</span>
+                <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center">
+                  <span className="text-lg font-semibold text-gray-600">
+                    {user.firstName?.[0] || ''}
+                    {user.lastName?.[0] || ''}
+                  </span>
+                </div>
               )}
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold">{user.firstName} {user.lastName}</span>
+                  {user.nationality ? (
+                    <CountryName code={user.nationality} />
+                  ) : (
+                    <span className="text-sm text-gray-500">Nacionalidad no disponible</span>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="space-y-4 mt-4">
+              <h3 className="font-semibold">Progreso</h3>
+              <div>
+                <div className="flex justify-between text-sm mb-2">
+                  <span>Nivel {Math.floor(user.experience / 1000)}</span>
+                  <span>{user.experience} XP</span>
+                </div>
+                <div className="w-full bg-gray-100 rounded-full h-2">
+                  <div
+                    className="bg-red-500 h-2 rounded-full"
+                    style={{
+                      width: `${(user.experience % 1000) / 10}%`
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-          <div className="space-y-4">
-            <h3 className="font-semibold">Progreso</h3>
-            <div>
-              <div className="flex justify-between text-sm mb-2">
-                <span>Nivel 5</span>
-                <span>{user?.experience} exp</span>
-              </div>
-              <div className="w-full bg-gray-100 rounded-full h-2">
-                <div className="bg-red-500 h-2 rounded-full" style={{ width: `${Math.min(Number(user?.experience) / 15000 * 100, 100)}%` }}></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Weekly Challenges Section */}
+        {/* === DESAFÍOS SEMANALES === */}
         <div className="bg-white rounded-lg p-6 shadow-sm">
           <h2 className="text-xl font-bold mb-4">Desafíos Semanales</h2>
           <div className="space-y-4">
-            <button 
+            <button
               className="w-full bg-red-500 hover:bg-red-600 text-white p-4 rounded-lg flex justify-between items-center"
               onClick={() => navigate('/tasks')}
             >
               <span>Completar tareas</span>
               <ChevronRight />
             </button>
-            <button 
+            <button
               className="w-full bg-red-500 hover:bg-red-600 text-white p-4 rounded-lg flex justify-between items-center"
               onClick={() => navigate('/problems')}
             >
@@ -374,7 +377,7 @@ const [selectedAchievement, setSelectedAchievement] = useState<Achievement | nul
           </div>
         </div>
 
-        {/* Bot Section */}
+        {/* === BOT === */}
         <div
           className="bg-white rounded-lg p-6 shadow-sm cursor-pointer hover:shadow-lg transition-shadow"
           onClick={() => navigate('/bot-store')}
@@ -395,17 +398,16 @@ const [selectedAchievement, setSelectedAchievement] = useState<Achievement | nul
                     <Star
                       key={i}
                       className={`w-4 h-4 ${
-                        i < purchasedBot.proficiency ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
+                        i < purchasedBot.proficiency
+                          ? 'text-yellow-400 fill-yellow-400'
+                          : 'text-gray-300'
                       }`}
                     />
                   ))}
                 </div>
                 <div className="space-y-2">
-                  {purchasedBot.abilities.slice(0, 2).map((ability, index) => (
-                    <div
-                      key={index}
-                      className="bg-gray-100 p-2 rounded text-sm"
-                    >
+                  {purchasedBot.abilities.slice(0, 2).map((ability, idx) => (
+                    <div key={idx} className="bg-gray-100 p-2 rounded text-sm">
                       {ability}
                     </div>
                   ))}
@@ -417,84 +419,100 @@ const [selectedAchievement, setSelectedAchievement] = useState<Achievement | nul
           </div>
         </div>
 
-
-        {/* Team Section */}
+        {/* === EQUIPO === */}
         <div className="bg-white rounded-lg p-6 shadow-sm md:col-span-2">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold">Equipo</h2>
-            <button
-              className="text-red-500 hover:text-red-600"
-              onClick={() => {
-                if (user?.team_id) {
-                  navigate(`/team/${user.team_id}`);
-                } else {
-                  alert("Este usuario no está asignado a ningún equipo.");
-                }
-              }}
-            >
-              Ver más
-            </button>
-          </div>
-
-          {/* Nombre real del equipo */}
-          <div className="mb-3">
-            <h3 className="font-semibold flex items-center gap-2 mb-2">
-              <Users className="w-4 h-4" />
-              {teamName}
-            </h3>
-            <div className="flex justify-between text-xs mb-1">
-              <span>Nivel {Math.floor(totalExp / 2000)}</span>
-              <span>{totalExp} exp</span>
-            </div>
-            <div className="w-full bg-gray-100 rounded-full h-2">
-              <div
-                className="bg-red-500 h-2 rounded-full"
-                style={{ width: `${Math.min((totalExp % 2000) / 2000 * 100, 100)}%` }}
-              ></div>
-            </div>
-          </div>
-
-          {/* Miembros dinámicos */}
-          <div className="space-y-2">
-            {members.map((member) => (
-              <div
-                key={member.id}
-                className="bg-gray-50 p-4 rounded-lg flex items-center justify-between gap-4"
+            {user.team_id && (
+              <button
+                className="text-red-500 hover:text-red-600"
+                onClick={() => navigate(`/team/${user.team_id}`)}
               >
-                {/* Columna 1: Foto + Nombre */}
-                <div className="flex items-center gap-3 w-1/3">
-                  <img
-                    src={member.profilePicture || "https://via.placeholder.com/40"}
-                    alt={`${member.firstName} ${member.lastName}`}
-                    className="w-10 h-10 rounded-full object-cover"
+                Ver más
+              </button>
+            )}
+          </div>
+
+          {!user.team_id ? (
+            <div className="text-center bg-gray-50 rounded-lg p-6">
+              <p className="text-lg font-semibold mb-4 text-gray-700">
+                Aún no perteneces a un equipo.
+              </p>
+              <div className="flex justify-center gap-4">
+                <button
+                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                  onClick={() => navigate('/teams/create')}
+                >
+                  Crear equipo
+                </button>
+                <button
+                  className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
+                  onClick={() => navigate('/teams/join')}
+                >
+                  Unirse a un equipo
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="mb-3">
+                <h3 className="font-semibold flex items-center gap-2 mb-2">
+                  <Users className="w-4 h-4" />
+                  {teamName}
+                </h3>
+                <div className="flex justify-between text-xs mb-1">
+                  <span>Nivel {teamLevel}</span>
+                  <span>{totalExp} exp</span>
+                </div>
+                <div className="w-full bg-gray-100 rounded-full h-2">
+                  <div
+                    className="bg-red-500 h-2 rounded-full"
+                    style={{
+                      width: `${Math.min(((totalExp % 2000) / 2000) * 100, 100)}%`,
+                    }}
                   />
-                  <span className="font-medium">{member.firstName} {member.lastName}</span>
-                </div>
-
-                {/* Columna 2: País + bandera */}
-                <div className="w-1/4 text-sm text-gray-500">
-                  <CountryName code={member.nationality ?? ""} />
-                </div>
-
-                {/* Columna 3: Nivel */}
-                <div className="w-1/6 flex items-center gap-1 justify-center">
-                  <span className="font-medium">Nivel {member.level ?? 1}</span>
-                </div>
-
-                {/* Columna 4: Exp */}
-                <div className="w-1/6 text-right text-gray-500">
-                  {member.coins ?? 0} exp
                 </div>
               </div>
-
-            ))}
-          </div>
+              <div className="space-y-2">
+                {teamLoading ? (
+                  <p className="text-gray-500">Cargando miembros…</p>
+                ) : (
+                  members.map(member => (
+                    <div
+                      key={member.id}
+                      className="bg-gray-50 p-4 rounded-lg flex items-center justify-between gap-4"
+                    >
+                      <div className="flex items-center gap-3 w-1/3">
+                        <img
+                          src={member.profilePicture || 'https://via.placeholder.com/40'}
+                          alt={`${member.firstName} ${member.lastName}`}
+                          className="w-10 h-10 rounded-full object-cover"
+                        />
+                        <span className="font-medium">
+                          {member.firstName} {member.lastName}
+                        </span>
+                      </div>
+                      <div className="w-1/4 text-sm text-gray-500">
+                        <CountryName code={member.nationality ?? ''} />
+                      </div>
+                      <div className="w-1/6 flex items-center gap-1 justify-center">
+                        <span className="font-medium">Nivel {member.level ?? 1}</span>
+                      </div>
+                      <div className="w-1/6 text-right text-gray-500">
+                        {member.coins ?? 0} exp
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </>
+          )}
         </div>
 
-        {/* Achievements Section */}
+        {/* === LOGROS E INSIGNIAS (PREVIEW) === */}
         <div className="bg-white rounded-lg p-6 shadow-sm">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold">Logros e insignias</h2>
+            <h2 className="text-xl font-bold">Logros e Insignias</h2>
             <button
               onClick={() => setShowAllAchievements(true)}
               className="text-red-500 hover:text-red-600"
@@ -503,13 +521,16 @@ const [selectedAchievement, setSelectedAchievement] = useState<Achievement | nul
             </button>
           </div>
           <div className="grid grid-cols-3 gap-4">
-            {achievements.slice(0, 6).map(renderAchievement)}
+            {earned.slice(0, 6).map(ea => (
+              // ea.achievement es el AchievementMini
+              renderAchievementTile(ea.achievement, true)
+            ))}
+            {/* Si tienes menos de 6 ganados, opcionalmente puedes mostrar algunos “notEarned” aquí */}
           </div>
         </div>
       </div>
     </div>
   );
-}
-
+};
 
 export default Dashboard;

@@ -20,6 +20,9 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy import func  # Add this import at the top
 from models.employee import Employee 
 
+# <<-- IMPORTAMOS nuestra utilidad para asignación de logros:
+from achievements_utils import check_and_award_achievements   # <-- se añadió
+
 from sqlalchemy import func, desc, asc
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import label
@@ -30,7 +33,6 @@ from typing import List
 load_dotenv()
 
 # Updated configuration for self-hosted Judge0
-
 JUDGE0_CONFIG = {
     'url': os.getenv('SELF_HOSTED_JUDGE0_URL'),
     'headers': {
@@ -348,7 +350,8 @@ async def get_test_case_results(submission: Submission, db: Session) -> List[Tes
             problem.successful_submissions = (problem.successful_submissions or 0) + 1
         db.commit()
     
-    # 7. If Accepted, insert into Employee_Problem if not already present
+    # 7. Si es Accepted, insertamos en EmployeeProblem (si no existe) y 
+    #     actualizamos experiencia + asignamos logros
     if status == "Accepted":
         exists = db.query(EmployeeProblem).filter_by(
             employee_id=submission.employee_id,
@@ -366,25 +369,19 @@ async def get_test_case_results(submission: Submission, db: Session) -> List[Tes
                 db.rollback()
                 print("Integrity error:", e)
                 raise HTTPException(status_code=400, detail="Invalid foreign key: employee or problem does not exist.")
-            # db.commit
-            # pass
-    
-    '''
-    if status == "Accepted":
-        pass
-        exists = db.query(EmployeeProblem).filter_by(
-            employee_id=submission.employee_id,
-            problem_id=submission.problem_id
-        ).first()
+            
+            # ----- NUEVO BLOQUE: actualizar experiencia del usuario y asignar logros -----
+            user = db.query(Employee).filter(Employee.id == submission.employee_id).first()
+            if user:
+                # Ejemplo: sumamos 10 puntos de experiencia por cada Accepted
+                user.experience = (user.experience or 0) + 10
+                db.commit()
+                db.refresh(user)
 
-        if not exists:
-            pass
-            new_record = EmployeeProblem(
-                employee_id=submission.employee_id,
-                problem_id=submission.problem_id
-            )
-            db.add(new_record)
-            db.commit()'''
+                # Llamamos a la función que comprueba umbrales y crea EmployeeAchievement
+                check_and_award_achievements(db, user.id)
+            # ----------------------------------------------------------------------------
+    
     return results
 
 def get_problem_leaderboard_data(problem_id: int, db: Session) -> List[dict]:

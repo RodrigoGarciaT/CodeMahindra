@@ -19,7 +19,6 @@ from controllers.solution_controller import (
 )
 
 
-
 router = APIRouter(prefix="/solutions", tags=["Solutions"])
 
 @router.get("/", response_model=List[SolutionOut])
