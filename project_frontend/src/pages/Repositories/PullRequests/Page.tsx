@@ -78,7 +78,7 @@ export default function PullRequests() {
           return;
         }
 
-        const res = await axios.get("http://127.0.0.1:8000/github/pull-requests", {
+        const res = await axios.get(`${import.meta.env.VITE_REPOSITORIES_BACKEND_URL}/github/pull-requests`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

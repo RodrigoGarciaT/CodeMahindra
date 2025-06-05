@@ -75,7 +75,7 @@ export default function Commits() {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        const res = await axios.get("http://127.0.0.1:8000/github/branches", {
+        const res = await axios.get(`${import.meta.env.VITE_REPOSITORIES_BACKEND_URL}/github/branches`, {
           params: { repo: repoFullName },
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -102,7 +102,7 @@ export default function Commits() {
           return;
         }
 
-        const res = await axios.get("http://127.0.0.1:8000/github/commits", {
+        const res = await axios.get(`${import.meta.env.VITE_REPOSITORIES_BACKEND_URL}/github/commits`, {
           params: {
             repo: repoFullName,
             branch: branch,

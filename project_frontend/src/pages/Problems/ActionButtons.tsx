@@ -24,6 +24,7 @@ interface Submission {
   source_code: string;
   employee_id: string;
   language: string;
+  inTeam: boolean;
 }
 
 interface TestResult {
@@ -40,6 +41,7 @@ const ActionButtons = ({ code, problemId, employeeId, language }: ActionButtonsP
   const [testResults, setTestResults] = useState<TestResult[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [testCases, setTestCases] = useState<TestCase[]>([]);
+  const [inTeam, setInTeam] = useState(false);
 
   const simulateCodeRun = async () => {
     setIsProcessing(true);
@@ -88,6 +90,7 @@ const ActionButtons = ({ code, problemId, employeeId, language }: ActionButtonsP
       source_code: code,
       employee_id: employeeId,
       language: language,
+      inTeam: inTeam
     };
 
     try {
@@ -133,6 +136,15 @@ const ActionButtons = ({ code, problemId, employeeId, language }: ActionButtonsP
             Test against custom input
           </button>
         </div>
+        <label className="flex items-center space-x-2 text-sm text-gray-700">
+        <input
+          type="checkbox"
+          checked={inTeam}
+          onChange={(e) => setInTeam(e.target.checked)}
+          className="form-checkbox"
+        />
+        <span>Submit as team</span>
+      </label>
         <div className="flex items-center space-x-3">
           <button
             className="px-4 py-1.5 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 flex items-center"

@@ -274,7 +274,7 @@ async def get_commit_feedback(token: str, repo: str, sha: str):
         )
         row = cur.fetchone()
         if row:
-            summary = row["summary"]
+            summary = row["summary"] if row["summary"].strip() else "This commit has not been analyzed yet."
             feedback = row["feedback"] if isinstance(row["feedback"], list) else []
             recommended_resources = row.get("recommended_resources", []) if isinstance(row.get("recommended_resources"), list) else []
             status = row["status"]

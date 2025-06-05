@@ -1,7 +1,10 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, ResponsiveContainer, Cell } from 'recharts';
+import { useParams } from "react-router-dom";
+import { useTeamMembers } from "../hooks/useTeamMembers";
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const lineChartData = [
   { name: 'Jan 2024', value: 1200 },
@@ -14,20 +17,124 @@ const lineChartData = [
   { name: 'Oct 2025', value: 2400 },
 ];
 
-// Datos para las tres gráficas separadas, una por dificultad
-const barChartData = [
-  { name: 'Easy', value: 45, color: '#28a745' },  // Verde para dificultad baja
-  { name: 'Medium', value: 30, color: '#fd7e14' },  // Naranja para dificultad media
-  { name: 'High', value: 50, color: '#dc3545' },  // Rojo para dificultad alta
-];
-
 function ProfileAndTeamPage() {
   const navigate = useNavigate();
+  const { teamId } = useParams();
+
+  if (!teamId) {
+    return <div className="text-white p-8">No se proporcionó teamId en la URL.</div>;
+  }
+
+  type TeamMember = {
+    id: string;
+    firstName: string;
+    lastName: string;
+    profilePicture?: string;
+    coins?: number;
+    experience?: number;
+  };
+
+  const { members, loading } = useTeamMembers(teamId || "") as {
+    members: TeamMember[];
+    loading: boolean;
+  };
+
+  const totalExperience = members.reduce((sum, member) => sum + (member.experience ?? 0), 0);
+  const teamLevel = Math.floor(totalExperience / 1000);
+
+  const [teamInfo, setTeamInfo] = useState<{ name: string; code: string; } | null>(null);
+  const [difficultyData, setDifficultyData] = useState<{
+    Easy: number;
+    Medium: number;
+    Hard: number;
+  } | null>(null);
+  const [difficultyLoading, setDifficultyLoading] = useState(true);
+  
+  useEffect(() => {
+    const fetchTeamInfo = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/teams/${teamId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!res.ok) throw new Error("Error al cargar la información del equipo");
+        const data = await res.json();
+        setTeamInfo(data);
+      } catch (err) {
+        console.error("Error obteniendo el equipo:", err);
+      }
+    };
+
+    if (teamId) {
+      fetchTeamInfo();
+    }
+  }, [teamId]);
+
+  useEffect(() => {
+    if (members.length > 0) {
+      setDifficultyLoading(true);
+      const aggregatedData = {
+        Easy: 0,
+        Medium: 0,
+        Hard: 0
+      };
+
+      const fetchPromises = members.map(member => 
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}/employees/solved-difficulty/${member.id}`)
+          .then(res => {
+            aggregatedData.Easy += res.data.Easy || 0;
+            aggregatedData.Medium += res.data.Medium || 0;
+            aggregatedData.Hard += res.data.Hard || 0;
+          })
+          .catch(err => {
+            console.error(`Error fetching difficulty for member ${member.id}:`, err);
+          })
+      );
+
+      Promise.all(fetchPromises)
+        .then(() => {
+          setDifficultyData(aggregatedData);
+          setDifficultyLoading(false);
+        });
+    }
+  }, [members]);
+
+  const leaveTeam = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/teams/${teamId}/leave`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) throw new Error("No se pudo salir del equipo");
+
+      navigate("/home");
+    } catch (error) {
+      console.error("Error al salir del equipo:", error);
+      alert("Hubo un error al intentar salir del equipo.");
+    }
+  };
+
+  const barChartData = difficultyData 
+    ? [
+        { name: 'Easy', value: difficultyData.Easy, color: '#28a745' },
+        { name: 'Medium', value: difficultyData.Medium, color: '#fd7e14' },
+        { name: 'Hard', value: difficultyData.Hard, color: '#dc3545' },
+      ]
+    : [
+        { name: 'Easy', value: 0, color: '#28a745' },
+        { name: 'Medium', value: 0, color: '#fd7e14' },
+        { name: 'Hard', value: 0, color: '#dc3545' },
+      ];
 
   return (
-    <div className="min-h-screen bg-[#363B41]"> {/* Fondo gris para toda la página */}
+    <div className="min-h-screen bg-[#363B41]">
       <div className="max-w-7xl mx-auto p-6 text-gray-900">
-        {/* Botón Volver con fondo blanco y texto negro */}
         <button 
           onClick={() => navigate('/home')}
           className="flex items-center gap-2 bg-white text-black hover:bg-gray-200 p-2 rounded-md mb-6"
@@ -37,119 +144,103 @@ function ProfileAndTeamPage() {
         </button>
 
         <div className="mb-8">
-          {/* Cambié el color de la palabra "Perfil" a blanco */}
-          <h1 className="text-2xl font-bold mb-6 text-white">Perfil</h1> {/* Se puede cambiar a "Equipo" en la otra pantalla */}
+          <h1 className="text-2xl font-bold mb-6 text-white">Equipo</h1>
           
-          {/* Recuadro de equipo */}
           <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
-            <h2 className="text-xl font-semibold mb-4">Los fieles y Edsel</h2>
+            <h2 className="text-xl font-semibold mb-4">{teamInfo?.name ?? "Nombre del equipo"}</h2>
+            {teamInfo?.code && (
+              <div className="text-sm text-gray-500 mb-2">
+                Código del equipo: <span className="font-mono bg-gray-100 px-2 py-1 rounded">{teamInfo.code}</span>
+              </div>
+            )}
             <div className="mb-6">
               <div className="flex justify-between text-sm mb-2">
-                <span>Nivel 5</span>
-                <span>9462 exp</span>
+                <span>Nivel del equipo: {teamLevel}</span>
+                <span>Experiencia del equipo: {totalExperience} XP</span>
               </div>
-              <div className="w-full bg-gray-100 rounded-full h-2">
-                <div className="bg-red-500 h-2 rounded-full w-3/4"></div>
-              </div>
+              <div className="bg-red-500 h-2 rounded-full"
+                style={{
+                  width: `${(totalExperience % 1000) / 10}%`,
+                }}
+              ></div>
             </div>
 
-            {/* Tabla de equipo */}
             <div className="overflow-x-auto">
               <table className="min-w-full table-auto">
                 <thead className="bg-gray-200">
                   <tr>
                     <th className="px-4 py-2 text-left">Miembro</th>
-                    <th className="px-4 py-2 text-left">Puntos</th>
+                    <th className="px-4 py-2 text-left">XP</th>
                     <th className="px-4 py-2 text-left">Nivel</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td className="border px-4 py-2">Davis Curtis</td>
-                    <td className="border px-4 py-2">9462</td>
-                    <td className="border px-4 py-2">Nivel 5</td>
-                  </tr>
-                  <tr>
-                    <td className="border px-4 py-2">Davis Curtis</td>
-                    <td className="border px-4 py-2">9462</td>
-                    <td className="border px-4 py-2">Nivel 5</td>
-                  </tr>
-                  <tr>
-                    <td className="border px-4 py-2">Davis Curtis</td>
-                    <td className="border px-4 py-2">9462</td>
-                    <td className="border px-4 py-2">Nivel 5</td>
-                  </tr>
-                  <tr>
-                    <td className="border px-4 py-2">Davis Curtis</td>
-                    <td className="border px-4 py-2">9462</td>
-                    <td className="border px-4 py-2">Nivel 5</td>
-                  </tr>
+                  {loading ? (
+                    <tr>
+                      <td colSpan={3} className="text-center py-4">Cargando...</td>
+                    </tr>
+                  ) : members.length === 0 ? (
+                    <tr>
+                      <td colSpan={3} className="text-center py-4">No hay miembros en este equipo.</td>
+                    </tr>
+                  ) : (
+                    members.map((member) => {
+                      const experience = member.experience ?? 0;
+                      const level = Math.floor(experience / 1000);
+                      return (
+                        <tr key={member.id}>
+                          <td className="border px-4 py-2 flex items-center gap-2">
+                            {member.profilePicture && (
+                              <img src={member.profilePicture} alt="foto" className="w-6 h-6 rounded-full" />
+                            )}
+                            {member.firstName} {member.lastName}
+                          </td>
+                          <td className="border px-4 py-2">{experience}</td>
+                          <td className="border px-4 py-2">Nivel {level}</td>
+                        </tr>
+                      );
+                    })
+                  )}
                 </tbody>
               </table>
             </div>
           </div>
-
-          {/* Recuadro de la gráfica de líneas */}
-          <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
-            <h2 className="text-xl font-semibold mb-4">Progreso a lo largo del tiempo</h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={lineChartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Line type="monotone" dataKey="value" stroke="#8884d8" />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Recuadro para las tres gráficas de barras alineadas horizontalmente */}
           <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
             <h2 className="text-xl font-semibold mb-4">Clasificación por dificultad</h2>
-
-            {/* Contenedor para las tres gráficas en el mismo nivel */}
-            <div className="flex justify-between">
-              {/* Gráfica para Easy */}
-              <div className="flex-1">
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={[barChartData[0]]}>
+            {difficultyLoading ? (
+              <div className="text-center py-8">Cargando datos de dificultad...</div>
+            ) : (
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={barChartData} margin={{ top: 20, right: 30, left: 20, bottom: 30 }}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
-                    <YAxis />
+                    <YAxis allowDecimals={false} />
                     <Tooltip />
-                    <Bar dataKey="value" fill={barChartData[0].color} />
+                    <Bar dataKey="value">
+                      {barChartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-
-              {/* Gráfica para Medium */}
-              <div className="flex-1">
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={[barChartData[1]]}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="value" fill={barChartData[1].color} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-
-              {/* Gráfica para High */}
-              <div className="flex-1">
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={[barChartData[2]]}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="value" fill={barChartData[2].color} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
+            )}
           </div>
 
+          <div className="flex justify-center mt-10">
+            <button
+              onClick={() => {
+                const confirmLeave = window.confirm("¿Estás seguro de que quieres salir del equipo?");
+                if (confirmLeave) {
+                  leaveTeam();
+                }
+              }}
+              className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded"
+            >
+              Salir del equipo
+            </button>
+          </div>
         </div>
       </div>
     </div>

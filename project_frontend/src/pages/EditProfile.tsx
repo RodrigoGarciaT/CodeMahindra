@@ -6,6 +6,7 @@ import { jwtDecode } from "jwt-decode"
 import { ArrowLeft, User, Mail, Phone, Flag, Briefcase, Coins, Upload, Loader2, Check, X } from "lucide-react"
 import ReactCountryFlag from "react-country-flag";
 import axios from "axios"
+import CountryName from "./Home/CountryName"
 
 interface DecodedToken {
   firstName: string
@@ -376,24 +377,54 @@ const initials = user
                         className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent appearance-none bg-white"
                       >
                         <option value="">Selecciona un país</option>
+                        <option value="AF">Afganistán</option>
+                        <option value="DE">Alemania</option>
                         <option value="AR">Argentina</option>
+                        <option value="AU">Australia</option>
                         <option value="BR">Brasil</option>
+                        <option value="CA">Canadá</option>
                         <option value="CL">Chile</option>
+                        <option value="CN">China</option>
                         <option value="CO">Colombia</option>
+                        <option value="KR">Corea del Sur</option>
+                        <option value="CU">Cuba</option>
+                        <option value="DK">Dinamarca</option>
+                        <option value="EC">Ecuador</option>
+                        <option value="EG">Egipto</option>
+                        <option value="SV">El Salvador</option>
                         <option value="ES">España</option>
                         <option value="US">Estados Unidos</option>
+                        <option value="FR">Francia</option>
+                        <option value="GR">Grecia</option>
+                        <option value="GT">Guatemala</option>
+                        <option value="HN">Honduras</option>
+                        <option value="IN">India</option>
+                        <option value="ID">Indonesia</option>
+                        <option value="IE">Irlanda</option>
+                        <option value="IT">Italia</option>
+                        <option value="JP">Japón</option>
                         <option value="MX">México</option>
+                        <option value="NI">Nicaragua</option>
+                        <option value="NO">Noruega</option>
+                        <option value="PA">Panamá</option>
+                        <option value="PY">Paraguay</option>
                         <option value="PE">Perú</option>
+                        <option value="PL">Polonia</option>
+                        <option value="PT">Portugal</option>
+                        <option value="GB">Reino Unido</option>
+                        <option value="DO">República Dominicana</option>
+                        <option value="RU">Rusia</option>
+                        <option value="SE">Suecia</option>
+                        <option value="CH">Suiza</option>
+                        <option value="TH">Tailandia</option>
+                        <option value="TR">Turquía</option>
+                        <option value="UY">Uruguay</option>
                         <option value="VE">Venezuela</option>
+                        <option value="VN">Vietnam</option>
                       </select>
                       {user.nationality && (
                         <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                          <ReactCountryFlag
-                            countryCode={user.nationality}
-                            svg
-                            style={{ width: "1.5em", height: "1.5em" }}
-                            title={user.nationality}
-                          />
+                          <CountryName code = {user.nationality} showCountryName = {false}/>
                           </div>
                         )} 
                     </div>
@@ -456,18 +487,22 @@ const initials = user
           <h2 className="text-lg font-bold mb-6">Progreso</h2>
           <div className="mb-2 flex justify-between items-center">
             <span className="text-sm font-medium">
-              Nivel {user.experience ? Math.floor(user.experience / 2000) + 1 : 5}
+              Nivel {Math.floor((user?.experience ?? 0) / 1000)}
             </span>
-            <span className="text-sm text-gray-500">{user.experience} XP</span>
+            <span className="text-sm text-gray-500">{user?.experience ?? 0} XP</span>
           </div>
+
           <div className="h-3 w-full bg-gray-100 rounded-full overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-red-500 to-red-600 rounded-full"
-              style={{ width: `${user.experience ? (user.experience % 2000) / 20 : 70}%` }}
+              style={{
+                width: `${((user?.experience ?? 0) % 1000) / 10}%`,
+              }}
             ></div>
           </div>
+
           <p className="text-sm text-gray-500 mt-2">
-            Necesitas {user.experience ? 2000 - (user.experience % 2000) : 600} XP más para subir al siguiente nivel
+            Necesitas {1000 - ((user?.experience ?? 0) % 1000)} XP más para subir al siguiente nivel
           </p>
         </div>
       </div>

@@ -29,7 +29,7 @@ export default function ReposListPage() {
           return;
         }
 
-        const res = await fetch("http://localhost:8000/github/repos", {
+        const res = await fetch(`${import.meta.env.VITE_REPOSITORIES_BACKEND_URL}/github/repos`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,

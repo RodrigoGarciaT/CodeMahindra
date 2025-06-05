@@ -14,7 +14,7 @@ class Employee(Base):
         default='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkshh0IMgSA8yw_1JFALVsXFojVdR88C05Fw&s'
     )
     nationality = Column(String(255))
-    experience = Column(Integer)
+    experience = Column(Integer, default=0)
     level = Column(Integer)
     firstName = Column(String(255))
     lastName = Column(String(255))
@@ -37,6 +37,7 @@ class Employee(Base):
 
     # Usuario de Github
     github_username = Column(String(255), nullable=True)
+    github_token = Column(String(255), nullable=True)  # Añadir esto en tu modelo Employee
 
     # Campos para autenticación con Jira
     jira_email = Column(String(255))

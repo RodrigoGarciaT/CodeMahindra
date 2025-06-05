@@ -19,7 +19,7 @@ import ProfilePage from './pages/Profile';
 import AdminDashboard from './pages/AdminDashboard';
 import Roadmap from './pages/Roadmap/Page';
 import StoreManagement from './pages/StoreManagement';
-import ImageUploaderCloudinary from './pages/ImageUploaderCloudinary'
+import ImageUploaderCloudinary from './pages/ImageUploaderCloudinary';
 import ManageUsers from './pages/ManageUsers';
 import ManageProblems from './pages/ManageProblems';
 import EditProfile from './pages/EditProfile';
@@ -32,8 +32,13 @@ import RecommendedResources from './pages/Repositories/RecommendedResources/Page
 import BotStore from './pages/Home/BotStore';
 import CommitFeedback from './pages/Repositories/Commits/CommitFeedback/Page';
 import ReposListPage from './pages/Repositories/Page';
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
+import CreateTeamPage from "@/pages/CreateTeamPage";
+import JoinTeamPage from "@/pages/JoinTeamPage";
 
-// 1. Layout que incluye la Navbar
+// Layout con navbar
 function LayoutConNavbar() {
   return (
     <div className="min-h-screen bg-[#1e1e1e]">
@@ -46,52 +51,54 @@ function LayoutConNavbar() {
 function App() {
   return (
     <CartProvider>
-      <Router>
-        <Routes>
-          {/* 2. Ruta que NO muestra la Navbar (LandingPage) */}
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/landing-page" element={<LandingPage />} />
-          <Route path="/GoogleReg" element={<GoogleReg />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/login" element={<LoginPage />} />
+      <AuthProvider>
+        <Router>
+          <Routes>
+            {/* Páginas sin navbar */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/landing-page" element={<LandingPage />} />
+            <Route path="/GoogleReg" element={<GoogleReg />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/login" element={<LoginPage />} />
 
-          {/* 3. Ruta con Navbar */}
-          <Route element={<LayoutConNavbar />}>
-          
-            <Route path="/home" element={<Home />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/manage-users" element={<ManageUsers />} />
-            <Route path="/manage-problems" element={<ManageProblems />} />
-            <Route path="/problemList" element={<ProblemList />} />
-            <Route path="/roadmap" element={<Roadmap/>} />
-            <Route path="/problemList/problem/:problemId" element={<Problems />} />
-            <Route path="/problems" element={<ProblemList />} />
-            <Route path="/problems/create" element={<CreateProblem />} />
-            <Route path="/tasks" element={<Tasks />} />
-            <Route path="/ranking" element={<Ranking />} />
-            <Route path="/store" element={<Store />} />
-            <Route path="/store/manage" element={<StoreManagement />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/team" element={<TeamPage />} />
-            <Route path="/test" element={<ImageUploaderCloudinary />} />
-            <Route path="/Profile" element={<ProfilePage />} />
-            <Route path="/profile/view" element={<EditProfile />} />
-            <Route path ='/manage-purchase' element = {<PurchaseManager/>} />
-            <Route path ='/repos' element = {<ReposListPage />} />
+            {/* Páginas con navbar */}
+            <Route element={<LayoutConNavbar />}>
+              <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+              <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+              <Route path="/manage-users" element={<AdminRoute><ManageUsers /></AdminRoute>} />
+              <Route path="/manage-problems" element={<AdminRoute><ManageProblems /></AdminRoute>} />
+              <Route path="/problemList" element={<ProtectedRoute><ProblemList /></ProtectedRoute>} />
+              <Route path="/roadmap" element={<ProtectedRoute><Roadmap /></ProtectedRoute>} />
+              <Route path="/problemList/problem/:problemId" element={<ProtectedRoute><Problems /></ProtectedRoute>} />
+              <Route path="/problems" element={<ProtectedRoute><ProblemList /></ProtectedRoute>} />
+              <Route path="/problems/create" element={<ProtectedRoute><CreateProblem /></ProtectedRoute>} />
+              <Route path="/tasks" element={<ProtectedRoute><Tasks /></ProtectedRoute>} />
+              <Route path="/ranking" element={<ProtectedRoute><Ranking /></ProtectedRoute>} />
+              <Route path="/store" element={<ProtectedRoute><Store /></ProtectedRoute>} />
+              <Route path="/store/manage" element={<AdminRoute><StoreManagement /></AdminRoute>} />
+              <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+              <Route path="/team" element={<ProtectedRoute><TeamPage /></ProtectedRoute>} />
+              <Route path="/test" element={<ProtectedRoute><ImageUploaderCloudinary /></ProtectedRoute>} />
+              <Route path="/Profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+              <Route path="/profile/view" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
+              <Route path="/manage-purchase" element={<ProtectedRoute><PurchaseManager /></ProtectedRoute>} />
+              <Route path="/teams/create" element={<ProtectedRoute><CreateTeamPage /></ProtectedRoute>} />
+              <Route path="/teams/join" element={<ProtectedRoute><JoinTeamPage /></ProtectedRoute>} />
+              <Route path="/bot-store" element={<ProtectedRoute><BotStore /></ProtectedRoute>} />
+              <Route path="/repos" element={<ProtectedRoute><ReposListPage /></ProtectedRoute>} />
 
-            <Route element={<ReposLayout />}>
-              <Route path="/repos/:repoFullName/Dashboard" element={<Dashboard />} />
-              <Route path="/repos/:repoFullName/Commits" element={<Commits />} />
-              <Route path="/repos/:repoFullName/PullRequests" element={<PullRequests />} />
-              <Route path="/repos/:repoFullName/RecommendedResources" element={<RecommendedResources />} />
-              <Route path="/repos/:repoFullName/commits/:sha/feedback" element={<CommitFeedback />} />
+              {/* Subrutas de Repositories protegidas y anidadas */}
+              <Route element={<ProtectedRoute><ReposLayout /></ProtectedRoute>}>
+                <Route path="/repos/:repoFullName/Dashboard" element={<Dashboard />} />
+                <Route path="/repos/:repoFullName/Commits" element={<Commits />} />
+                <Route path="/repos/:repoFullName/PullRequests" element={<PullRequests />} />
+                <Route path="/repos/:repoFullName/RecommendedResources" element={<RecommendedResources />} />
+                <Route path="/repos/:repoFullName/commits/:sha/feedback" element={<CommitFeedback />} />
+              </Route>
             </Route>
-
-            <Route path="/bot-store" element={<BotStore />} />
-          
-          </Route>
-        </Routes>
-      </Router>
+          </Routes>
+        </Router>
+      </AuthProvider>
     </CartProvider>
   );
 }

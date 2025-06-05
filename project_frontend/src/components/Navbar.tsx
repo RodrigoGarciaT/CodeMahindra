@@ -12,6 +12,12 @@ const Navbar = () => {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // Obtenemos usuario desde localStorage
+const userRaw = localStorage.getItem("user");
+const user = userRaw ? JSON.parse(userRaw) : null;
+const isAdmin = user?.isAdmin === true;
+
+
   const navItems = [
     { path: '/home', label: 'Home', icon: <Home className="h-4 w-4 mr-1" />, includes: ["/home", "/profile", "/team"] },
     { path: '/problems', label: 'Problems', icon: <Code2 className="h-4 w-4 mr-1" />, includes: ["/problems", "/roadmap", "/problemList/problem"] },
@@ -21,6 +27,16 @@ const Navbar = () => {
     { path: '/store', label: 'Store', icon: <ShoppingBag className="h-4 w-4 mr-1" /> },
     { path: '/admin', label: 'Admin', icon: <Settings className="h-4 w-4 mr-1" /> },
   ];
+
+  // Filtramos los ítems visibles según si es admin
+  const visibleNavItems = navItems.filter(item => {
+    // Si no es admin, ocultamos solo la ruta /admin
+    if (!isAdmin && item.path === "/admin") {
+      return false;
+    }
+    return true; // Mostrar todo lo demás
+  });
+
 
   const getLinkClass = (includes: string[]) =>
     includes.some((p) => location.pathname.startsWith(p))
@@ -49,7 +65,7 @@ const Navbar = () => {
 
         {/* Navegación Desktop */}
         <div className="hidden md:flex items-center space-x-2">
-          {navItems.map(({ path, label, icon, includes }) => (
+          {visibleNavItems.map(({ path, label, icon, includes }) => (
             <Link key={path} to={path} className={getLinkClass(includes || [path])}>
               {icon}
               {label}
@@ -77,7 +93,7 @@ const Navbar = () => {
       {/* Menú Mobile */}
       {menuOpen && (
         <div className="md:hidden px-4 pb-4 flex flex-col space-y-2">
-          {navItems.map(({ path, label, icon, includes }) => (
+          {visibleNavItems.map(({ path, label, icon, includes }) => (
             <Link key={path} to={path} className={getLinkClass(includes || [path])}>
               {icon}
               {label}

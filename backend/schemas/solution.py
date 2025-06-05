@@ -37,5 +37,6 @@ class Submission(BaseModel):
     problem_id: int
     source_code: str
     language: str # language va a ser o C++, Javascript, Python o Java
+    inTeam: bool
     class Config:
         from_attributes = True

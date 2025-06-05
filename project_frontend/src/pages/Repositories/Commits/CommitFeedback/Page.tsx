@@ -100,7 +100,7 @@ export default function CommitFeedback() {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        const res = await axios.get("http://127.0.0.1:8000/github/commit-feedback", {
+        const res = await axios.get(`${import.meta.env.VITE_REPOSITORIES_BACKEND_URL}/github/commit-feedback`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

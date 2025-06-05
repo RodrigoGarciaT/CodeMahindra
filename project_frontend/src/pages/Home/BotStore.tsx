@@ -1,222 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Star, ChevronRight } from 'lucide-react';
+import { ArrowLeft, ChevronRight, Check, Zap } from 'lucide-react';
 import { motion, useAnimation } from 'framer-motion';
-
-import Botoriginal from "../../images/BotsTechmahindra/Botoriginal.png";
-import BotMahindra2 from '../../images/BotsTechmahindra/BotMahindra2.png';
-import BotMahindra3 from '../../images/BotsTechmahindra/BotMahindra3.png';
-import BotMahindra4 from '../../images/BotsTechmahindra/BotMahindra4.png';
-import BotPython from '../../images/BotsTechmahindra/BotPython.png';
-import BotReact from '../../images/BotsTechmahindra/BotReact.png';
-import BotTechmahindra5 from '../../images/BotsTechmahindra/BotTechmahindra5.png';
-import BotTechmahindra6 from '../../images/BotsTechmahindra/BotTechmahindra6.png';
-import BotTecmahindra7 from '../../images/BotsTechmahindra/BotTecmahindra7.png';
-import BotTecmahindra8 from '../../images/BotsTechmahindra/BotTecmahindra8.png';
-import BotTecmahindra10 from '../../images/BotsTechmahindra/BotTecmahindra10.png';
-import BotTecmahindra11 from '../../images/BotsTechmahindra/BotTecmahindra11.png';
-import BotTecmahindra12 from '../../images/BotsTechmahindra/BotTecmahindra12.png';
-import BotTecmahindra13 from '../../images/BotsTechmahindra/BotTecmahindra13.png';
-import BotTecmahindra14 from '../../images/BotsTechmahindra/BotTecmahindra14.png';
-import BotTecmahindra15 from '../../images/BotsTechmahindra/BotTecmahindra15.png';
-import BotTecmahindra16 from '../../images/BotsTechmahindra/BotTecmahindra16.png';
-import BotTechmahindra17 from '../../images/BotsTechmahindra/BotTecmahindra17.png';
-
+import Toast from '@/components/Toast';
 
 export interface Bot {
   id: string;
   name: string;
   description: string;
   price: number;
-  imageUrl: string;
-  publishedDate: string;
-  abilities: string[];
-  proficiency: number;
+  image: string;
+  owns: boolean;
+  isEquipped: boolean;
 }
-
-const initialBots: Bot[] = [
-  {
-    id: '1',
-    name: 'Bot Original',
-    description: 'Advanced AI assistant with natural language processing capabilities.',
-    price: 20,
-    imageUrl: Botoriginal,
-    publishedDate: '2024-03-14',
-    abilities: ['Natural Language Processing', 'Code Generation', 'Problem Solving', 'Data Analysis'],
-    proficiency: 4,
-  },
-  {
-    id: '2',
-    name: 'Bot Animado',
-    description: 'Specialized in creating engaging animations and visual effects.',
-    price: 30,
-    imageUrl: BotMahindra2,
-    publishedDate: '2024-03-14',
-    abilities: ['Animation Creation', 'Visual Effects', 'Motion Graphics', 'Character Design'],
-    proficiency: 5,
-  },
-  {
-    id: '3',
-    name: 'Bot C++',
-    description: 'Expert in C++ programming and system optimization.',
-    price: 45,
-    imageUrl: BotMahindra3,
-    publishedDate: '2024-03-14',
-    abilities: ['System Programming', 'Performance Optimization', 'Memory Management', 'Algorithm Design'],
-    proficiency: 5,
-  },
-  {
-    id: '4',
-    name: 'Bot Python',
-    description: 'Specialized in Python development and data science.',
-    price: 40,
-    imageUrl: BotMahindra4,
-    publishedDate: '2024-03-14',
-    abilities: ['Data Science', 'Machine Learning', 'Web Scraping', 'Automation'],
-    proficiency: 4,
-  },
-  {
-    id: '5',
-    name: 'Bot Python',
-    description: 'Specialized in Python development and data science.',
-    price: 40,
-    imageUrl: BotPython,
-    publishedDate: '2024-03-14',
-    abilities: ['Data Science', 'Machine Learning', 'Web Scraping', 'Automation'],
-    proficiency: 4,
-  },
-  {
-    id: '6',
-    name: 'React bot',
-    description: 'Specialized in Python development and data science.',
-    price: 40,
-    imageUrl: BotReact,
-    publishedDate: '2024-03-14',
-    abilities: ['Data Science', 'Machine Learning', 'Web Scraping', 'Automation'],
-    proficiency: 5,
-  },
-  {
-    id: '7',
-    name: 'Knigth bot',
-    description: 'Specialized in Python development and data science.',
-    price: 40,
-    imageUrl: BotTechmahindra5,
-    publishedDate: '2024-03-14',
-    abilities: ['Data Science', 'Machine Learning', 'Web Scraping', 'Automation'],
-    proficiency: 4,
-  },
-  {
-    id: '8',
-    name: 'Knigth bot 2',
-    description: 'Specialized in Python development and data science.',
-    price: 40,
-    imageUrl: BotTechmahindra6,
-    publishedDate: '2024-03-14',
-    abilities: ['Data Science', 'Machine Learning', 'Web Scraping', 'Automation'],
-    proficiency: 4,
-  },
-  {
-    id: '9',
-    name: 'White bot',
-    description: 'Specialized in Python development and data science.',
-    price: 40,
-    imageUrl: BotTecmahindra7,
-    publishedDate: '2024-03-14',
-    abilities: ['Data Science', 'Machine Learning', 'Web Scraping', 'Automation'],
-    proficiency: 2,
-  },
-  {
-    id: '10',
-    name: 'Simple bot',
-    description: 'Specialized in Python development and data science.',
-    price: 40,
-    imageUrl: BotTecmahindra8,
-    publishedDate: '2024-03-14',
-    abilities: ['Data Science', 'Machine Learning', 'Web Scraping', 'Automation'],
-    proficiency: 3,
-  },
-  {
-    id: '12',
-    name: 'Basketd ball bot',
-    description: 'Specialized in Python development and data science.',
-    price: 40,
-    imageUrl: BotTecmahindra10,
-    publishedDate: '2024-03-14',
-    abilities: ['Data Science', 'Machine Learning', 'Web Scraping', 'Automation'],
-    proficiency: 4,
-  },
-  {
-    id: '13',
-    name: 'Build bot',
-    description: 'Specialized in Python development and data science.',
-    price: 40,
-    imageUrl: BotTecmahindra11,
-    publishedDate: '2024-03-14',
-    abilities: ['Data Science', 'Machine Learning', 'Web Scraping', 'Automation'],
-    proficiency: 4,
-  },
-  {
-    id: '14',
-    name: 'Beisball bot',
-    description: 'Specialized in Python development and data science.',
-    price: 40,
-    imageUrl: BotTecmahindra12,
-    publishedDate: '2024-03-14',
-    abilities: ['Data Science', 'Machine Learning', 'Web Scraping', 'Automation'],
-    proficiency: 4,
-  },
-  {
-    id: '15',
-    name: 'Bot simple',
-    description: 'Specialized in Python development and data science.',
-    price: 40,
-    imageUrl: BotTecmahindra13,
-    publishedDate: '2024-03-14',
-    abilities: ['Data Science', 'Machine Learning', 'Web Scraping', 'Automation'],
-    proficiency: 2,
-  },
-  {
-    id: '16',
-    name: 'Soccer bot',
-    description: 'Specialized in Python development and data science.',
-    price: 40,
-    imageUrl: BotTecmahindra14,
-    publishedDate: '2024-03-14',
-    abilities: ['Data Science', 'Machine Learning', 'Web Scraping', 'Automation'],
-    proficiency: 3,
-  },
-  {
-    id: '17',
-    name: 'Armor bot',
-    description: 'Specialized in Python development and data science.',
-    price: 40,
-    imageUrl: BotTecmahindra15,
-    publishedDate: '2024-03-14',
-    abilities: ['Data Science', 'Machine Learning', 'Web Scraping', 'Automation'],
-    proficiency: 4,
-  },
-  {
-    id: '18',
-    name: 'Happy bot',
-    description: 'Specialized in Python development and data science.',
-    price: 40,
-    imageUrl: BotTecmahindra16,
-    publishedDate: '2024-03-14',
-    abilities: ['Data Science', 'Machine Learning', 'Web Scraping', 'Automation'],
-    proficiency: 5,
-  },
-  {
-    id: '19',
-    name: 'Dark bot',
-    description: 'Specialized in Python development and data science.',
-    price: 40,
-    imageUrl: BotTechmahindra17,
-    publishedDate: '2024-03-14',
-    abilities: ['Data Science', 'Machine Learning', 'Web Scraping', 'Automation'],
-    proficiency: 5,
-  },
-  
-];
 
 const botCardVariants = {
   initial: { scale: 1 },
@@ -233,20 +29,124 @@ const selectedBotVariants = {
   animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
 };
 
-const abilityCardVariants = {
-  initial: { opacity: 0, x: -20 },
-  animate: { opacity: 1, x: 0, transition: { duration: 0.3, delay: 0.1 } },
-};
-
 function BotStore() {
   const navigate = useNavigate();
-  const [bots] = useState<Bot[]>(initialBots);
+  const [bots, setBots] = useState<Bot[]>([]);
   const [selectedBot, setSelectedBot] = useState<Bot | null>(null);
+  const [isPurchasing, setIsPurchasing] = useState(false);
+  const [isEquipping, setIsEquipping] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastSuccess, setToastSuccess] = useState(false);
   const selectedBotControls = useAnimation();
 
-  const handlePurchase = (bot: Bot) => {
-    localStorage.setItem('purchasedBots', JSON.stringify([bot]));
-    navigate('/dashboard');
+  useEffect(() => {
+    const fetchBots = async () => {
+      try {
+        const employeeId = localStorage.getItem("user_id");
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/bots/employee/${employeeId}`);
+        const data = await response.json();
+        setBots(data);
+      } catch (error) {
+        console.error("Failed to fetch bots:", error);
+      }
+    };
+
+    fetchBots();
+  }, []);
+
+  const handlePurchase = async (bot: Bot) => {
+    if (bot.owns) {
+      showToastMessage("Ya posees este bot", false);
+      return;
+    }
+
+    setIsPurchasing(true);
+
+    try {
+      const employeeId = localStorage.getItem("user_id");
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/bots/buy_bots?employee_id=${employeeId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify([
+          { bot_id: parseInt(bot.id, 10) }
+        ])
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to purchase bot');
+      }
+
+      // Update local state to reflect purchase
+      setBots(prevBots => prevBots.map(b => 
+        b.id === bot.id ? { ...b, owns: true, isEquipped: false } : b
+      ));
+      
+      if (selectedBot?.id === bot.id) {
+        setSelectedBot({ ...selectedBot, owns: true, isEquipped: false });
+      }
+
+      showToastMessage("¡Bot comprado con éxito!", true);
+    } catch (error) {
+      console.error('Purchase error:', error);
+      showToastMessage(error instanceof Error ? error.message : 'Failed to purchase bot', false);
+    } finally {
+      setIsPurchasing(false);
+    }
+  };
+
+  const handleEquip = async (bot: Bot) => {
+    if (!bot.owns) return;
+    if (bot.isEquipped) return;
+
+    setIsEquipping(true);
+
+    try {
+      const employeeId = localStorage.getItem("user_id");
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/employee-bots/${employeeId}/${bot.id}/equip`,
+        { method: 'POST' }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to equip bot');
+      }
+
+      // Update local state to reflect equip changes
+      setBots(prevBots => prevBots.map(b => ({
+        ...b,
+        isEquipped: b.id === bot.id // Equip selected bot, unequip others
+      })));
+
+      if (selectedBot) {
+        setSelectedBot({
+          ...selectedBot,
+          isEquipped: selectedBot.id === bot.id
+        });
+      }
+
+      showToastMessage(`¡Bot ${bot.name} equipado!`, true);
+    } catch (error) {
+      console.error('Equip error:', error);
+      showToastMessage(error instanceof Error ? error.message : 'Failed to equip bot', false);
+    } finally {
+      setIsEquipping(false);
+    }
+  };
+
+  const showToastMessage = (message: string, success: boolean) => {
+    setToastMessage(message);
+    setToastSuccess(success);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 5000);
+  };
+
+  const closeToast = () => {
+    setShowToast(false);
   };
 
   useEffect(() => {
@@ -259,6 +159,13 @@ function BotStore() {
 
   return (
     <div className="min-h-screen bg-[#363B41]">
+      <Toast 
+        show={showToast} 
+        success={toastSuccess} 
+        msg={toastMessage} 
+        onClose={closeToast} 
+      />
+
       <div className="max-w-7xl mx-auto p-6">
         <button
           onClick={() => navigate('/home')}
@@ -281,13 +188,27 @@ function BotStore() {
                   variants={botCardVariants}
                   onClick={() => setSelectedBot(bot)}
                   className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all duration-300 ${
-                    selectedBot?.id === bot.id ? 'border-blue-500 shadow-lg shadow-blue-500/50' : 'border-gray-700'
+                    selectedBot?.id === bot.id 
+                      ? 'border-blue-500 shadow-lg shadow-blue-500/50' 
+                      : 'border-gray-700'
+                  } ${bot.owns ? 'border-green-500' : ''} ${
+                    bot.isEquipped ? 'border-yellow-400 shadow-lg shadow-yellow-400/50' : ''
                   }`}
                 >
+                  {bot.owns && (
+                    <div className="absolute top-2 right-2 bg-green-500 rounded-full p-1 z-10">
+                      <Check className="w-3 h-3 text-white" />
+                    </div>
+                  )}
+                  {bot.isEquipped && (
+                    <div className="absolute top-2 left-2 bg-yellow-500 rounded-full p-1 z-10">
+                      <Zap className="w-3 h-3 text-white" />
+                    </div>
+                  )}
                   <motion.img
-                    src={bot.imageUrl}
+                    src={bot.image}
                     alt={bot.name}
-                    className={`w-full h-full object-cover`}
+                    className={`w-full h-full object-cover ${bot.owns ? '' : 'grayscale'}`}
                     variants={botImageVariants}
                     whileHover="hover"
                   />
@@ -313,55 +234,81 @@ function BotStore() {
                 <div className="flex justify-between items-start mb-6">
                   <div>
                     <h2 className="text-3xl font-bold text-blue-400">{selectedBot.name}</h2>
-                    <div className="flex gap-1 mt-2">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-5 h-5 transition-all duration-300 ${
-                            i < selectedBot.proficiency ? 'text-yellow-400 fill-yellow-400 scale-110' : 'text-gray-600'
-                          }`}
-                        />
-                      ))}
-                    </div>
+                    {selectedBot.owns && (
+                      <div className="flex items-center gap-1 mt-1 text-green-400 text-sm">
+                        <Check className="w-4 h-4" />
+                        <span>Ya posees este bot</span>
+                      </div>
+                    )}
+                    {selectedBot.isEquipped && (
+                      <div className="flex items-center gap-1 mt-1 text-yellow-400 text-sm">
+                        <Zap className="w-4 h-4" />
+                        <span>Actualmente equipado</span>
+                      </div>
+                    )}
                   </div>
                   <span className="text-2xl font-bold text-green-400">{selectedBot.price} puntos</span>
                 </div>
 
-                <div className="flex-1flex gap-6">
+                <div className="flex-1 flex gap-6">
                   <div className="flex-1 relative overflow-hidden rounded-lg">
                     <motion.img
-                      src={selectedBot.imageUrl}
+                      src={selectedBot.image}
                       alt={selectedBot.name}
-                      className="w-full h-full object-cover"
+                      className={`w-full h-full object-cover ${selectedBot.owns ? '' : 'grayscale'}`}
                       whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
                     />
+                    {selectedBot.isEquipped && (
+                      <div className="absolute inset-0 bg-yellow-400/20 border-2 border-yellow-400 rounded-lg pointer-events-none" />
+                    )}
                   </div>
 
                   <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-white mb-4">Habilidades</h3>
-                    <div className="space-y-2">
-                      {selectedBot.abilities.map((ability, index) => (
-                        <motion.div
-                          key={index}
-                          className="bg-gradient-to-r from-blue-500/50 to-purple-500/50 p-3 rounded-lg text-white flex items-center"
-                          variants={abilityCardVariants}
-                          initial="initial"
-                          animate="animate"
-                          style={{ transitionDelay: `${index * 0.1}s` }}
-                        >
-                          <span className="flex-1">{ability}</span>
-                          <ChevronRight className="w-5 h-5" />
-                        </motion.div>
-                      ))}
+                    <h3 className="text-xl font-semibold text-white mb-4">Descripción</h3>
+                    <div className="bg-gradient-to-r from-blue-500/50 to-purple-500/50 p-4 rounded-lg text-white">
+                      <p>{selectedBot.description}</p>
                     </div>
 
-                    <motion.button
-                      onClick={() => handlePurchase(selectedBot)}
-                      className="mt-6 w-full bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-green-500/50"
-                      whileHover={{ scale: 1.05 }}
-                    >
-                      Comprar Bot
-                    </motion.button>
+                    <div className="flex flex-col gap-4 mt-6">
+                      <motion.button
+                        onClick={() => handlePurchase(selectedBot)}
+                        disabled={isPurchasing || selectedBot.owns}
+                        className={`w-full text-white py-3 px-6 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-lg ${
+                          isPurchasing 
+                            ? 'bg-gray-500 cursor-not-allowed' 
+                            : selectedBot.owns
+                              ? 'bg-blue-500 cursor-default'
+                              : 'bg-green-500 hover:bg-green-600 hover:shadow-green-500/50'
+                        }`}
+                        whileHover={!isPurchasing && !selectedBot.owns ? { scale: 1.05 } : {}}
+                      >
+                        {isPurchasing 
+                          ? 'Procesando...' 
+                          : selectedBot.owns 
+                            ? 'Bot adquirido' 
+                            : 'Comprar Bot'}
+                      </motion.button>
+                      {selectedBot.owns && (
+                        <motion.button
+                          onClick={() => handleEquip(selectedBot)}
+                          disabled={isEquipping || selectedBot.isEquipped}
+                          className={`w-full text-white py-3 px-6 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-lg ${
+                            isEquipping
+                              ? 'bg-gray-500 cursor-not-allowed'
+                              : selectedBot.isEquipped
+                                ? 'bg-yellow-500 cursor-default'
+                                : 'bg-yellow-400 hover:bg-yellow-500 hover:shadow-yellow-400/50'
+                          }`}
+                          whileHover={!isEquipping && !selectedBot.isEquipped ? { scale: 1.05 } : {}}
+                        >
+                          {isEquipping
+                            ? 'Procesando...'
+                            : selectedBot.isEquipped
+                              ? 'Equipado'
+                              : 'Equipar Bot'}
+                        </motion.button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </>

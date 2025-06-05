@@ -43,8 +43,12 @@ def create_employee(db: Session, employee_create: EmployeeCreate):
         lastName=employee_create.lastName,
         nationality=employee_create.nationality,
         phoneNumber=employee_create.phoneNumber,
-        profilePicture=employee_create.profilePicture 
+        profilePicture=employee_create.profilePicture,
+        github_username=employee_create.github_username,
+        github_token=employee_create.github_token,
     )
+
+    print(f"[DEBUG] github_token guardado: {db_employee.github_token}")
 
     db.add(db_employee)
     db.commit()
@@ -98,7 +102,7 @@ async def login(login_data: LoginRequest, db: Session = Depends(get_db)):
     # Aquí generamos el token
     print(user.email)
     access_token = create_access_token(data={
-        "sub": user.email,
+        "sub": str(user.id),
         "firstName": user.firstName,
         "lastName": user.lastName,
         "email": user.email,
@@ -153,21 +157,23 @@ def google_auth(data: GoogleToken, db: Session = Depends(get_db)):
 
 
     token = create_access_token(data={
-        "sub": user.email,
-    "firstName": user.firstName,
-    "lastName": user.lastName,
-    "phoneNumber": user.phoneNumber,
-    "isAdmin": user.isAdmin,
-    "coins": user.coins,
-    "profilePicture": google_data.get("picture") or user.profilePicture,
-    "position_id": user.position_id,
-    "team_id": user.team_id
+        "sub": str(user.id),
+        "email": user.email,
+        "firstName": user.firstName,
+        "lastName": user.lastName,
+        "phoneNumber": user.phoneNumber,
+        "isAdmin": user.isAdmin,
+        "coins": user.coins,
+        "profilePicture": google_data.get("picture") or user.profilePicture,
+        "position_id": user.position_id,
+        "team_id": user.team_id
 })
     return JSONResponse(
         content={
             "access_token": token,
             "user": {
-                "sub": user.email,
+                "sub": str(user.id),
+                "email": user.email,
                 "firstName": user.firstName,
                 "lastName": user.lastName,
                 "phoneNumber": user.phoneNumber,
@@ -186,7 +192,7 @@ def login_with_github():
     redirect_uri = "https://code-mahindra-backend.vercel.app/auth/github/callback"
     github_auth_url = (
         f"https://github.com/login/oauth/authorize"
-        f"?client_id={github_client_id}&redirect_uri={redirect_uri}&scope=user:email"
+        f"?client_id={github_client_id}&redirect_uri={redirect_uri}&scope=user:email,repo"
     )
     return RedirectResponse(url=github_auth_url)
 
@@ -195,7 +201,7 @@ def github_callback(code: str, db: Session = Depends(get_db)):
     client_id = os.getenv("GITHUB_CLIENT_ID")
     client_secret = os.getenv("GITHUB_CLIENT_SECRET")
 
-    # Obtener token de acceso
+    # Obtener el token de acceso
     token_response = external_requests.post(
         "https://github.com/login/oauth/access_token",
         headers={"Accept": "application/json"},
@@ -209,7 +215,7 @@ def github_callback(code: str, db: Session = Depends(get_db)):
     access_token = token_json.get("access_token")
 
     if not access_token:
-        raise HTTPException(status_code=400, detail="No se pudo obtener access_token")
+        raise HTTPException(status_code=400, detail="No se pudo obtener el access_token")
 
     # Obtener información básica del usuario
     user_response = external_requests.get(
@@ -217,23 +223,23 @@ def github_callback(code: str, db: Session = Depends(get_db)):
         headers={"Authorization": f"token {access_token}"}
     )
     user_data = user_response.json()
-    github_username = user_data.get("login")
 
-    # Obtener correos del usuario
+    github_username = user_data.get("login")
+    print("[DEBUG] github_username obtenido:", github_username)
+
+    # Obtener correo del usuario (primario y verificado)
     emails_response = external_requests.get(
         "https://api.github.com/user/emails",
         headers={"Authorization": f"token {access_token}"}
     )
     emails_data = emails_response.json()
 
-    # Buscar el email primario y verificado
     primary_email = next(
         (email["email"] for email in emails_data if email["primary"] and email["verified"]),
         None
     )
-    email = primary_email or f"{user_data['id']}@github.fake"
 
-    # Nombre completo
+    email = primary_email or f"{user_data['id']}@github.fake"
     full_name = user_data.get("name") or user_data.get("login")
     parts = full_name.strip().split()
     if len(parts) >= 2:
@@ -243,24 +249,26 @@ def github_callback(code: str, db: Session = Depends(get_db)):
         first_name = full_name
         last_name = "GitHub"
 
-    # Buscar o crear usuario
+    # Aquí, pasamos correctamente el github_token como access_token
     user = get_user_by_email(db, email)
     if not user:
         new_user = EmployeeCreate(
             email=email,
-            password="github",
+            password="github",  # Usamos una contraseña temporal o en blanco
             firstName=first_name,
             lastName=last_name,
             nationality="No especificado",
             phoneNumber="0000000000",
             profilePicture=user_data.get("avatar_url"),
-            github_username=github_username 
+            github_username=github_username,
+            github_token=access_token,  # Aquí pasamos el access_token como github_token
         )
         user = create_employee(db, new_user)
 
-    # Generar JWT
+    # Generar JWT con los datos del usuario, ahora con el github_token
     token = create_access_token(data={
-        "sub": user.email,
+        "sub": str(user.id),
+        "email": user.email,
         "firstName": user.firstName,
         "lastName": user.lastName,
         "phoneNumber": user.phoneNumber,
@@ -269,14 +277,19 @@ def github_callback(code: str, db: Session = Depends(get_db)):
         "profilePicture": user.profilePicture,
         "position_id": user.position_id,
         "team_id": user.team_id,
-        "github_username": github_username
+        "github_username": github_username,
+        "github_token": access_token,  # Aquí también pasamos el github_token al JWT
     })
-    
-    # Redirigir al frontend
-    # Return both token AND user_id
+
+    # Redirigir al frontend con el token
     return RedirectResponse(
-        url="https://code-mahindra-w4lk.vercel.app/login?" + urllib.parse.urlencode({
+        url="http://code-mahindra-w4lk.vercel.app/login?" + urllib.parse.urlencode({
             "token": token,
-            "user_id": str(user.id)  # <-- Add user_id to the redirect URL
+            "user_id": str(user.id)
         })
     )
+
+
+
+
+
