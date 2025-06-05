@@ -18,7 +18,8 @@ class EmployeeBase(BaseModel):
     phoneNumber: Optional[str] = None
     position_id: Optional[int] = None
     team_id: Optional[int] = None
-    github_username: Optional[str] = None 
+    github_username: Optional[str] = None
+    github_token: Optional[str] = None 
 
     # 🆕 Campos para autenticación con Jira
     jira_email: Optional[str] = None
@@ -33,6 +34,7 @@ class EmployeeCreate(EmployeeBase):
     phoneNumber: str = "0000000000"
     profilePicture: Optional[str] = None
     github_username: Optional[str] = None 
+    github_token: Optional[str] = None 
 
 class EmployeeUpdate(BaseModel):
     firstName: Optional[str]
@@ -49,7 +51,8 @@ class EmployeeUpdate(BaseModel):
     jira_email: Optional[str] = None
     jira_api_token: Optional[str] = None
     github_username: Optional[str] = None 
-
+    github_token: Optional[str] = None
+    
 class EmployeeOut(EmployeeBase):
     id: UUID
     email: EmailStr
