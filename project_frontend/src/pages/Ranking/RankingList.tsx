@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import type { User } from "../types/user"
+import type { User } from "@../types/user"
 import { motion } from "framer-motion"
 import { ChevronLeft, ChevronRight, Trophy } from "lucide-react"
 
@@ -10,7 +10,6 @@ type RankingListProps = {
   currentPage: number
   totalPages: number
   onPageChange: (page: number) => void
-  
 }
 
 const RankingList: React.FC<RankingListProps> = ({ users, currentPage, totalPages, onPageChange }) => {
@@ -67,7 +66,9 @@ const RankingList: React.FC<RankingListProps> = ({ users, currentPage, totalPage
 
               <div className="ml-3 flex-1 min-w-0">
                 <p className="font-semibold text-white">{user.name}</p>
-                <p className="text-sm text-amber-400">{user.coins.toLocaleString()} QP</p>
+                <p className="text-sm text-amber-400">
+                  {user.experience.toLocaleString()} XP
+                </p> {/* Cambiado a experiencia (XP) */}
               </div>
             </motion.div>
           ))}
@@ -84,11 +85,13 @@ const RankingList: React.FC<RankingListProps> = ({ users, currentPage, totalPage
             whileHover={currentPage !== 1 ? { scale: 1.1 } : {}}
             whileTap={currentPage !== 1 ? { scale: 0.9 } : {}}
             transition={{ duration: 0.2 }}
+            aria-label="Previous Page"
           >
             <ChevronLeft className="w-5 h-5" />
           </motion.button>
 
           <div className="flex space-x-1">
+            {/* Paginate with three visible pages */}
             {Array.from({ length: Math.min(3, totalPages) }, (_, i) => {
               let page
               if (totalPages > 3) {
@@ -115,6 +118,7 @@ const RankingList: React.FC<RankingListProps> = ({ users, currentPage, totalPage
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   transition={{ duration: 0.2 }}
+                  aria-label={`Go to page ${page}`}
                 >
                   {page}
                 </motion.button>
@@ -133,6 +137,7 @@ const RankingList: React.FC<RankingListProps> = ({ users, currentPage, totalPage
             whileHover={currentPage !== totalPages ? { scale: 1.1 } : {}}
             whileTap={currentPage !== totalPages ? { scale: 0.9 } : {}}
             transition={{ duration: 0.2 }}
+            aria-label="Next Page"
           >
             <ChevronRight className="w-5 h-5" />
           </motion.button>

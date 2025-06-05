@@ -160,7 +160,6 @@ const GoogleReg: React.FC = () => {
                         </div>
                         <GoogleButton />
                         <GitHubButton />
-                        <GitHubButton />
                         </div>
                     </div>
                  </div>

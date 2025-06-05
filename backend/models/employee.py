@@ -15,6 +15,7 @@ class Employee(Base):
     )
     nationality = Column(String(255))
     experience = Column(Integer)
+    experience = Column(Integer, default=0)
     level = Column(Integer)
     firstName = Column(String(255))
     lastName = Column(String(255))
@@ -41,3 +42,5 @@ class Employee(Base):
     # Campos para autenticación con Jira
     jira_email = Column(String(255))
     jira_api_token = Column(String(255))
+
+

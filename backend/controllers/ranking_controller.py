@@ -4,10 +4,11 @@ from schemas.ranking import EmployeeRankingOut
 from typing import List
 
 def get_employee_ranking(db: Session) -> List[EmployeeRankingOut]:
+    # Modificación para ordenar por experiencia (experience) en lugar de monedas (coins)
     employees = (
         db.query(Employee)
-        .filter(Employee.coins > 0)
-        .order_by(Employee.coins.desc())
+        .filter(Employee.experience > 0)  # Filtramos solo aquellos con experiencia
+        .order_by(Employee.experience.desc())  # Ahora ordenamos por experiencia
         .all()
     )
 
@@ -16,9 +17,9 @@ def get_employee_ranking(db: Session) -> List[EmployeeRankingOut]:
             id=emp.id,
             name=f"{emp.firstName} {emp.lastName}",
             avatar=emp.profilePicture,
-            coins=emp.coins,
-            position=emp.position.positionName if emp.position else None,
-            team=emp.team.name if emp.team else None,
+            experience=emp.experience,  # Usamos experiencia en lugar de monedas
+            position=emp.position.positionName if emp.position else "Unknown",  # Valor por defecto si no existe
+            team=emp.team.name if emp.team else "Unassigned",  # Valor por defecto si no existe
             rank=index + 1  # 👈 Posición en el ranking
         )
         for index, emp in enumerate(employees)

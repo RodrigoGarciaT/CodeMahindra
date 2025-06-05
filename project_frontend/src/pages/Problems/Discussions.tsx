@@ -77,39 +77,55 @@ const Discussions: React.FC<DiscussionsProps> = ({ problemId, comments, setComme
       )}
 
       <div className="space-y-6">
-        {comments.map((comment) => (
-          <div key={comment.id} className="flex space-x-4">
-            <img
-              src={comment.profilePic}
-              alt={comment.userName}
-              className="w-10 h-10 rounded-full"
-            />
-            <div className="flex-1">
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-medium">{comment.userName}</span>
-                  <span className="text-sm text-gray-500">
-                    {new Date(comment.postDate).toLocaleString()}
-                  </span>
-                </div>
-                <p className="text-gray-700">{comment.comment}</p>
+      {comments.map((comment) => (
+        <div key={comment.id} className="flex space-x-4">
+          <img
+            src={comment.profilePic}
+            alt={comment.userName}
+            className="w-10 h-10 rounded-full"
+          />
+          <div className="flex-1">
+            <div className="relative bg-gray-50 rounded-lg pt-4 pb-8 px-4">
+              {/* Top: Name and Date */}
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-medium">{comment.userName}</span>
+                <span className="text-sm text-gray-500">
+                  {new Date(comment.postDate).toLocaleString()}
+                </span>
               </div>
-              <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
-                <button className="hover:text-blue-500">Reply</button>
-                <button className="hover:text-blue-500">Share</button>
-                <button className="hover:text-blue-500">Report</button>
-                {comment.employeeId === employeeId && (
-                  <button
-                    onClick={() => handleDeleteComment(comment.id)}
-                    className="hover:text-red-500"
+
+              {/* Comment text */}
+              <p className="text-gray-700">{comment.comment}</p>
+
+              {/* Bottom-left delete button */}
+              {comment.employeeId === employeeId && (
+                <button
+                  onClick={() => handleDeleteComment(comment.id)}
+                  className="absolute right-4 bottom-2 flex items-center text-gray-400 hover:text-red-500 text-sm"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4 mr-1"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
                   >
-                    Delete
-                  </button>
-                )}
-              </div>
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3m5 0H6"
+                    />
+                  </svg>
+                  Delete
+                </button>
+              )}
             </div>
           </div>
-        ))}
+        </div>
+      ))}
+
+
       </div>
     </div>
   );

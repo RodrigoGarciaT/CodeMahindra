@@ -40,19 +40,14 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# ─── CONFIGURACIÓN DE CORS ────────────────────────────────────────────────────────
-# Cambiamos allow_origins="*" por la URL exacta de tu frontend y habilitamos allow_credentials
+# Set up CORS (customize this for your frontend)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",   # <- Cambia esto si tu frontend corre en otra URL o puerto
-        # "https://tu-dominio-produccion.com"  # si en producción tu web está en otro dominio, agréguelo aquí
-    ],
-    allow_credentials=True,       # Necesario para que el navegador pueda enviar el Authorization header
-    allow_methods=["*"],          # Permite todos los métodos (GET, POST, PUT, DELETE…)
-    allow_headers=["*"],          # Permite todas las cabeceras (incluyendo Authorization)
+    allow_origins=["*"],  # No le cambien
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
-# ────────────────────────────────────────────────────────────────────────────────
 
 # Include all routers
 app.include_router(position_router)
@@ -85,4 +80,5 @@ app.include_router(purchase_router)
 # Health check route
 @app.get("/")
 def read_root():
+
     return {"message": "🚀 API is running successfully!"}

@@ -23,14 +23,14 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         print(jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM]))
-        email: str = payload.get("sub")
-        if email is None:
+        user_id: str = payload.get("sub")
+        if user_id is None:
             raise credentials_exception
     except JWTError as e:
         print(f"❌ Error al decodificar el token: {e}")
         raise credentials_exception
         
-    user = get_user_by_email(db, email)
+    user = db.query(Employee).filter(Employee.id == user_id).first()
     if user is None:
         raise credentials_exception
     return user

@@ -5,6 +5,7 @@ from models.employee_xp_history import EmployeeXPHistory
 from models.employee import Employee
 from models.solution import Solution
 from models.problem import Problem
+from models.team import Team
 from schemas.problem import ProblemCreate, ProblemGradingResult, ProblemUpdate
 from schemas.problem_with_testcases import ProblemCreateWithTestCases, ProblemOutWithTestCases
 from schemas.problem_with_testcases import TestCaseCreate  # Import TestCaseCreate
@@ -109,27 +110,19 @@ from sqlalchemy.sql import over
 from fastapi import HTTPException
 
 def grade_problem(problem_id: int, db: Session) -> ProblemGradingResult:
-    # Get the problem first to check difficulty
     problem = db.query(Problem).filter(Problem.id == problem_id).first()
     if not problem:
         raise HTTPException(status_code=404, detail="Problem not found")
-    
-    # Check if problem was already graded
-    '''
-    if problem.was_graded:
-        raise HTTPException(status_code=400, detail="Problem was already graded")
-    '''
     
     # Determine rewards based on difficulty
     if problem.difficulty.lower() == "hard":
         rewards = [1000, 800, 600]
     elif problem.difficulty.lower() == "medium":
         rewards = [800, 600, 400]
-    else:  # easy or unspecified defaults to easy
+    else:
         rewards = [600, 400, 200]
     
     try:
-        # Rank each solution per employee using row_number
         ranked_subq = (
             db.query(
                 Solution.id.label("solution_id"),
@@ -145,19 +138,17 @@ def grade_problem(problem_id: int, db: Session) -> ProblemGradingResult:
             )
             .filter(
                 Solution.problem_id == problem_id,
-                Solution.submissionDate >= problem.creationDate # only accepts submissions after the creationDate
-                )
+                Solution.submissionDate >= problem.creationDate
+            )
             .subquery()
         )
 
-        # Select only the top-ranked (best) solution per employee
         top_solution_ids = (
             db.query(ranked_subq.c.solution_id)
             .filter(ranked_subq.c.rank == 1)
             .subquery()
         )
 
-        # Get the actual Solution records
         top_solutions = (
             db.query(Solution)
             .filter(Solution.id.in_(top_solution_ids))
@@ -175,25 +166,54 @@ def grade_problem(problem_id: int, db: Session) -> ProblemGradingResult:
         )
 
         for i, solution in enumerate(top_solutions):
+            reward = rewards[i] if i < len(rewards) else 0
             employee = db.query(Employee).filter(Employee.id == solution.employee_id).first()
+            print(employee.firstName, ' ', employee.lastName)
             if not employee:
                 continue
 
-            reward = rewards[i] if i < len(rewards) else 0
+            if solution.inTeam:
+                team = db.query(Team).filter(Team.id == employee.team_id).first()
+                if team and team.terminationDate is None:
+                    team_members = db.query(Employee).filter(Employee.team_id == team.id).all()
+                    if team_members:
+                        reward_per_member = reward // len(team_members)
+                        for member in team_members:
+                            member.coins += reward_per_member
+                            member.experience += reward_per_member
+                            db.add(EmployeeXPHistory(
+                                employee_id=member.id,
+                                experience=member.experience,
+                                date=datetime.utcnow()
+                            ))
+                    else:
+                        # No members found, give reward to original employee
+                        employee.coins += reward
+                        employee.experience += reward
+                        db.add(EmployeeXPHistory(
+                            employee_id=employee.id,
+                            experience=employee.experience,
+                            date=datetime.utcnow()
+                        ))
+                else:
+                    # Team doesn't exist anymore or is terminated
+                    employee.coins += reward
+                    employee.experience += reward
+                    db.add(EmployeeXPHistory(
+                        employee_id=employee.id,
+                        experience=employee.experience,
+                        date=datetime.utcnow()
+                    ))
+            else:
+                # Individual solution
+                employee.coins += reward
+                employee.experience += reward
+                db.add(EmployeeXPHistory(
+                    employee_id=employee.id,
+                    experience=employee.experience,
+                    date=datetime.utcnow()
+                ))
 
-            # Update employee stats
-            employee.coins += reward
-            employee.experience += reward
-            
-            # Log the experience update in history
-            xp_entry = EmployeeXPHistory(
-                employee_id=employee.id,
-                experience=employee.experience,
-                date=datetime.utcnow()
-            )
-            db.add(xp_entry)
-
-            # Set result fields
             if i == 0:
                 result.first_place = employee.id
                 result.first_reward = reward
@@ -204,13 +224,12 @@ def grade_problem(problem_id: int, db: Session) -> ProblemGradingResult:
                 result.third_place = employee.id
                 result.third_reward = reward
 
-        # Mark problem as graded
         problem.was_graded = True
         db.commit()
-
         return result
 
     except Exception as e:
+        print(f"Error while grading problem {problem_id}: {e}") 
         db.rollback()
         raise HTTPException(
             status_code=500,

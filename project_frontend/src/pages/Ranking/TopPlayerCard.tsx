@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import type { User } from "../types/user"
+import type { User } from "@/types/user"
 import { motion } from "framer-motion"
 import { Crown } from "lucide-react"
 
@@ -41,13 +41,16 @@ const TopPlayerCard: React.FC<TopPlayerCardProps> = ({ user }) => {
             initial={{ rotate: -10 }}
             animate={{ rotate: [0, 10, 0] }}
             transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+            aria-label="Top player crown"
           >
             <Crown className="h-4 w-4 text-yellow-900" />
           </motion.div>
         </div>
 
         <div className="flex-1 min-w-0">
-          <p className="font-bold text-white text-xl truncate">{user.name}</p>
+          <p className="font-bold text-white text-xl truncate" aria-label={`${user.name} - Top player`}>
+            {user.name}
+          </p>
 
           <div className="flex items-center gap-2 mt-1">
             <motion.div
@@ -55,7 +58,7 @@ const TopPlayerCard: React.FC<TopPlayerCardProps> = ({ user }) => {
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.2 }}
             >
-              <span>{user.coins.toLocaleString()} QP</span>
+              <span>{user.experience.toLocaleString()} XP</span> {/* Cambiado a experiencia (XP) */}
             </motion.div>
 
             {user.flag && (
@@ -63,9 +66,10 @@ const TopPlayerCard: React.FC<TopPlayerCardProps> = ({ user }) => {
                 className="w-8 h-8 rounded-md overflow-hidden shadow-md border-2 border-gray-800"
                 whileHover={{ scale: 1.2 }}
                 transition={{ duration: 0.3 }}
+                aria-label={`${user.name}'s flag`}
               >
                 <img
-                  src={user.flag}
+                  src={user.flag || "/placeholder-flag.svg"} // Agregamos una bandera predeterminada
                   alt={`${user.name}'s nationality`}
                   className="w-full h-full object-cover"
                 />

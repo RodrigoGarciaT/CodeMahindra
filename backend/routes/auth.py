@@ -43,7 +43,7 @@ def create_employee(db: Session, employee_create: EmployeeCreate):
         lastName=employee_create.lastName,
         nationality=employee_create.nationality,
         phoneNumber=employee_create.phoneNumber,
-        profilePicture=employee_create.profilePicture 
+        profilePicture=employee_create.profilePicture,
     )
 
     db.add(db_employee)
@@ -98,7 +98,7 @@ async def login(login_data: LoginRequest, db: Session = Depends(get_db)):
     # Aquí generamos el token
     print(user.email)
     access_token = create_access_token(data={
-        "sub": user.email,
+        "sub": str(user.id),
         "firstName": user.firstName,
         "lastName": user.lastName,
         "email": user.email,
@@ -153,21 +153,23 @@ def google_auth(data: GoogleToken, db: Session = Depends(get_db)):
 
 
     token = create_access_token(data={
-        "sub": user.email,
-    "firstName": user.firstName,
-    "lastName": user.lastName,
-    "phoneNumber": user.phoneNumber,
-    "isAdmin": user.isAdmin,
-    "coins": user.coins,
-    "profilePicture": google_data.get("picture") or user.profilePicture,
-    "position_id": user.position_id,
-    "team_id": user.team_id
+        "sub": str(user.id),
+        "email": user.email,
+        "firstName": user.firstName,
+        "lastName": user.lastName,
+        "phoneNumber": user.phoneNumber,
+        "isAdmin": user.isAdmin,
+        "coins": user.coins,
+        "profilePicture": google_data.get("picture") or user.profilePicture,
+        "position_id": user.position_id,
+        "team_id": user.team_id
 })
     return JSONResponse(
         content={
             "access_token": token,
             "user": {
-                "sub": user.email,
+                "sub": str(user.id),
+                "email": user.email,
                 "firstName": user.firstName,
                 "lastName": user.lastName,
                 "phoneNumber": user.phoneNumber,
@@ -195,7 +197,7 @@ def github_callback(code: str, db: Session = Depends(get_db)):
     client_id = os.getenv("GITHUB_CLIENT_ID")
     client_secret = os.getenv("GITHUB_CLIENT_SECRET")
 
-    # Obtener token de acceso
+    # Obtener el token de acceso
     token_response = external_requests.post(
         "https://github.com/login/oauth/access_token",
         headers={"Accept": "application/json"},
@@ -209,7 +211,7 @@ def github_callback(code: str, db: Session = Depends(get_db)):
     access_token = token_json.get("access_token")
 
     if not access_token:
-        raise HTTPException(status_code=400, detail="No se pudo obtener access_token")
+        raise HTTPException(status_code=400, detail="No se pudo obtener el access_token")
 
     # Obtener información básica del usuario
     user_response = external_requests.get(
@@ -231,6 +233,8 @@ def github_callback(code: str, db: Session = Depends(get_db)):
         (email["email"] for email in emails_data if email["primary"] and email["verified"]),
         None
     )
+    
+    # Si no hay email primario, utilizamos un email falso
     email = primary_email or f"{user_data['id']}@github.fake"
 
     # Nombre completo
@@ -243,24 +247,25 @@ def github_callback(code: str, db: Session = Depends(get_db)):
         first_name = full_name
         last_name = "GitHub"
 
-    # Buscar o crear usuario
+    # Buscar o crear usuario en la base de datos
     user = get_user_by_email(db, email)
     if not user:
         new_user = EmployeeCreate(
             email=email,
-            password="github",
+            password="github",  # Aquí se puede usar una contraseña temporal o en blanco
             firstName=first_name,
             lastName=last_name,
             nationality="No especificado",
             phoneNumber="0000000000",
             profilePicture=user_data.get("avatar_url"),
-            github_username=github_username 
+            github_username=github_username,
         )
         user = create_employee(db, new_user)
 
-    # Generar JWT
+    # Generar JWT con los datos del usuario
     token = create_access_token(data={
-        "sub": user.email,
+        "sub": str(user.id), 
+        "email": user.email,
         "firstName": user.firstName,
         "lastName": user.lastName,
         "phoneNumber": user.phoneNumber,
@@ -272,11 +277,13 @@ def github_callback(code: str, db: Session = Depends(get_db)):
         "github_username": github_username
     })
     
-    # Redirigir al frontend
-    # Return both token AND user_id
+    # Redirigir al frontend con el token
     return RedirectResponse(
-        url="https://code-mahindra-w4lk.vercel.app/login?" + urllib.parse.urlencode({
+        url="http://code-mahindra-w4lk.vercel.app/login?" + urllib.parse.urlencode({
             "token": token,
-            "user_id": str(user.id)  # <-- Add user_id to the redirect URL
+            "user_id": str(user.id)
         })
     )
+
+
+

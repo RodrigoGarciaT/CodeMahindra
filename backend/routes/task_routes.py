@@ -28,7 +28,6 @@ router = APIRouter(prefix="/tasks", tags=["Tasks"])
 def list_tasks(db: Session = Depends(get_db)):
     return get_all_tasks(db)
 
-
 @router.get("/{task_id}", response_model=TaskOut)
 def retrieve_task(task_id: int, db: Session = Depends(get_db)):
     try:
@@ -36,11 +35,9 @@ def retrieve_task(task_id: int, db: Session = Depends(get_db)):
     except Exception as e:
         raise HTTPException(status_code=404, detail=str(e))
 
-
 @router.post("/", response_model=TaskOut, status_code=201)
 def create_new_task(task: TaskCreate, db: Session = Depends(get_db)):
     return create_task(task, db)
-
 
 @router.put("/{task_id}", response_model=TaskOut)
 def update_existing_task(task_id: int, task: TaskUpdate, db: Session = Depends(get_db)):
@@ -48,7 +45,6 @@ def update_existing_task(task_id: int, task: TaskUpdate, db: Session = Depends(g
         return update_task(task_id, task, db)
     except Exception as e:
         raise HTTPException(status_code=404, detail=str(e))
-
 
 @router.delete("/{task_id}", status_code=204)
 def delete_existing_task(task_id: int, db: Session = Depends(get_db)):

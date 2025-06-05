@@ -170,7 +170,7 @@ const LoginPage: React.FC = () => {
     } catch (error) {
       console.error("Error al decodificar token:", error);
     }
-
+    
     window.location.href = "/home";
     
   }

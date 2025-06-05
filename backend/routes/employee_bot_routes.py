@@ -8,7 +8,8 @@ from controllers.employee_bot_controller import (
     get_employee_bot,
     create_employee_bot,
     update_employee_bot,
-    delete_employee_bot
+    delete_employee_bot,
+    equip_employee_bot
 )
 from schemas.employee_bot import EmployeeBotCreate, EmployeeBotUpdate, EmployeeBotOut
 
@@ -33,3 +34,11 @@ def update_employee_bot_link(employee_id: UUID, bot_id: int, data: EmployeeBotUp
 @router.delete("/{employee_id}/{bot_id}", status_code=204)
 def delete_employee_bot_link(employee_id: UUID, bot_id: int, db: Session = Depends(get_db)):
     delete_employee_bot(employee_id, bot_id, db)
+
+@router.post("/{employee_id}/{bot_id}/equip", response_model=EmployeeBotOut)
+def equip_bot(
+    employee_id: UUID, 
+    bot_id: int, 
+    db: Session = Depends(get_db)
+):
+    return equip_employee_bot(employee_id, bot_id, db)

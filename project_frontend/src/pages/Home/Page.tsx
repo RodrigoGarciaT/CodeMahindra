@@ -9,12 +9,12 @@ import {
   Users,
   ArrowLeft,
 } from 'lucide-react';
-import type { Bot as BotType } from '../BotStore';
+import type { Bot as BotType } from './BotStore';
 import { useTeamMembers } from '@/hooks/useTeamMembers';
 
 // ——— 1. Definir los tipos que esperamos recibir del backend ———
 
-/** La forma en que tu backend retorna cada logro “ganado” */
+/** La forma en que tu backend retorna cada logro "ganado" */
 interface AchievementMini {
   id: number;
   key: string;
@@ -69,19 +69,42 @@ const Dashboard: React.FC = () => {
   const [achievementsLoading, setAchievementsLoading] = useState<boolean>(true);
   const [achievementsError, setAchievementsError] = useState<string | null>(null);
 
-  // — Estados de UI: tile seleccionado y “mostrar todo” — 
+  // — Estados de UI: tile seleccionado y "mostrar todo" — 
   const [selectedAchievement, setSelectedAchievement] = useState<AchievementMini | null>(null);
   const [showAllAchievements, setShowAllAchievements] = useState<boolean>(false);
 
-  // — Estado “Bot comprado” (igual que antes) — 
+  // — Estado "Bot comprado" (igual que antes) — 
   const [purchasedBot, setPurchasedBot] = useState<BotType | null>(() => {
     const saved = localStorage.getItem('purchasedBots');
     if (saved) {
-      const arr: BotType[] = JSON.parse(saved);
-      return arr.length > 0 ? arr[0] : null;
+      const bots = JSON.parse(saved);
+      return bots.length > 0 ? bots[0] : null;
     }
     return null;
   });
+  // — Estado para bot equipado —
+  const [equippedBot, setEquippedBot] = useState<BotType | null>(null);
+  useEffect(() => {
+    const fetchEquippedBot = async () => {
+      try {
+        const employeeId = localStorage.getItem("user_id");
+        if (!employeeId) return;
+        
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/bots/employee/${employeeId}/equipped`
+        );
+        
+        if (response.ok) {
+          const data = await response.json();
+          setEquippedBot(data);
+        }
+      } catch (error) {
+        console.error("Error fetching equipped bot:", error);
+      }
+    };
+  
+    fetchEquippedBot();
+  }, []);
 
   // ——— 3. useEffect para cargar datos del usuario (user/me) ———
   useEffect(() => {
@@ -166,7 +189,7 @@ const Dashboard: React.FC = () => {
 
   const notEarnedByCategory = groupByCategory(notEarned);
 
-  // ——— 6. Hooks para “equipo” ———
+  // ——— 6. Hooks para "equipo" ———
   const { members, loading: teamLoading } = useTeamMembers(user.team_id ? String(user.team_id) : '');
   const totalExp = members.reduce((acc, m) => acc + (m.experience ?? 0), 0);
   const teamLevel = Math.floor(totalExp / 2000);
@@ -174,7 +197,10 @@ const Dashboard: React.FC = () => {
     ? `Equipo de ${members[0].firstName}`
     : 'Tu equipo';
 
-  // ——— 7. Renderizado condicional ———
+  // ——— 7. Crear lista de logros para mostrar en el dashboard ———
+  const achievements = [...earned.map(ea => ea.achievement), ...notEarned.slice(0, 6 - earned.length)];
+
+  // ——— 8. Renderizado condicional ———
 
   // Si aún está cargando los logros…
   if (achievementsLoading) {
@@ -194,7 +220,7 @@ const Dashboard: React.FC = () => {
     );
   }
 
-  // ——— 7.1. Función para renderizar cada “tile” de logro ———
+  // ——— 8.1. Función para renderizar cada "tile" de logro ———
   const renderAchievementTile = (ach: AchievementMini, earnedFlag: boolean) => (
     <div
       key={ach.id + (earnedFlag ? '_earned' : '_not')}
@@ -238,7 +264,13 @@ const Dashboard: React.FC = () => {
     </div>
   );
 
-  // ——— 7.2. Si el usuario solicita “ver todos los logros” ———
+  // Función auxiliar para renderizar logros en el dashboard
+  const renderAchievement = (ach: AchievementMini) => {
+    const isEarned = earned.some(ea => ea.achievement.id === ach.id);
+    return renderAchievementTile(ach, isEarned);
+  };
+
+  // ——— 8.2. Si el usuario solicita "ver todos los logros" ———
   if (showAllAchievements) {
     return (
       <div className="min-h-screen bg-[#363B41] text-black p-6">
@@ -291,12 +323,11 @@ const Dashboard: React.FC = () => {
     );
   }
 
-  // ——— 7.3. Pantalla principal del Dashboard (vista previa) ———
+  // ——— 9. Dashboard principal ———
   return (
     <div className="min-h-screen bg-[#363B41] text-black p-6">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-
-        {/* === PERFIL === */}
+        {/* Profile Section */}
         <div className="bg-white rounded-lg p-6 shadow-sm">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold">Perfil</h2>
@@ -307,9 +338,10 @@ const Dashboard: React.FC = () => {
               Ver más
             </button>
           </div>
+
           <div className="bg-gray-50 p-4 rounded-lg mb-6">
             <div className="flex items-center gap-4">
-              {user.profilePicture ? (
+              {user?.profilePicture ? (
                 <div className="w-12 h-12 rounded-full overflow-hidden">
                   <img
                     src={user.profilePicture}
@@ -320,15 +352,15 @@ const Dashboard: React.FC = () => {
               ) : (
                 <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center">
                   <span className="text-lg font-semibold text-gray-600">
-                    {user.firstName?.[0] || ''}
-                    {user.lastName?.[0] || ''}
+                    {user?.firstName?.charAt(0) || ""}
+                    {user?.lastName?.charAt(0) || ""}
                   </span>
                 </div>
               )}
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold">{user.firstName} {user.lastName}</span>
-                  {user.nationality ? (
+                  <span className="font-semibold">{user?.firstName} {user?.lastName}</span>
+                  {user?.nationality ? (
                     <CountryName code={user.nationality} />
                   ) : (
                     <span className="text-sm text-gray-500">Nacionalidad no disponible</span>
@@ -336,38 +368,39 @@ const Dashboard: React.FC = () => {
                 </div>
               </div>
             </div>
-            <div className="space-y-4 mt-4">
-              <h3 className="font-semibold">Progreso</h3>
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span>Nivel {Math.floor(user.experience / 1000)}</span>
-                  <span>{user.experience} XP</span>
-                </div>
-                <div className="w-full bg-gray-100 rounded-full h-2">
-                  <div
-                    className="bg-red-500 h-2 rounded-full"
-                    style={{
-                      width: `${(user.experience % 1000) / 10}%`
-                    }}
-                  />
-                </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="font-semibold">Progreso</h3>
+            <div>
+              <div className="flex justify-between text-sm mb-2">
+                <span>Nivel {Math.floor((user?.experience ?? 0) / 1000)}</span>
+                <span>{user?.experience ?? 0} XP</span>
+              </div>
+              <div className="w-full bg-gray-100 rounded-full h-2">
+                <div
+                  className="bg-red-500 h-2 rounded-full"
+                  style={{
+                    width: `${((user?.experience ?? 0) % 1000) / 10}%`
+                  }}
+                ></div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* === DESAFÍOS SEMANALES === */}
+        {/* Weekly Challenges Section */}
         <div className="bg-white rounded-lg p-6 shadow-sm">
           <h2 className="text-xl font-bold mb-4">Desafíos Semanales</h2>
           <div className="space-y-4">
-            <button
+            <button 
               className="w-full bg-red-500 hover:bg-red-600 text-white p-4 rounded-lg flex justify-between items-center"
               onClick={() => navigate('/tasks')}
             >
               <span>Completar tareas</span>
               <ChevronRight />
             </button>
-            <button
+            <button 
               className="w-full bg-red-500 hover:bg-red-600 text-white p-4 rounded-lg flex justify-between items-center"
               onClick={() => navigate('/problems')}
             >
@@ -377,53 +410,56 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* === BOT === */}
-        <div
-          className="bg-white rounded-lg p-6 shadow-sm cursor-pointer hover:shadow-lg transition-shadow"
-          onClick={() => navigate('/bot-store')}
-        >
-          <div className="text-center">
-            <h2 className="text-xl font-bold mb-4">
-              {purchasedBot ? purchasedBot.name : 'Bot Mahindra'}
-            </h2>
-            {purchasedBot ? (
-              <div>
-                <img
-                  src={purchasedBot.imageUrl}
-                  alt={purchasedBot.name}
-                  className="w-32 h-32 mx-auto object-cover rounded-lg mb-4"
-                />
-                <div className="flex justify-center gap-1 mb-2">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-4 h-4 ${
-                        i < purchasedBot.proficiency
-                          ? 'text-yellow-400 fill-yellow-400'
-                          : 'text-gray-300'
-                      }`}
-                    />
-                  ))}
-                </div>
-                <div className="space-y-2">
-                  {purchasedBot.abilities.slice(0, 2).map((ability, idx) => (
-                    <div key={idx} className="bg-gray-100 p-2 rounded text-sm">
-                      {ability}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <Bot className="w-32 h-32 mx-auto text-gray-400" />
-            )}
-          </div>
-        </div>
+        {/* Bot Section */}
+        {/* Bot Section */}
+      <div
+        className="bg-white rounded-lg p-6 shadow-sm cursor-pointer hover:shadow-lg transition-shadow"
+        onClick={() => navigate('/bot-store')}
+      >
+        <div className="text-center">
+          <h2 className="text-xl font-bold mb-4">
+            {equippedBot ? equippedBot.name : purchasedBot ? purchasedBot.name : 'Bot Mahindra'}
+          </h2>
 
-        {/* === EQUIPO === */}
+          {equippedBot ? (
+            <div>
+              <img
+                src={equippedBot.image}
+                alt={equippedBot.name}
+                className="w-32 h-32 mx-auto object-cover rounded-lg mb-4"
+              />
+              <div className="bg-gray-100 p-2 rounded text-sm mb-2">
+                {equippedBot.description}
+              </div>
+              <div className="text-xs text-green-600 font-medium">
+                EQUIPADO
+              </div>
+            </div>
+          ) : purchasedBot ? (
+            <div>
+              <img
+                src={purchasedBot.image}
+                alt={purchasedBot.name}
+                className="w-32 h-32 mx-auto object-cover rounded-lg mb-4"
+              />
+              <div className="bg-gray-100 p-2 rounded text-sm mb-2">
+                {purchasedBot.description}
+              </div>
+              <div className="text-xs text-gray-500">
+                No equipado
+              </div>
+            </div>
+          ) : (
+            <Bot className="w-32 h-32 mx-auto text-gray-400" />
+          )}
+        </div>
+      </div>
+
+        {/* Team Section */}
         <div className="bg-white rounded-lg p-6 shadow-sm md:col-span-2">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold">Equipo</h2>
-            {user.team_id && (
+            {user?.team_id && (
               <button
                 className="text-red-500 hover:text-red-600"
                 onClick={() => navigate(`/team/${user.team_id}`)}
@@ -433,7 +469,7 @@ const Dashboard: React.FC = () => {
             )}
           </div>
 
-          {!user.team_id ? (
+          {!user?.team_id ? (
             <div className="text-center bg-gray-50 rounded-lg p-6">
               <p className="text-lg font-semibold mb-4 text-gray-700">
                 Aún no perteneces a un equipo.
@@ -455,64 +491,67 @@ const Dashboard: React.FC = () => {
             </div>
           ) : (
             <>
+              {/* Nombre del equipo + progreso */}
               <div className="mb-3">
                 <h3 className="font-semibold flex items-center gap-2 mb-2">
                   <Users className="w-4 h-4" />
-                  {teamName}
+                  {teamName || "Equipo"}
                 </h3>
                 <div className="flex justify-between text-xs mb-1">
-                  <span>Nivel {teamLevel}</span>
-                  <span>{totalExp} exp</span>
+                  <span>Nivel {Math.floor((totalExp ?? 0) / 1000)}</span>
+                  <span>{totalExp ?? 0} exp</span>
                 </div>
                 <div className="w-full bg-gray-100 rounded-full h-2">
                   <div
                     className="bg-red-500 h-2 rounded-full"
                     style={{
-                      width: `${Math.min(((totalExp % 2000) / 2000) * 100, 100)}%`,
+                      width: `${((totalExp ?? 0) % 1000) / 10}%`
                     }}
-                  />
+                  ></div>
                 </div>
               </div>
+              {/* Miembros dinámicos */}
               <div className="space-y-2">
-                {teamLoading ? (
-                  <p className="text-gray-500">Cargando miembros…</p>
-                ) : (
-                  members.map(member => (
-                    <div
-                      key={member.id}
-                      className="bg-gray-50 p-4 rounded-lg flex items-center justify-between gap-4"
-                    >
-                      <div className="flex items-center gap-3 w-1/3">
-                        <img
-                          src={member.profilePicture || 'https://via.placeholder.com/40'}
-                          alt={`${member.firstName} ${member.lastName}`}
-                          className="w-10 h-10 rounded-full object-cover"
-                        />
-                        <span className="font-medium">
-                          {member.firstName} {member.lastName}
-                        </span>
-                      </div>
-                      <div className="w-1/4 text-sm text-gray-500">
-                        <CountryName code={member.nationality ?? ''} />
-                      </div>
-                      <div className="w-1/6 flex items-center gap-1 justify-center">
-                        <span className="font-medium">Nivel {member.level ?? 1}</span>
-                      </div>
-                      <div className="w-1/6 text-right text-gray-500">
-                        {member.coins ?? 0} exp
-                      </div>
+                {members.map((member) => (
+                  <div
+                    key={member.id}
+                    className="bg-gray-50 p-4 rounded-lg flex items-center justify-between gap-4"
+                  >
+                    {/* Columna 1: Foto + Nombre */}
+                    <div className="flex items-center gap-3 w-1/3">
+                      <img
+                        src={member.profilePicture || "https://via.placeholder.com/40"}
+                        alt={`${member.firstName} ${member.lastName}`}
+                        className="w-10 h-10 rounded-full object-cover"
+                      />
+                      <span className="font-medium">{member.firstName} {member.lastName}</span>
                     </div>
-                  ))
-                )}
+
+                    {/* Columna 2: País + bandera */}
+                    <div className="w-1/4 text-sm text-gray-500">
+                      <CountryName code={member.nationality ?? ""} />
+                    </div>
+
+                    {/* Columna 3: Nivel */}
+                    <div className="w-1/6 flex items-center gap-1 justify-center">
+                      <span className="font-medium">Nivel {Math.floor((member.experience ?? 0) / 1000)}</span>
+                    </div>
+
+                    {/* Columna 4: Exp */}
+                    <div className="w-1/6 text-right text-gray-500">
+                      {member.experience ?? 0} exp
+                    </div>
+                  </div>
+                ))}
               </div>
             </>
           )}
         </div>
 
-        {/* === LOGROS E INSIGNIAS (PREVIEW) === */}
+        {/* Achievements Section */}
         <div className="bg-white rounded-lg p-6 shadow-sm">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold">Logros e Insignias</h2>
+            <h2 className="text-xl font-bold">Logros e insignias</h2>
             <button
               onClick={() => setShowAllAchievements(true)}
               className="text-red-500 hover:text-red-600"
@@ -521,11 +560,7 @@ const Dashboard: React.FC = () => {
             </button>
           </div>
           <div className="grid grid-cols-3 gap-4">
-            {earned.slice(0, 6).map(ea => (
-              // ea.achievement es el AchievementMini
-              renderAchievementTile(ea.achievement, true)
-            ))}
-            {/* Si tienes menos de 6 ganados, opcionalmente puedes mostrar algunos “notEarned” aquí */}
+            {achievements.slice(0, 6).map(renderAchievement)}
           </div>
         </div>
       </div>

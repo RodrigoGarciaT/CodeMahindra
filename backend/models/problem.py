@@ -1,12 +1,10 @@
-# backend/models/problem.py
-
-from sqlalchemy import Column, Integer, String, Text, Float, DateTime, Boolean, func
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, Text, Float, DateTime, Boolean
+from sqlalchemy.sql import func
 from database import Base
+from sqlalchemy.orm import relationship
 
 class Problem(Base):
     __tablename__ = "Problem"
-    __table_args__ = {"quote": True}
 
     id = Column(Integer, primary_key=True, index=True)
     reward = Column(Integer)
@@ -25,5 +23,4 @@ class Problem(Base):
     was_graded = Column(Boolean, nullable=False, server_default='false')
     successful_submissions = Column(Integer, default=0)
     total_submissions = Column(Integer, default=0)
-
     employees = relationship("EmployeeProblem", back_populates="problem")

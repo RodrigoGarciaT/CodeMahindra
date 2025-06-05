@@ -92,7 +92,7 @@ const ManageUsers: React.FC = () => {
         lastName: user.lastName,
         email: user.email,
         isAdmin: user.isAdmin,
-        profileEpic: user.profileEpic || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkshh0IMgSA8yw_1JFALVsXFojVdR88C05Fw&s",
+        profileEpic: user.profilePicture || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkshh0IMgSA8yw_1JFALVsXFojVdR88C05Fw&s",
       }));
       setUsers(fetchedUsers);
     } catch (err) {

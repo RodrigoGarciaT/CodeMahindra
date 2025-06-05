@@ -335,12 +335,13 @@ async def get_test_case_results(submission: Submission, db: Session) -> List[Tes
             code=submission.source_code,
             executionTime=max_execution_time,
             memory=max_memory,
-            inTeam=False,
+            inTeam=submission.inTeam,
             language=submission.language,
             testCasesPassed=passed_count
         ),
         db
     )
+    print("this is the solution team: ", submission.inTeam)
     
     # 6. Update problem statistics
     problem = db.query(Problem).filter(Problem.id == submission.problem_id).first()
@@ -389,7 +390,7 @@ def get_problem_leaderboard_data(problem_id: int, db: Session) -> List[dict]:
     ranked_solutions = (
         db.query(
             Solution,
-            Employee.profileEpic,
+            Employee.profilePicture,
             Employee.firstName,
             Employee.lastName,
             label("rank", func.row_number().over(
@@ -409,7 +410,7 @@ def get_problem_leaderboard_data(problem_id: int, db: Session) -> List[dict]:
     # Select only the top-ranked (best) solution per employee
     best_solutions = (
         db.query(
-            ranked_solutions.c.profileEpic,
+            ranked_solutions.c.profilePicture,
             ranked_solutions.c.firstName,
             ranked_solutions.c.lastName,
             ranked_solutions.c.testCasesPassed,

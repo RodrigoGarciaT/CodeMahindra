@@ -1,4 +1,5 @@
 "use client"
+
 import { useEffect, useState, useCallback } from "react"
 import PodiumView from "./PodiumView"
 import RankingList from "./RankingList"
@@ -10,7 +11,7 @@ interface User {
   id: string
   name: string
   avatar?: string
-  coins: number
+  experience: number  // Cambiado de coins a experience
   position?: string
   team?: string
   rank: number
@@ -19,22 +20,34 @@ interface User {
 export default function Ranking() {
   const [userData, setUserData] = useState<User[]>([])
   const [currentPage, setCurrentPage] = useState(1)
+  const [loading, setLoading] = useState(true) // Estado para la carga
+  const [error, setError] = useState<string | null>(null) // Estado para errores
   const usersPerPage = 6
 
   useEffect(() => {
+    setLoading(true) // Inicia la carga
     fetch(`${import.meta.env.VITE_BACKEND_URL}/ranking/`)
       .then((res) => res.json())
       .then((data) => {
-        // Asignamos el rank manualmente basado en posición
-        const ranked = data
-          .sort((a: User, b: User) => b.coins - a.coins)
-          .map((user: User, index: number) => ({
-            ...user,
-            rank: index + 1
-          }))
-        setUserData(ranked)
+        // Verificamos si los datos son válidos
+        if (Array.isArray(data)) {
+          const ranked = data
+            .sort((a: User, b: User) => b.experience - a.experience) // Ordenado por experiencia
+            .map((user: User, index: number) => ({
+              ...user,
+              rank: index + 1
+            }))
+          setUserData(ranked)
+        } else {
+          throw new Error("Invalid data format received from backend")
+        }
+        setLoading(false) // Finaliza la carga
       })
-      .catch((err) => console.error("Error loading ranking:", err))
+      .catch((err) => {
+        console.error("Error loading ranking:", err)
+        setError("Failed to load ranking data.")
+        setLoading(false)
+      })
   }, [])
 
   const podiumUsers = userData.slice(0, 3)
@@ -49,20 +62,24 @@ export default function Ranking() {
     setCurrentPage(page)
   }, [])
 
-  // Usamos directamente el usuario en la posición 3 (índice 3 = rank 4)
   const currentUser = userData[3] // simulando que el usuario actual es el #4
   const percentile = 60 // puedes calcularlo si lo deseas
 
   return (
     <div className="min-h-screen bg-[#121212] text-white overflow-x-hidden py-6">
-      {/* 
-      Background circles
-      <div className="relative w-full h-full">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full border border-gray-700 opacity-20 pointer-events-none"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full border border-gray-700 opacity-30 pointer-events-none"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full border border-gray-700 opacity-40 pointer-events-none"></div>
-      </div>
-      */}
+      {/* Indicador de carga */}
+      {loading && (
+        <div className="flex justify-center items-center">
+          <div className="loader">Cargando...</div> {/* Aquí podrías poner un spinner */}
+        </div>
+      )}
+
+      {/* Error de carga */}
+      {error && (
+        <div className="text-red-500 text-center">
+          <p>{error}</p>
+        </div>
+      )}
 
       {/* Main content */}
       <div className="max-w-[1300px] mx-auto px-6 relative z-10">
