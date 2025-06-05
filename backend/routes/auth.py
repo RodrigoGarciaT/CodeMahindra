@@ -44,6 +44,7 @@ def create_employee(db: Session, employee_create: EmployeeCreate):
         nationality=employee_create.nationality,
         phoneNumber=employee_create.phoneNumber,
         profilePicture=employee_create.profilePicture,
+        github_username=employee_create.github_username,
     )
 
     db.add(db_employee)
@@ -246,6 +247,9 @@ def github_callback(code: str, db: Session = Depends(get_db)):
     else:
         first_name = full_name
         last_name = "GitHub"
+
+    # Verifica que github_username no sea None o vacío
+    print("[DEBUG] github_username obtenido de GitHub:", github_username)
 
     # Buscar o crear usuario en la base de datos
     user = get_user_by_email(db, email)
