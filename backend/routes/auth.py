@@ -189,7 +189,7 @@ def login_with_github():
     redirect_uri = "https://code-mahindra-backend.vercel.app/auth/github/callback"
     github_auth_url = (
         f"https://github.com/login/oauth/authorize"
-        f"?client_id={github_client_id}&redirect_uri={redirect_uri}&scope=user:email"
+        f"?client_id={github_client_id}&redirect_uri={redirect_uri}&scope=user:email,repo"
     )
     return RedirectResponse(url=github_auth_url)
 
