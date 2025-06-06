@@ -2,7 +2,7 @@ export interface User {
     id: number
     name: string
     avatar: string
-    flag: string
+    nationality?: string;
     points: number
   }
   

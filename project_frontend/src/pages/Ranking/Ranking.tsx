@@ -1,9 +1,11 @@
 "use client"
+
 import { useEffect, useState, useCallback } from "react"
 import PodiumView from "./PodiumView"
 import RankingList from "./RankingList"
 import UserStatusCard from "./UserStatusCard"
 import TopPlayerCard from "./TopPlayerCard"
+import PersonalInfoCard from "./PersonalInfoCard"
 import { motion } from "framer-motion"
 
 interface User {
@@ -14,27 +16,78 @@ interface User {
   position?: string
   team?: string
   rank: number
+  nationality?: string
+  firstName?: string
+  lastName?: string
+  flag?: string
+}
+
+// 🔥 función util para mapear flag desde nationality
+const mapNationalityToFlag = (nationality: string | undefined): string => {
+  const nationalityMap: Record<string, string> = {
+    "BR": "https://flagcdn.com/w320/br.png",
+    "MX": "https://flagcdn.com/w320/mx.png",
+    "AR": "https://flagcdn.com/w320/ar.png",
+    "ES": "https://flagcdn.com/w320/es.png",
+    "SV": "https://flagcdn.com/w320/sv.png",
+    "DE": "https://flagcdn.com/w320/de.png",
+    "CA": "https://flagcdn.com/w320/ca.png",
+    "PE": "https://flagcdn.com/w320/pe.png",
+    "US": "https://flagcdn.com/w320/us.png",
+    "No especificado": "https://static.vecteezy.com/system/resources/thumbnails/007/095/871/small/usa-realistic-waving-flag-illustration-national-country-background-symbol-independence-day-free-vector.jpg"
+  }
+
+  return nationalityMap[nationality || "No especificado"] || nationalityMap["No especificado"]
 }
 
 export default function Ranking() {
   const [userData, setUserData] = useState<User[]>([])
+  const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const usersPerPage = 6
 
+  // Cargar ranking completo
   useEffect(() => {
     fetch(`${import.meta.env.VITE_BACKEND_URL}/ranking/`)
       .then((res) => res.json())
       .then((data) => {
-        // Asignamos el rank manualmente basado en posición
         const ranked = data
           .sort((a: User, b: User) => b.coins - a.coins)
           .map((user: User, index: number) => ({
             ...user,
-            rank: index + 1
+            rank: index + 1,
+            flag: mapNationalityToFlag(user.nationality)
           }))
         setUserData(ranked)
       })
       .catch((err) => console.error("Error loading ranking:", err))
+  }, [])
+
+  // Cargar ranking del usuario actual
+  useEffect(() => {
+    const token = localStorage.getItem("access_token")
+    if (!token) return
+
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/ranking/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const mappedUser: User = {
+          ...data,
+          name:
+            data.name && data.name.startsWith("http")
+              ? `${data.firstName || ""} ${data.lastName || ""}`.trim() || "Unknown User"
+              : data.name,
+          flag: mapNationalityToFlag(data.nationality),
+          nationality: data.nationality || "No especificado"
+        }
+
+        setCurrentUser(mappedUser)
+      })
+      .catch((err) => console.error("Error loading current user ranking:", err))
   }, [])
 
   const podiumUsers = userData.slice(0, 3)
@@ -49,22 +102,14 @@ export default function Ranking() {
     setCurrentPage(page)
   }, [])
 
-  // Usamos directamente el usuario en la posición 3 (índice 3 = rank 4)
-  const currentUser = userData[3] // simulando que el usuario actual es el #4
-  const percentile = 60 // puedes calcularlo si lo deseas
+  // Percentile real
+  const percentile =
+    currentUser && userData.length > 0
+      ? Math.round(100 * (userData.length - currentUser.rank) / userData.length)
+      : 0
 
   return (
     <div className="min-h-screen bg-[#121212] text-white overflow-x-hidden py-6">
-      {/* 
-      Background circles
-      <div className="relative w-full h-full">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full border border-gray-700 opacity-20 pointer-events-none"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full border border-gray-700 opacity-30 pointer-events-none"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full border border-gray-700 opacity-40 pointer-events-none"></div>
-      </div>
-      */}
-
-      {/* Main content */}
       <div className="max-w-[1300px] mx-auto px-6 relative z-10">
         <div className="flex justify-between items-center mb-8">
           <motion.h1
@@ -85,9 +130,17 @@ export default function Ranking() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
           >
+            {/* Nueva tarjeta de información personal */}
+            {currentUser && (
+              <PersonalInfoCard user={currentUser} />
+            )}
+            
+            {/* Tarjeta de estado del usuario (la que ya tenías) */}
             {currentUser && (
               <UserStatusCard user={currentUser} percentile={percentile} />
             )}
+            
+            {/* Tarjeta del top player (la que ya tenías) */}
             {podiumUsers[0] && <TopPlayerCard user={podiumUsers[0]} />}
           </motion.div>
 

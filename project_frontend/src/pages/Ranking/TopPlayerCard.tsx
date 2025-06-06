@@ -9,6 +9,26 @@ type TopPlayerCardProps = {
   user: User
 }
 
+// 🔥 función para obtener la bandera a partir de nationality
+const getFlagForUser = (user: User): string => {
+  if (!user || !user.nationality) return "https://static.vecteezy.com/system/resources/thumbnails/007/095/871/small/usa-realistic-waving-flag-illustration-national-country-background-symbol-independence-day-free-vector.jpg"
+
+  const nationalityToFlag: Record<string, string> = {
+    "Brasil": "https://flagcdn.com/w320/br.png",
+    "México": "https://flagcdn.com/w320/mx.png",
+    "Argentina": "https://flagcdn.com/w320/ar.png",
+    "España": "https://flagcdn.com/w320/es.png",
+    "El Salvador": "https://flagcdn.com/w320/sv.png",
+    "Alemania": "https://flagcdn.com/w320/de.png",
+    "Canadá": "https://flagcdn.com/w320/ca.png",
+    "Perú": "https://flagcdn.com/w320/pe.png",
+    "Estados Unidos": "https://flagcdn.com/w320/us.png",
+    "No especificado": "https://static.vecteezy.com/system/resources/thumbnails/007/095/871/small/usa-realistic-waving-flag-illustration-national-country-background-symbol-independence-day-free-vector.jpg"
+  }
+
+  return nationalityToFlag[user.nationality] || nationalityToFlag["No especificado"]
+}
+
 const TopPlayerCard: React.FC<TopPlayerCardProps> = ({ user }) => {
   if (!user) return null
 
@@ -58,15 +78,15 @@ const TopPlayerCard: React.FC<TopPlayerCardProps> = ({ user }) => {
               <span>{user.coins.toLocaleString()} QP</span>
             </motion.div>
 
-            {user.flag && (
+            {user.nationality && (
               <motion.div
                 className="w-8 h-8 rounded-md overflow-hidden shadow-md border-2 border-gray-800"
                 whileHover={{ scale: 1.2 }}
                 transition={{ duration: 0.3 }}
               >
                 <img
-                  src={user.flag}
-                  alt={`${user.name}'s nationality`}
+                  src={getFlagForUser(user)}
+                  alt={user.nationality}
                   className="w-full h-full object-cover"
                 />
               </motion.div>
