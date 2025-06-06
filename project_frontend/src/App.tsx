@@ -10,7 +10,7 @@ import CreateProblem from './pages/CreateProblem';
 import ProblemList from './pages/ProblemList';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import TeamPage from './pages/TeamPage';
+import ProfileAndTeamPage from './pages/TeamPage'; // ← tu componente actual
 import Home from './pages/Home/Page';
 import LandingPage from './pages/LandingPage/Page';
 import { CartProvider } from './contexts/CartContext';
@@ -77,7 +77,8 @@ function App() {
               <Route path="/store" element={<ProtectedRoute><Store /></ProtectedRoute>} />
               <Route path="/store/manage" element={<AdminRoute><StoreManagement /></AdminRoute>} />
               <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
-              <Route path="/team" element={<ProtectedRoute><TeamPage /></ProtectedRoute>} />
+              <Route path="/team" element={<ProtectedRoute><ProfileAndTeamPage /></ProtectedRoute>} />
+              <Route path="/team/:teamId" element={<ProtectedRoute><ProfileAndTeamPage /></ProtectedRoute>} />
               <Route path="/test" element={<ProtectedRoute><ImageUploaderCloudinary /></ProtectedRoute>} />
               <Route path="/Profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
               <Route path="/profile/view" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
