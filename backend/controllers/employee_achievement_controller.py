@@ -5,6 +5,9 @@ from schemas.employee_achievement import EmployeeAchievementCreate
 from typing import List
 from uuid import UUID
 
+def get_all_achievements_for_employee(employee_id: UUID, db: Session) -> List[EmployeeAchievement]:
+    return db.query(EmployeeAchievement).filter(EmployeeAchievement.employee_id == employee_id).all()
+
 def get_all_employee_achievements(db: Session) -> List[EmployeeAchievement]:
     return db.query(EmployeeAchievement).all()
 

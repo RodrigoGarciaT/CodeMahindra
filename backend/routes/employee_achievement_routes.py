@@ -3,6 +3,7 @@ from typing import List
 from uuid import UUID
 from sqlalchemy.orm import Session
 from database import get_db
+from controllers.employee_achievement_controller import get_all_achievements_for_employee
 from controllers.employee_achievement_controller import (
     get_all_employee_achievements,
     get_employee_achievement,
@@ -28,3 +29,7 @@ def create_employee_achievement_link(data: EmployeeAchievementCreate, db: Sessio
 @router.delete("/{employee_id}/{achievement_id}", status_code=204)
 def delete_employee_achievement_link(employee_id: UUID, achievement_id: int, db: Session = Depends(get_db)):
     delete_employee_achievement(employee_id, achievement_id, db)
+
+@router.get("/{employee_id}", response_model=List[EmployeeAchievementOut])
+def list_achievements_for_employee(employee_id: UUID, db: Session = Depends(get_db)):
+    return get_all_achievements_for_employee(employee_id, db)

@@ -5,7 +5,12 @@ from datetime import datetime
 class AchievementBase(BaseModel):
     name: str
     description: Optional[str] = None
-    image: Optional[str] = None
+    icon: Optional[str] = None
+    key: str
+    category: Optional[str] = None
+    topic: Optional[str] = None
+    criterion_type: str  # e.g., "count_solved", "static"
+    threshold: int        # e.g., 100
 
 class AchievementCreate(AchievementBase):
     pass
