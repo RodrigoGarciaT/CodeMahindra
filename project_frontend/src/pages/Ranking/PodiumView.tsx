@@ -9,25 +9,76 @@ type PodiumViewProps = {
   topUsers: User[]
 }
 
-const getFlagForUser = (user: User | undefined) => {
+const getFlagForUser = (user: User | undefined): string => {
   if (!user || !user.nationality) {
-    return "https://static.vecteezy.com/system/resources/thumbnails/007/095/871/small/usa-realistic-waving-flag-illustration-national-country-background-symbol-independence-day-free-vector.jpg"
+    return "https://flagcdn.com/w320/us.png"
   }
 
   const nationalityToFlag: Record<string, string> = {
-    "BR": "https://flagcdn.com/w320/br.png",
-    "MX": "https://flagcdn.com/w320/mx.png",
-    "AR": "https://flagcdn.com/w320/ar.png",
-    "ES": "https://flagcdn.com/w320/es.png",
-    "SV": "https://flagcdn.com/w320/sv.png",
-    "DE": "https://flagcdn.com/w320/de.png",
-    "CA": "https://flagcdn.com/w320/ca.png",
-    "PE": "https://flagcdn.com/w320/pe.png",
-    "US": "https://flagcdn.com/w320/us.png",
-    "No especificado": "https://static.vecteezy.com/system/resources/thumbnails/007/095/871/small/usa-realistic-waving-flag-illustration-national-country-background-symbol-independence-day-free-vector.jpg"
+    // América
+    AR: "https://flagcdn.com/w320/ar.png",
+    BO: "https://flagcdn.com/w320/bo.png",
+    BR: "https://flagcdn.com/w320/br.png",
+    CL: "https://flagcdn.com/w320/cl.png",
+    CO: "https://flagcdn.com/w320/co.png",
+    CR: "https://flagcdn.com/w320/cr.png",
+    CU: "https://flagcdn.com/w320/cu.png",
+    DO: "https://flagcdn.com/w320/do.png",
+    EC: "https://flagcdn.com/w320/ec.png",
+    SV: "https://flagcdn.com/w320/sv.png",
+    GT: "https://flagcdn.com/w320/gt.png",
+    HN: "https://flagcdn.com/w320/hn.png",
+    MX: "https://flagcdn.com/w320/mx.png",
+    NI: "https://flagcdn.com/w320/ni.png",
+    PA: "https://flagcdn.com/w320/pa.png",
+    PY: "https://flagcdn.com/w320/py.png",
+    PE: "https://flagcdn.com/w320/pe.png",
+    PR: "https://flagcdn.com/w320/pr.png",
+    UY: "https://flagcdn.com/w320/uy.png",
+    VE: "https://flagcdn.com/w320/ve.png",
+    US: "https://flagcdn.com/w320/us.png",
+    CA: "https://flagcdn.com/w320/ca.png",
+
+    // Europa
+    DE: "https://flagcdn.com/w320/de.png",
+    ES: "https://flagcdn.com/w320/es.png",
+    FR: "https://flagcdn.com/w320/fr.png",
+    GB: "https://flagcdn.com/w320/gb.png",
+    IT: "https://flagcdn.com/w320/it.png",
+    NL: "https://flagcdn.com/w320/nl.png",
+    PT: "https://flagcdn.com/w320/pt.png",
+    BE: "https://flagcdn.com/w320/be.png",
+    CH: "https://flagcdn.com/w320/ch.png",
+    AT: "https://flagcdn.com/w320/at.png",
+    SE: "https://flagcdn.com/w320/se.png",
+    NO: "https://flagcdn.com/w320/no.png",
+    DK: "https://flagcdn.com/w320/dk.png",
+    FI: "https://flagcdn.com/w320/fi.png",
+    IE: "https://flagcdn.com/w320/ie.png",
+    PL: "https://flagcdn.com/w320/pl.png",
+    CZ: "https://flagcdn.com/w320/cz.png",
+    HU: "https://flagcdn.com/w320/hu.png",
+    RO: "https://flagcdn.com/w320/ro.png",
+
+    // Asia
+    CN: "https://flagcdn.com/w320/cn.png",
+    JP: "https://flagcdn.com/w320/jp.png",
+    KR: "https://flagcdn.com/w320/kr.png",
+    IN: "https://flagcdn.com/w320/in.png",
+
+    // Otros
+    AU: "https://flagcdn.com/w320/au.png",
+    NZ: "https://flagcdn.com/w320/nz.png",
+    ZA: "https://flagcdn.com/w320/za.png",
+
+    // Fallback
+    "NO ESPECIFICADO": "https://flagcdn.com/w320/us.png",
   }
 
-  return nationalityToFlag[user.nationality] || nationalityToFlag["No especificado"]
+  return (
+    nationalityToFlag[user.nationality?.toUpperCase?.()] ||
+    nationalityToFlag["NO ESPECIFICADO"]
+  )
 }
 
 const PodiumUserCard = ({ user, place }: { user?: User; place: number }) => {
