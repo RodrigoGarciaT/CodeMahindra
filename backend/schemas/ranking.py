@@ -8,7 +8,7 @@ class EmployeeRankingOut(BaseModel):
     id: UUID
     name: Optional[str]  # Usamos profileEpic por ahora
     avatar: Optional[str]  # Mapeado a profileEpic
-    coins: int  # Mapeado a experience
+    experience: int
     position: Optional[str]  # JOIN con Position.name
     team: Optional[str]  # JOIN con Team.name
     rank: int  # Calculado en el controller (enumerate)

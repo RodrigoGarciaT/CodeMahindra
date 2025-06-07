@@ -11,10 +11,10 @@ import { motion } from "framer-motion"
 interface User {
   id: string
   name: string
-  avatar?: string
-  coins: number
-  position?: string
-  team?: string
+  avatar: string
+  experience: number // ✅ SOLO experience
+  position?: string | null
+  team?: string | null
   rank: number
   nationality?: string
   firstName?: string
@@ -22,7 +22,6 @@ interface User {
   flag?: string
 }
 
-// 🔥 función util para mapear flag desde nationality
 const mapNationalityToFlag = (nationality: string | undefined): string => {
   const nationalityMap: Record<string, string> = {
     "BR": "https://flagcdn.com/w320/br.png",
@@ -36,7 +35,6 @@ const mapNationalityToFlag = (nationality: string | undefined): string => {
     "US": "https://flagcdn.com/w320/us.png",
     "No especificado": "https://static.vecteezy.com/system/resources/thumbnails/007/095/871/small/usa-realistic-waving-flag-illustration-national-country-background-symbol-independence-day-free-vector.jpg"
   }
-
   return nationalityMap[nationality || "No especificado"] || nationalityMap["No especificado"]
 }
 
@@ -44,23 +42,36 @@ export default function Ranking() {
   const [userData, setUserData] = useState<User[]>([])
   const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const usersPerPage = 6
 
   // Cargar ranking completo
   useEffect(() => {
+    setIsLoading(true)
     fetch(`${import.meta.env.VITE_BACKEND_URL}/ranking/`)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error("Error al cargar el ranking")
+        return res.json()
+      })
       .then((data) => {
         const ranked = data
-          .sort((a: User, b: User) => b.coins - a.coins)
-          .map((user: User, index: number) => ({
+          .sort((a: User, b: User) => b.experience - a.experience)
+          .map((user: any, index: number) => ({
             ...user,
             rank: index + 1,
-            flag: mapNationalityToFlag(user.nationality)
+            flag: mapNationalityToFlag(user.nationality),
+            avatar: user.avatar || "/default-avatar.png",
+            experience: user.experience // ✅ SOLO experience
           }))
         setUserData(ranked)
+        setError(null)
       })
-      .catch((err) => console.error("Error loading ranking:", err))
+      .catch((err) => {
+        console.error("Error loading ranking:", err)
+        setError("No se pudo cargar el ranking. Intenta más tarde.")
+      })
+      .finally(() => setIsLoading(false))
   }, [])
 
   // Cargar ranking del usuario actual
@@ -68,45 +79,72 @@ export default function Ranking() {
     const token = localStorage.getItem("access_token")
     if (!token) return
 
+    if (userData.length === 0) return
+
     fetch(`${import.meta.env.VITE_BACKEND_URL}/ranking/me`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     })
-      .then((res) => res.json())
-      .then((data) => {
-        const mappedUser: User = {
-          ...data,
-          name:
-            data.name && data.name.startsWith("http")
-              ? `${data.firstName || ""} ${data.lastName || ""}`.trim() || "Unknown User"
-              : data.name,
-          flag: mapNationalityToFlag(data.nationality),
-          nationality: data.nationality || "No especificado"
-        }
-
-        setCurrentUser(mappedUser)
+      .then((res) => {
+        if (!res.ok) return null
+        return res.json()
       })
-      .catch((err) => console.error("Error loading current user ranking:", err))
-  }, [])
+      .then((data) => {
+        if (!data) return
+
+        const foundUser = userData.find((user) => user.id === data.id)
+        const userRank = foundUser?.rank || data.rank || userData.length + 1
+
+        const formattedUser: User = {
+          ...data,
+          name: data.name || `${data.firstName || ""} ${data.lastName || ""}`.trim() || "Usuario",
+          flag: mapNationalityToFlag(data.nationality),
+          avatar: data.avatar || "/default-avatar.png",
+          experience: data.experience, // ✅ SOLO experience
+          position: data.position ?? null,
+          team: data.team ?? null,
+          rank: userRank
+        }
+        setCurrentUser(formattedUser)
+      })
+      .catch((err) => {
+        console.error("Error loading user ranking:", err)
+      })
+  }, [userData])
 
   const podiumUsers = userData.slice(0, 3)
   const restUsers = userData.slice(3)
-
   const totalPages = Math.ceil(restUsers.length / usersPerPage)
-  const indexOfFirstUser = (currentPage - 1) * usersPerPage
-  const indexOfLastUser = indexOfFirstUser + usersPerPage
-  const currentUsers = restUsers.slice(indexOfFirstUser, indexOfLastUser)
+  const currentUsers = restUsers.slice(
+    (currentPage - 1) * usersPerPage,
+    currentPage * usersPerPage
+  )
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page)
   }, [])
 
-  // Percentile real
   const percentile =
     currentUser && userData.length > 0
       ? Math.round(100 * (userData.length - currentUser.rank) / userData.length)
       : 0
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#121212] flex items-center justify-center">
+        <div className="text-white text-2xl">Cargando ranking...</div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#121212] flex items-center justify-center">
+        <div className="text-red-500 text-xl">{error}</div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-[#121212] text-white overflow-x-hidden py-6">
@@ -123,28 +161,24 @@ export default function Ranking() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Left column */}
+          {/* Columna izquierda */}
           <motion.div
             className="lg:col-span-3 space-y-6"
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
           >
-            {/* Nueva tarjeta de información personal */}
             {currentUser && (
-              <PersonalInfoCard user={currentUser} />
+              <>
+                <PersonalInfoCard user={currentUser} />
+                <UserStatusCard user={currentUser} percentile={percentile} />
+              </>
             )}
-            
-            {/* Tarjeta de estado del usuario (la que ya tenías) */}
-            {currentUser && (
-              <UserStatusCard user={currentUser} percentile={percentile} />
-            )}
-            
-            {/* Tarjeta del top player (la que ya tenías) */}
+
             {podiumUsers[0] && <TopPlayerCard user={podiumUsers[0]} />}
           </motion.div>
 
-          {/* Center column */}
+          {/* Columna central */}
           <motion.div
             className="lg:col-span-6"
             initial={{ opacity: 0, y: 30 }}
@@ -154,7 +188,7 @@ export default function Ranking() {
             <PodiumView topUsers={podiumUsers} />
           </motion.div>
 
-          {/* Right column */}
+          {/* Columna derecha */}
           <motion.div
             className="lg:col-span-3"
             initial={{ opacity: 0, x: 30 }}

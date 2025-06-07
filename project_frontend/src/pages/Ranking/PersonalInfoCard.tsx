@@ -1,10 +1,12 @@
+"use client"
+
 import { motion } from "framer-motion"
 
 interface User {
   id: string
   name: string
   avatar?: string
-  coins: number
+  experience: number // 🔥 Cambiado de coins → experience
   position?: string
   team?: string
   rank: number
@@ -73,7 +75,7 @@ export default function PersonalInfoCard({ user }: PersonalInfoCardProps) {
             <div>
               <p className="text-xs text-slate-400 uppercase tracking-wide">Experiencia</p>
               <p className="text-lg font-bold text-yellow-400">
-                {user.coins.toLocaleString()}
+                {user.experience.toLocaleString()} XP
               </p>
             </div>
             <span className="text-2xl">🏆</span>

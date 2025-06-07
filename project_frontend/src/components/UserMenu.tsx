@@ -20,32 +20,35 @@ const UserMenu = () => {
   const navigate = useNavigate()
   const [user, setUser] = useState<User | null>(null)
 
-useEffect(() => {
-      const token = localStorage.getItem("token");
-      console.log("Token en localStorage:", token);
-      console.log("user id: ", localStorage.getItem("user_id"));
+  useEffect(() => {
+    // Cambiado de "token" a "access_token" para que coincida con LoginPage
+    const token = localStorage.getItem("access_token");
+    console.log("Token en localStorage:", token);
+    console.log("user id: ", localStorage.getItem("user_id"));
 
-      if (!token) {
-        console.error("No hay token en localStorage");
-        return;
-      }
-    
-      axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        console.log("Usuario autenticado:", res.data);
-        setUser(res.data);
-      })
-      .catch((err) => {
-        console.error("Error al obtener el perfil", err.response?.data || err.message);
-      });
-    }, []);
+    if (!token) {
+      console.error("No hay token en localStorage");
+      return;
+    }
+  
+    axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((res) => {
+      console.log("Usuario autenticado:", res.data);
+      setUser(res.data);
+    })
+    .catch((err) => {
+      console.error("Error al obtener el perfil", err.response?.data || err.message);
+    });
+  }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token")
+    // También cambiar aquí para remover la clave correcta
+    localStorage.removeItem("access_token")
+    localStorage.removeItem("user_id") // También limpiar el user_id
     navigate("/login")
   }
 

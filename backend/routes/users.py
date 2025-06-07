@@ -87,4 +87,3 @@ def update_current_user(
             "experience":current_user.experience
         }
     }
-

@@ -1,5 +1,3 @@
-# backend/controllers/ranking_controller.py
-
 from sqlalchemy.orm import Session
 from models.employee import Employee
 from schemas.ranking import EmployeeRankingOut
@@ -8,7 +6,7 @@ from typing import List
 def get_employee_ranking(db: Session) -> List[EmployeeRankingOut]:
     employees = (
         db.query(Employee)
-        .filter(Employee.experience > 0)  # ← cambiamos coins → experience
+        .filter(Employee.experience > 0)
         .order_by(Employee.experience.desc())
         .all()
     )
@@ -16,9 +14,9 @@ def get_employee_ranking(db: Session) -> List[EmployeeRankingOut]:
     return [
         EmployeeRankingOut(
             id=emp.id,
-            name=f"{emp.firstName} {emp.lastName}".strip() or emp.email,  # ← ahora sí un nombre
-            avatar=emp.profilePicture or "/placeholder.svg",
-            coins=emp.experience,
+            name=f"{emp.firstName} {emp.lastName}".strip() or emp.email,
+            avatar=emp.profileEpic,  # Cambiado de profilePicture a profileEpic
+            experience=emp.experience,  # Cambiado de coins a experience
             position=emp.position.name if emp.position else None,
             team=emp.team.name if emp.team else None,
             rank=index + 1,
