@@ -12,17 +12,17 @@ def get_employee_ranking(db: Session) -> List[EmployeeRankingOut]:
     )
 
     return [
-        EmployeeRankingOut(
-            id=emp.id,
-            name=f"{emp.firstName} {emp.lastName}".strip() or emp.email,
-            profileEpic=emp.profileEpic,  # Ahora se llama igual que en EmployeeRankingOut
-            experience=emp.experience,
-            position=emp.position.name if emp.position else None,
-            team=emp.team.name if emp.team else None,
-            rank=index + 1,
-            firstName=emp.firstName,
-            lastName=emp.lastName,
-            nationality=emp.nationality
-        )
-        for index, emp in enumerate(employees)
-    ]
+    EmployeeRankingOut(
+        id=emp.id,
+        name=f"{emp.firstName} {emp.lastName}".strip() or emp.email,
+        profileEpic=emp.profileEpic or emp.profilePicture,  # CAMBIO AQUI
+        experience=emp.experience,
+        position=emp.position.name if emp.position else None,
+        team=emp.team.name if emp.team else None,
+        rank=index + 1,
+        firstName=emp.firstName,
+        lastName=emp.lastName,
+        nationality=emp.nationality
+    )
+    for index, emp in enumerate(employees)
+]
