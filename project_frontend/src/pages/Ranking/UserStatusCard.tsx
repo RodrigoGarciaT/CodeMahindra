@@ -7,7 +7,7 @@ import { Trophy, Star, Users, MapPin } from "lucide-react"
 type User = {
   id: string
   name: string
-  avatar: string
+  profileEpic: string
   experience: number
   position?: string | null
   team?: string | null
@@ -151,7 +151,7 @@ const UserStatusCard: React.FC<UserStatusCardProps> = ({ user, percentile }) => 
     return fullName || "Usuario Desconocido"
   })()
 
-  const avatarUrl = user.avatar || "/placeholder.svg?height=80&width=80"
+  const profileEpicUrl = user.profileEpic || "/placeholder.svg?height=80&width=80"
 
   // Determinar el color del ranking basado en la posición
   const getRankingColor = (rank: number) => {
@@ -195,7 +195,7 @@ const UserStatusCard: React.FC<UserStatusCardProps> = ({ user, percentile }) => 
           <motion.div className="relative" whileHover={{ scale: 1.1 }} transition={{ duration: 0.2 }}>
             <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-white/30 shadow-xl backdrop-blur-sm">
               <img
-                src={avatarUrl || "/placeholder.svg"}
+                src={profileEpicUrl || "/placeholder.svg"}
                 alt={displayName}
                 className="w-full h-full object-cover"
                 onError={(e) => {

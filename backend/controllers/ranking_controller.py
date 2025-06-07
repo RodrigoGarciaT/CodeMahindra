@@ -15,8 +15,8 @@ def get_employee_ranking(db: Session) -> List[EmployeeRankingOut]:
         EmployeeRankingOut(
             id=emp.id,
             name=f"{emp.firstName} {emp.lastName}".strip() or emp.email,
-            avatar=emp.profileEpic,  # Cambiado de profilePicture a profileEpic
-            experience=emp.experience,  # Cambiado de coins a experience
+            profileEpic=emp.profileEpic,  # Ahora se llama igual que en EmployeeRankingOut
+            experience=emp.experience,
             position=emp.position.name if emp.position else None,
             team=emp.team.name if emp.team else None,
             rank=index + 1,

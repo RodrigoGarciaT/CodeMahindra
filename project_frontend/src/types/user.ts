@@ -1,7 +1,7 @@
 export interface User {
   id: string
   name: string
-  avatar?: string
+  profileEpic?: string
   experience: number
   position?: string | null
   team?: string | null
@@ -9,6 +9,7 @@ export interface User {
   firstName?: string
   lastName?: string
   nationality?: string
+  flag?: string
 }
   export interface UserWithRank extends User {
     rank: number

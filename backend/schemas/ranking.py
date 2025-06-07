@@ -6,15 +6,15 @@ from uuid import UUID
 
 class EmployeeRankingOut(BaseModel):
     id: UUID
-    name: Optional[str]  # Usamos profileEpic por ahora
-    avatar: Optional[str]  # Mapeado a profileEpic
+    name: Optional[str]
+    profileEpic: Optional[str]  # Ahora es profileEpic directamente
     experience: int
-    position: Optional[str]  # JOIN con Position.name
-    team: Optional[str]  # JOIN con Team.name
-    rank: int  # Calculado en el controller (enumerate)
+    position: Optional[str]
+    team: Optional[str]
+    rank: int
     firstName: Optional[str] = None
     lastName: Optional[str] = None
     nationality: Optional[str] = None
 
     class Config:
-        orm_mode = True  # Compatible con tu proyecto actual
+        orm_mode = True

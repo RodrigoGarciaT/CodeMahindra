@@ -112,7 +112,7 @@ const PodiumUserCard = ({ user, place }: { user?: User; place: number }) => {
         style={{ marginTop: positions[place].marginTop }}
       >
         <img
-          src={user?.avatar || "/default-avatar.png"}
+          src={user?.profileEpic || "/default-avatar.png"}
           alt={user?.name || `Player ${place}`}
           className={`w-20 h-20 rounded-full object-cover mb-2 ${
             place === 1 ? "border-4 border-yellow-400" : "border-2 border-red-500"

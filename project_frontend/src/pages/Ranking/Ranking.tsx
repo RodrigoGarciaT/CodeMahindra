@@ -9,7 +9,7 @@ import { motion } from "framer-motion"
 interface User {
   id: string
   name: string
-  avatar: string
+  profileEpic: string
   experience: number
   position?: string | null
   team?: string | null
@@ -107,7 +107,7 @@ export default function Ranking() {
             ...user,
             rank: index + 1,
             flag: mapNationalityToFlag(user.nationality),
-            avatar: user.avatar || "/default-avatar.png",
+            profileEpic: user.profileEpic || "/default-avatar.png",
             experience: user.experience,
           }))
         setUserData(ranked)
@@ -153,7 +153,7 @@ export default function Ranking() {
           ...data,
           name: data.name || `${data.firstName || ""} ${data.lastName || ""}`.trim() || "Usuario",
           flag: mapNationalityToFlag(data.nationality),
-          avatar: data.avatar || "/default-avatar.png",
+          profileEpic: data.profileEpic || "/default-avatar.png",
           experience: data.experience,
           position: data.position ?? null,
           team: data.team ?? null,

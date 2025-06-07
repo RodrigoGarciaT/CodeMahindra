@@ -64,7 +64,7 @@ def get_my_ranking(
                 return EmployeeRankingOut(
                     id=emp.id,
                     name=f"{emp.firstName} {emp.lastName}".strip() or emp.email,
-                    avatar=emp.profileEpic or emp.profilePicture,  # Priorizar profileEpic
+                    profileEpic=emp.profileEpic or emp.profilePicture,  # Cambiado a profileEpic
                     experience=emp.experience,
                     position=emp.position.name if emp.position else None,
                     team=emp.team.name if emp.team else None,
@@ -83,7 +83,7 @@ def get_my_ranking(
         return EmployeeRankingOut(
             id=current_user.id,
             name=f"{current_user.firstName} {current_user.lastName}".strip() or current_user.email,
-            avatar=current_user.profileEpic or current_user.profilePicture,
+            profileEpic=current_user.profileEpic or current_user.profilePicture,  # Cambiado a profileEpic
             experience=current_user.experience,
             position=current_user.position.name if current_user.position else None,
             team=current_user.team.name if current_user.team else None,

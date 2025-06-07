@@ -1,5 +1,4 @@
 "use client"
-
 import type React from "react"
 import type { User } from "@/types/user"
 import { motion } from "framer-motion"
@@ -14,7 +13,7 @@ type RankingListProps = {
 
 const getFlagForUser = (user: User): string => {
   if (!user || !user.nationality) return "https://flagcdn.com/w320/us.png"
-
+  
   const nationalityToFlag: Record<string, string> = {
     // América
     AR: "https://flagcdn.com/w320/ar.png",
@@ -75,7 +74,7 @@ const getFlagForUser = (user: User): string => {
     // Fallback
     "NO ESPECIFICADO": "https://flagcdn.com/w320/us.png",
   }
-
+  
   return (
     nationalityToFlag[user.nationality?.toUpperCase?.()] ||
     nationalityToFlag["NO ESPECIFICADO"]
@@ -131,7 +130,7 @@ const RankingList: React.FC<RankingListProps> = ({ users, currentPage, totalPage
               <div className="ml-4 relative">
                 <div className="w-14 h-14 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center p-[2px] shadow-lg">
                   <img
-                    src={user.avatar || "/placeholder.svg?height=56&width=56"}
+                    src={user.profileEpic || "/placeholder.svg?height=56&width=56"}
                     alt={user.name}
                     className="w-full h-full rounded-full object-cover"
                     onError={(e) => {
@@ -140,7 +139,6 @@ const RankingList: React.FC<RankingListProps> = ({ users, currentPage, totalPage
                     }}
                   />
                 </div>
-
                 {/* Flag overlay */}
                 {user.nationality && (
                   <div className="absolute -right-1 -bottom-1 w-7 h-7 rounded-full overflow-hidden border-2 border-gray-700 shadow-md">
@@ -167,13 +165,11 @@ const RankingList: React.FC<RankingListProps> = ({ users, currentPage, totalPage
                     <Trophy className="h-4 w-4 text-yellow-400 animate-pulse" />
                   )}
                 </div>
-                
                 {user.team && (
                   <p className="text-xs text-gray-400 mb-1 truncate">
                     Equipo: <span className="text-blue-300">{user.team}</span>
                   </p>
                 )}
-                
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-medium text-amber-400">
                     {user.experience.toLocaleString()} XP
@@ -203,8 +199,8 @@ const RankingList: React.FC<RankingListProps> = ({ users, currentPage, totalPage
               onClick={() => onPageChange(Math.max(1, currentPage - 1))}
               disabled={currentPage === 1}
               className={`p-3 rounded-full transition-all duration-200 ${
-                currentPage === 1 
-                  ? "text-gray-600 cursor-not-allowed opacity-50" 
+                currentPage === 1
+                  ? "text-gray-600 cursor-not-allowed opacity-50"
                   : "text-white hover:bg-[#333] hover:shadow-lg hover:text-blue-400"
               }`}
               whileHover={currentPage !== 1 ? { scale: 1.1 } : {}}
