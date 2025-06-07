@@ -76,8 +76,12 @@ export default function Ranking() {
 
   // Cargar ranking del usuario actual
   useEffect(() => {
-    const token = localStorage.getItem("access_token")
-    if (!token) return
+    const token = localStorage.getItem("access_token") || localStorage.getItem("token") // soporte ambos
+
+    if (!token) {
+      console.warn("No hay token, no se carga ranking personal")
+      return
+    }
 
     if (userData.length === 0) return
 
@@ -87,7 +91,10 @@ export default function Ranking() {
       }
     })
       .then((res) => {
-        if (!res.ok) return null
+        if (!res.ok) {
+          console.warn("No se pudo obtener el ranking personal", res.status)
+          return null
+        }
         return res.json()
       })
       .then((data) => {

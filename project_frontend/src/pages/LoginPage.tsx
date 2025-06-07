@@ -116,9 +116,8 @@ const LoginPage: React.FC = () => {
   
       const data = await response.json()
   
-      // Guardar el token con la clave "access_token" para ser consistente
-      localStorage.setItem("access_token", data.access_token);
-      
+      // Guardar el token en el almacenamiento local o en un estado global
+      localStorage.setItem("token", data.access_token);
       // Hacer una solicitud para obtener el perfil del usuario
       const userRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
         headers: {
@@ -126,7 +125,6 @@ const LoginPage: React.FC = () => {
         },
       });
       console.log("this is token", data.access_token)
-      
       if (!userRes.ok) {
         throw new Error("No se pudo obtener el perfil del usuario.");
       }
@@ -158,8 +156,7 @@ const LoginPage: React.FC = () => {
   const user_id = params.get("user_id");
 
   if (token && user_id) {
-    // Usar "access_token" en lugar de "token" para ser consistente
-    localStorage.setItem("access_token", token);
+    localStorage.setItem("token", token);
     localStorage.setItem("user_id", user_id);
 
     try {
@@ -272,6 +269,7 @@ const LoginPage: React.FC = () => {
                     <span className="flex items-center gap-2">
                       <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0..." />
                       </svg>
                       Iniciando...
                     </span>
