@@ -19,75 +19,76 @@ export default function ReposListPage() {
   const [githubLinked, setGithubLinked] = useState<boolean | null>(null); // Para verificar si está enlazado
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        console.log("🔐 Token found in localStorage:", token);
+useEffect(() => {
+  const fetchProfile = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      console.log("🔐 Token found in localStorage:", token);
 
-        if (!token) {
-          console.warn("⚠️ Token not found. Redirecting to login...");
-          navigate("/");  // Si no hay token, redirigimos al login
-          return;
-        }
-
-        // Hacemos la solicitud para obtener los datos del perfil
-        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!res.ok) {
-          throw new Error("Failed to fetch profile");
-        }
-
-        const data = await res.json();
-        console.log("🧑‍💻 Profile received:", data);
-
-        // Verificamos si tiene github_username y github_token
-        const isLinked = !!data.github_username && !!data.github_token;
-        setGithubLinked(isLinked);
-
-        if (isLinked) {
-          fetchRepos(token);  // Si ya está enlazado, traemos los repos
-        } else {
-          setLoading(false);  // Si no está enlazado, solo mostramos el botón
-        }
-      } catch (err: any) {
-        console.error("💥 Fetch profile error:", err.message);
-        setError(err.message);
-        setLoading(false);
+      if (!token) {
+        console.warn("⚠️ Token not found. Redirecting to login...");
+        navigate("/");  // Si no hay token, redirigimos al login
+        return;
       }
-    };
 
-    const fetchRepos = async (token: string) => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_REPOSITORIES_BACKEND_URL}/github/repos`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+      // Hacemos la solicitud para obtener los datos del perfil
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-        if (!res.ok) {
-          throw new Error("Failed to fetch repositories");
-        }
-
-        const data: Repo[] = await res.json();
-        console.log("✅ Repositories received:", data);
-        setRepos(data);
-      } catch (err: any) {
-        console.error("💥 Fetch error:", err.message);
-        setError(err.message);
-      } finally {
-        setLoading(false);
+      if (!res.ok) {
+        throw new Error("Failed to fetch profile");
       }
-    };
 
-    fetchProfile();  // Llamamos a la función que verifica el perfil
-  }, [navigate]);
+      const data = await res.json();
+      console.log("🧑‍💻 Profile received:", data);
+
+      // Verificamos si tiene github_username y github_token
+      const isLinked = !!data.github_username && !!data.github_token;
+      setGithubLinked(isLinked);
+
+      // Si está enlazado, traemos los repos
+      if (isLinked) {
+        fetchRepos(token); 
+      } else {
+        setLoading(false); // Si no está enlazado, solo mostramos el botón
+      }
+    } catch (err: any) {
+      console.error("💥 Fetch profile error:", err.message);
+      setError(err.message);
+      setLoading(false);
+    }
+  };
+
+  const fetchRepos = async (token: string) => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_REPOSITORIES_BACKEND_URL}/github/repos`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch repositories");
+      }
+
+      const data: Repo[] = await res.json();
+      console.log("✅ Repositories received:", data);
+      setRepos(data);
+    } catch (err: any) {
+      console.error("💥 Fetch error:", err.message);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchProfile();
+}, [navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0d1117] to-[#111827] text-white px-6 py-10">

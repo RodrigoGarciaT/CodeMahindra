@@ -319,3 +319,4 @@ def github_callback(code: str, state: str = None, db: Session = Depends(get_db))
         })
     )
 
+
