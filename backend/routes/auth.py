@@ -197,7 +197,7 @@ def login_with_github():
     return RedirectResponse(url=github_auth_url)
 
 @router.get("/github/callback")
-def github_callback(code: str, db: Session = Depends(get_db)):
+def github_callback(code: str, state: str = None, db: Session = Depends(get_db)):
     client_id = os.getenv("GITHUB_CLIENT_ID")
     client_secret = os.getenv("GITHUB_CLIENT_SECRET")
 
@@ -249,9 +249,39 @@ def github_callback(code: str, db: Session = Depends(get_db)):
         first_name = full_name
         last_name = "GitHub"
 
-    # Aquí, pasamos correctamente el github_token como access_token
+    # Verificamos si estamos enlazando la cuenta
+    if state and state.startswith("link_account|"):
+        token = state.split("|")[1]
+        print("[DEBUG] Link_account flow con token:", token)
+
+        # Obtener el user actual a partir del token
+        from utils.jwt_utils import decode_access_token  # debes tener una función para decodificar token
+        payload = decode_access_token(token)
+        user_id = payload.get("sub")
+        if not user_id:
+            raise HTTPException(status_code=401, detail="Token inválido en link_account")
+
+        # Obtener usuario de la BD
+        user = db.query(Employee).filter(Employee.id == user_id).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="Usuario no encontrado para link_account")
+
+        # Actualizar la cuenta con los datos de GitHub
+        user.github_username = github_username
+        user.github_token = access_token
+        db.commit()
+
+        print("[DEBUG] Cuenta de GitHub enlazada al usuario:", user.email)
+
+        # Redirigir al frontend después de enlazar la cuenta
+        return RedirectResponse(
+            url="http://code-mahindra-w4lk.vercel.app/reposlistpage?linked=true"
+        )
+
+    # Si no es un "link_account", entonces procesamos como un login normal de GitHub
     user = get_user_by_email(db, email)
     if not user:
+        # Crear un nuevo usuario, solo si no existe
         new_user = EmployeeCreate(
             email=email,
             password="github",  # Usamos una contraseña temporal o en blanco
@@ -288,7 +318,3 @@ def github_callback(code: str, db: Session = Depends(get_db)):
             "user_id": str(user.id)
         })
     )
-
-
-
-
