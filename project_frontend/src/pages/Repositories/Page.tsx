@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { FolderGit2, ChevronRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import GitHubLinkButton from '@/components/GitHubLinkButton';
 
 type Repo = {
   id: number;
@@ -15,10 +16,11 @@ export default function ReposListPage() {
   const [repos, setRepos] = useState<Repo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [githubLinked, setGithubLinked] = useState<boolean | null>(null); // Para verificar si está enlazado
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchRepos = async () => {
+    const fetchProfile = async () => {
       try {
         const token = localStorage.getItem("token");
         console.log("🔐 Token found in localStorage:", token);
@@ -29,6 +31,39 @@ export default function ReposListPage() {
           return;
         }
 
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch profile");
+        }
+
+        const data = await res.json();
+        console.log("🧑‍💻 Profile received:", data);
+
+        // Verificamos si tiene github_username y github_token
+        const isLinked = !!data.github_username && !!data.github_token;
+        setGithubLinked(isLinked);
+
+        if (isLinked) {
+          fetchRepos(token); // Traemos los repos solo si está enlazado
+        } else {
+          setLoading(false); // No mostramos loading, solo el botón de enlazar
+        }
+
+      } catch (err: any) {
+        console.error("💥 Fetch profile error:", err.message);
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    const fetchRepos = async (token: string) => {
+      try {
         const res = await fetch(`${import.meta.env.VITE_REPOSITORIES_BACKEND_URL}/github/repos`, {
           method: "GET",
           headers: {
@@ -36,13 +71,7 @@ export default function ReposListPage() {
           },
         });
 
-        console.log("📤 Request sent to backend with headers:", {
-          Authorization: `Bearer ${token}`,
-        });
-
         if (!res.ok) {
-          const text = await res.text();
-          console.error("❌ Error in backend response:", text);
           throw new Error("Failed to fetch repositories");
         }
 
@@ -57,12 +86,21 @@ export default function ReposListPage() {
       }
     };
 
-    fetchRepos();
+    fetchProfile();
   }, [navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0d1117] to-[#111827] text-white px-6 py-10">
       <h1 className="text-3xl font-bold mb-8 text-center">Repositories</h1>
+
+      {/* Si no tiene GitHub enlazado, mostramos el botón de "Link GitHub Account" */}
+      {githubLinked === false && (
+        <div className="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50">
+          <GitHubLinkButton
+            redirectUrl={`${import.meta.env.VITE_BACKEND_URL}/auth/github?link_account=true&token=${localStorage.getItem("token")}`}
+          />
+        </div>
+      )}
 
       {loading ? (
         <p className="text-center text-gray-400">Loading repositories...</p>

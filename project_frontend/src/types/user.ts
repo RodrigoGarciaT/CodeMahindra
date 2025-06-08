@@ -1,11 +1,16 @@
 export interface User {
-    id: number
-    name: string
-    avatar: string
-    flag: string
-    points: number
-  }
-  
+  id: string
+  name: string
+  profileEpic?: string
+  experience: number
+  position?: string | null
+  team?: string | null
+  rank: number
+  firstName?: string
+  lastName?: string
+  nationality?: string
+  flag?: string
+}
   export interface UserWithRank extends User {
     rank: number
   }

@@ -1,15 +1,20 @@
+# backend/schemas/employee_ranking.py
+
 from pydantic import BaseModel
 from typing import Optional
 from uuid import UUID
 
 class EmployeeRankingOut(BaseModel):
     id: UUID
-    name: str
-    avatar: Optional[str]
-    coins: int
+    name: Optional[str]
+    profileEpic: Optional[str]  # Ahora es profileEpic directamente
+    experience: int
     position: Optional[str]
     team: Optional[str]
-    rank: int  # ← nuevo campo
+    rank: int
+    firstName: Optional[str] = None
+    lastName: Optional[str] = None
+    nationality: Optional[str] = None
 
     class Config:
-        from_attributes = True
+        orm_mode = True
