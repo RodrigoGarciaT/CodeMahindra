@@ -281,19 +281,12 @@ def github_callback(code: str, state: str = None, db: Session = Depends(get_db))
     # Si no es un "link_account", entonces procesamos como un login normal de GitHub
     user = get_user_by_email(db, email)
     if not user:
-        # Crear un nuevo usuario, solo si no existe
-        new_user = EmployeeCreate(
-            email=email,
-            password="github",  # Usamos una contraseña temporal o en blanco
-            firstName=first_name,
-            lastName=last_name,
-            nationality="No especificado",
-            phoneNumber="0000000000",
-            profilePicture=user_data.get("avatar_url"),
-            github_username=github_username,
-            github_token=access_token,  # Aquí pasamos el access_token como github_token
-        )
-        user = create_employee(db, new_user)
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    # No creamos un nuevo usuario, solo actualizamos los datos de GitHub si es necesario
+    user.github_username = github_username
+    user.github_token = access_token
+    db.commit()
 
     # Generar JWT con los datos del usuario, ahora con el github_token
     token = create_access_token(data={
@@ -318,6 +311,3 @@ def github_callback(code: str, state: str = None, db: Session = Depends(get_db))
             "user_id": str(user.id)
         })
     )
-
-
-
