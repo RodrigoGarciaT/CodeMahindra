@@ -269,7 +269,7 @@ def github_callback(
             db.commit()
 
             print(f"🔄 GitHub vinculado a {user.email}")
-            return RedirectResponse("https://tu-frontend.com/repos?linked=true")
+            return RedirectResponse("http://code-mahindra-w4lk.vercel.app/reposlistpage?linked=true/repos?linked=true")
 
         except Exception as e:
             print(f"❌ Error vinculación: {str(e)}")
@@ -302,7 +302,7 @@ def github_callback(
     })
 
     return RedirectResponse(
-        url="https://tu-frontend.com/login?" + urllib.parse.urlencode({
+        url="http://code-mahindra-w4lk.vercel.app/reposlistpage?linked=true/login?" + urllib.parse.urlencode({
             "token": token,
             "user_id": str(user.id)
         })
