@@ -201,7 +201,7 @@ def github_callback(code: str, state: str = None, db: Session = Depends(get_db))
     client_id = os.getenv("GITHUB_CLIENT_ID")
     client_secret = os.getenv("GITHUB_CLIENT_SECRET")
 
-    # Obtener el token de acceso
+    # Obtener el token de acceso de GitHub
     token_response = external_requests.post(
         "https://github.com/login/oauth/access_token",
         headers={"Accept": "application/json"},
@@ -217,7 +217,7 @@ def github_callback(code: str, state: str = None, db: Session = Depends(get_db))
     if not access_token:
         raise HTTPException(status_code=400, detail="No se pudo obtener el access_token")
 
-    # Obtener información básica del usuario
+    # Obtener información básica del usuario desde GitHub
     user_response = external_requests.get(
         "https://api.github.com/user",
         headers={"Authorization": f"token {access_token}"}
@@ -249,7 +249,7 @@ def github_callback(code: str, state: str = None, db: Session = Depends(get_db))
         first_name = full_name
         last_name = "GitHub"
 
-    # Verificamos si estamos enlazando la cuenta
+    # Verificamos si estamos enlazando la cuenta (estado link_account)
     if state and state.startswith("link_account|"):
         token = state.split("|")[1]
         print("[DEBUG] Link_account flow con token:", token)
@@ -261,12 +261,12 @@ def github_callback(code: str, state: str = None, db: Session = Depends(get_db))
         if not user_id:
             raise HTTPException(status_code=401, detail="Token inválido en link_account")
 
-        # Obtener usuario de la BD
+        # Obtener el usuario de la BD
         user = db.query(Employee).filter(Employee.id == user_id).first()
         if not user:
             raise HTTPException(status_code=404, detail="Usuario no encontrado para link_account")
 
-        # Actualizar la cuenta con los datos de GitHub
+        # Actualizamos la cuenta con los datos de GitHub
         user.github_username = github_username
         user.github_token = access_token
         db.commit()
@@ -318,5 +318,6 @@ def github_callback(code: str, state: str = None, db: Session = Depends(get_db))
             "user_id": str(user.id)
         })
     )
+
 
 
