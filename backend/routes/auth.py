@@ -254,7 +254,7 @@ def github_callback(code: str, state: str = None, db: Session = Depends(get_db))
         token = state.split("|")[1]
         print("[DEBUG] Link_account flow con token:", token)
 
-        # Obtener el user actual a partir del token
+        # Obtener el usuario actual a partir del token
         from utils.jwt_utils import decode_access_token  # debes tener una función para decodificar token
         payload = decode_access_token(token)
         user_id = payload.get("sub")
@@ -318,3 +318,4 @@ def github_callback(code: str, state: str = None, db: Session = Depends(get_db))
             "user_id": str(user.id)
         })
     )
+
