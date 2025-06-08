@@ -101,10 +101,19 @@ CREATE TABLE IF NOT EXISTS Problem (
     sample_input TEXT NOT NULL,
     sample_output TEXT NOT NULL,
     difficulty VARCHAR(50),
-    acceptance FLOAT,
+    successful_submissions INTEGER DEFAULT 0,
+    total_submissions INTEGER DEFAULT 0,
+    acceptance FLOAT GENERATED ALWAYS AS (
+        CASE 
+            WHEN total_submissions = 0 THEN 0
+            ELSE CAST(successful_submissions AS FLOAT) / total_submissions
+        END
+    ) STORED,
     creationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     expirationDate TIMESTAMP,
-    solution TEXT
+    solution TEXT,
+    language TEXT NOT NULL,
+    was_graded BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS Problem_Topic (
