@@ -1,22 +1,22 @@
 import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 
 import Navbar from './components/Navbar';
-import Problems from './pages/Problems/Page';
+import Problems from './pages/Problems/Problems';
 import Tasks from './pages/Tasks/Tasks';
 import Ranking from './pages/Ranking/Ranking';
 import Store from './pages/Store';
 import Cart from './pages/Cart';
 import CreateProblem from './pages/CreateProblem';
-import ProblemList from './pages/ProblemList';
+import ProblemList from './pages/Problems/Page';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import ProfileAndTeamPage from './pages/TeamPage'; // ← tu componente actual
+import ProfileAndTeamPage from './pages/TeamPage';
 import Home from './pages/Home/Page';
 import LandingPage from './pages/LandingPage/Page';
 import { CartProvider } from './contexts/CartContext';
 import GoogleReg from './pages/GoogleReg';
 import ProfilePage from './pages/Profile';
-import AdminDashboard from './pages/AdminDashboard';
+//import AdminDashboard from './pages/AdminPanel/AdminDashboard';
 import Roadmap from './pages/Roadmap/Page';
 import StoreManagement from './pages/StoreManagement';
 import ImageUploaderCloudinary from './pages/ImageUploaderCloudinary';
@@ -38,6 +38,7 @@ import AdminRoute from "./components/AdminRoute";
 import CreateTeamPage from "@/pages/CreateTeamPage";
 import JoinTeamPage from "@/pages/JoinTeamPage";
 import Achievements from './pages/Achievements/Page';
+import AdminPanel from './pages/AdminPanel/Page';
 
 // Layout con navbar
 function LayoutConNavbar() {
@@ -66,7 +67,7 @@ function App() {
             <Route element={<LayoutConNavbar />}>
               <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
               <Route path="/achievements" element={<ProtectedRoute><Achievements /></ProtectedRoute>} />
-              <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+              <Route path="/admin" element={<AdminRoute><AdminPanel /></AdminRoute>} />
               <Route path="/manage-users" element={<AdminRoute><ManageUsers /></AdminRoute>} />
               <Route path="/manage-problems" element={<AdminRoute><ManageProblems /></AdminRoute>} />
               <Route path="/problemList" element={<ProtectedRoute><ProblemList /></ProtectedRoute>} />
@@ -90,7 +91,6 @@ function App() {
               <Route path="/bot-store" element={<ProtectedRoute><BotStore /></ProtectedRoute>} />
               <Route path="/repos" element={<ProtectedRoute><ReposListPage /></ProtectedRoute>} />
 
-              {/* Subrutas de Repositories protegidas y anidadas */}
               <Route element={<ProtectedRoute><ReposLayout /></ProtectedRoute>}>
                 <Route path="/repos/:repoFullName/Dashboard" element={<Dashboard />} />
                 <Route path="/repos/:repoFullName/Commits" element={<Commits />} />

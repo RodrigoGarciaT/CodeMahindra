@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { motion } from "framer-motion"
 import { useTeamMembers } from "@/hooks/useTeamMembers"
 import type { Bot as BotType } from "../BotStore/Page"
 import ProfileSection from "./ProfileSection"
@@ -120,13 +121,48 @@ function Home() {
   const teamName = fetchedTeamName || (members.length > 0 ? `Equipo de ${members[0].firstName}` : "Tu equipo")
 
   return (
-    <div className="min-h-screen bg-[#363B41] text-black p-6">
+    <div className="min-h-screen bg-[#1A1C1E] text-white p-6">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-        <ProfileSection user={user} />
-        <WeeklyChallengesSection />
-        <BotSection equippedBot={equippedBot} purchasedBot={purchasedBot} />
-        <TeamSection user={user} members={members} teamName={teamName} totalExp={totalExp} />
-        <AchievementsSection achievements={achievements} />
+        <motion.div
+          initial={{ opacity: 0, y: -40, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.1 }}
+        >
+          <ProfileSection user={user} />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, x: 40, scale: 0.95 }}
+          animate={{ opacity: 1, x: 0, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          <WeeklyChallengesSection />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 40, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+        >
+          <BotSection equippedBot={equippedBot} purchasedBot={purchasedBot} />
+        </motion.div>
+
+        <motion.div
+          className="md:col-span-2"
+          initial={{ opacity: 0, x: -40, scale: 0.95 }}
+          animate={{ opacity: 1, x: 0, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+        >
+          <TeamSection user={user} members={members} teamName={teamName} totalExp={totalExp} />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 40, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.5 }}
+        >
+          <AchievementsSection achievements={achievements} />
+        </motion.div>
       </div>
     </div>
   )

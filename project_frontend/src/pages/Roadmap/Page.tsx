@@ -4,6 +4,8 @@ import { edges } from "./data/edges";
 import { nodes } from "./data/nodes";
 import FloatingBot from "./FloatingBot";
 import PlatformInfo from "./PlatformInfo";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 
 const getImage = (name: string) =>
   new URL(`../../images/platforms/${name}`, import.meta.url).href;
@@ -12,6 +14,7 @@ const clamp = (value: number, min: number, max: number) =>
   Math.max(min, Math.min(value, max));
 
 const Roadmap: React.FC = () => {
+  const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
   const [zoom, setZoom] = useState(1);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -58,7 +61,7 @@ const Roadmap: React.FC = () => {
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !draggingEnabled) return; // ✅ se bloquea si no está permitido
+    if (!isDragging || !draggingEnabled) return;
     const newX = e.clientX - startDrag.x;
     const newY = e.clientY - startDrag.y;
     setOffset({ x: newX, y: newY });
@@ -67,7 +70,7 @@ const Roadmap: React.FC = () => {
   const handleMouseUp = () => setIsDragging(false);
 
   const handleWheel = (e: React.WheelEvent) => {
-    if (!zoomEnabled) return; // 🚫 bloquea zoom si está dentro del panel
+    if (!zoomEnabled) return;
     e.preventDefault();
     if (!containerRef.current) return;
 
@@ -161,7 +164,7 @@ const Roadmap: React.FC = () => {
             platform={selectedNode}
             onClose={() => setSelectedNode(null)}
             setDraggingEnabled={setDraggingEnabled}
-            setZoomEnabled={setZoomEnabled} // ✅ nuevo
+            setZoomEnabled={setZoomEnabled}
           />
         )}
 
@@ -171,9 +174,14 @@ const Roadmap: React.FC = () => {
         </div>
 
         <div className="relative z-30 w-full h-full p-10">
-          <h1 className="text-4xl font-bold text-white drop-shadow-lg mb-6">
-            Roadmap 🚀
-          </h1>
+          <button
+            onClick={() => navigate('/home')}
+            className="relative z-50 flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#ff003c] to-[#ff5e3a] text-white font-semibold shadow-lg border border-red-500 mb-6 transition-transform duration-300 hover:scale-105 active:scale-95"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span>Go back</span>
+          </button>
+
 
           <div
             style={{
