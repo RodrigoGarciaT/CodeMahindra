@@ -29,7 +29,7 @@ import Dashboard from './pages/Repositories/Dashboard/Page';
 import Commits from './pages/Repositories/Commits/Page';
 import PullRequests from './pages/Repositories/PullRequests/Page';
 import RecommendedResources from './pages/Repositories/RecommendedResources/Page';
-import BotStore from './pages/Home/BotStore';
+import BotStore from './pages/BotStore/Page';
 import CommitFeedback from './pages/Repositories/Commits/CommitFeedback/Page';
 import ReposListPage from './pages/Repositories/Page';
 import { AuthProvider } from "./contexts/AuthContext";
@@ -37,6 +37,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 import CreateTeamPage from "@/pages/CreateTeamPage";
 import JoinTeamPage from "@/pages/JoinTeamPage";
+import Achievements from './pages/Achievements/Page';
 
 // Layout con navbar
 function LayoutConNavbar() {
@@ -64,6 +65,7 @@ function App() {
             {/* Páginas con navbar */}
             <Route element={<LayoutConNavbar />}>
               <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+              <Route path="/achievements" element={<ProtectedRoute><Achievements /></ProtectedRoute>} />
               <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
               <Route path="/manage-users" element={<AdminRoute><ManageUsers /></AdminRoute>} />
               <Route path="/manage-problems" element={<AdminRoute><ManageProblems /></AdminRoute>} />
