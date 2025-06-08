@@ -27,10 +27,11 @@ export default function ReposListPage() {
 
         if (!token) {
           console.warn("⚠️ Token not found. Redirecting to login...");
-          navigate("/");
+          navigate("/");  // Si no hay token, redirigimos al login
           return;
         }
 
+        // Hacemos la solicitud para obtener los datos del perfil
         const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
           method: "GET",
           headers: {
@@ -50,11 +51,10 @@ export default function ReposListPage() {
         setGithubLinked(isLinked);
 
         if (isLinked) {
-          fetchRepos(token); // Traemos los repos solo si está enlazado
+          fetchRepos(token);  // Si ya está enlazado, traemos los repos
         } else {
-          setLoading(false); // No mostramos loading, solo el botón de enlazar
+          setLoading(false);  // Si no está enlazado, solo mostramos el botón
         }
-
       } catch (err: any) {
         console.error("💥 Fetch profile error:", err.message);
         setError(err.message);
@@ -86,14 +86,14 @@ export default function ReposListPage() {
       }
     };
 
-    fetchProfile();
+    fetchProfile();  // Llamamos a la función que verifica el perfil
   }, [navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0d1117] to-[#111827] text-white px-6 py-10">
       <h1 className="text-3xl font-bold mb-8 text-center">Repositories</h1>
 
-      {/* Si no tiene GitHub enlazado, mostramos el botón de "Link GitHub Account" */}
+      {/* Si el usuario no tiene GitHub enlazado, mostramos el botón de "Link GitHub Account" */}
       {githubLinked === false && (
         <div className="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50">
           <GitHubLinkButton
@@ -102,6 +102,7 @@ export default function ReposListPage() {
         </div>
       )}
 
+      {/* Mostrar repos si están disponibles */}
       {loading ? (
         <p className="text-center text-gray-400">Loading repositories...</p>
       ) : error ? (
