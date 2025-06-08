@@ -207,81 +207,125 @@ def github_auth(state: str = None):
     )
 
 @router.get("/github/callback")
-def github_callback(
-    code: str,
-    state: str = None,
-    db: Session = Depends(get_db)
-):
-    # 1. Intercambiar código por token de acceso
-    token_data = {
-        "client_id": os.getenv("GITHUB_CLIENT_ID"),
-        "client_secret": os.getenv("GITHUB_CLIENT_SECRET"),
-        "code": code,
-    }
+def github_callback(code: str, state: str = None, db: Session = Depends(get_db)):
+    client_id = os.getenv("GITHUB_CLIENT_ID")
+    client_secret = os.getenv("GITHUB_CLIENT_SECRET")
+
+    # Obtener el token de acceso de GitHub
     token_response = external_requests.post(
         "https://github.com/login/oauth/access_token",
         headers={"Accept": "application/json"},
-        data=token_data,
+        data={
+            "client_id": client_id,
+            "client_secret": client_secret,
+            "code": code,
+        },
     )
-    access_token = token_response.json().get("access_token")
-    if not access_token:
-        raise HTTPException(status_code=400, detail="Fallo al obtener token de GitHub")
+    token_json = token_response.json()
+    access_token = token_json.get("access_token")
 
-    # 2. Obtener datos del usuario de GitHub
-    user_data = external_requests.get(
+    if not access_token:
+        raise HTTPException(status_code=400, detail="No se pudo obtener el access_token")
+
+    # Obtener información básica del usuario desde GitHub
+    user_response = external_requests.get(
         "https://api.github.com/user",
         headers={"Authorization": f"token {access_token}"}
-    ).json()
+    )
+    user_data = user_response.json()
 
     github_username = user_data.get("login")
-    emails = external_requests.get(
+    print("[DEBUG] github_username obtenido:", github_username)
+
+    # Obtener correo del usuario (primario y verificado)
+    emails_response = external_requests.get(
         "https://api.github.com/user/emails",
         headers={"Authorization": f"token {access_token}"}
-    ).json()
+    )
+    emails_data = emails_response.json()
 
-    email = next(
-        (e["email"] for e in emails if e["primary"] and e["verified"]),
-        f"{user_data['id']}@users.noreply.github.com"
+    primary_email = next(
+        (email["email"] for email in emails_data if email["primary"] and email["verified"]),
+        None
     )
 
-    # 3. Lógica para vincular cuentas existentes
-    if state and "link_account|" in state:
-        user_token = state.split("|")[1]
-        try:
-            from utils.jwt_utils import decode_access_token
-            user_id = decode_access_token(user_token).get("sub")
-            user = db.query(Employee).filter(Employee.id == user_id).first()
-            
-            if user:
-                user.github_username = github_username
-                user.github_token = access_token
-                db.commit()
-                return RedirectResponse("http://frontend.com/repos?linked=true")
-            
-            raise HTTPException(status_code=404, detail="Usuario no encontrado")
-        except Exception as e:
-            raise HTTPException(status_code=400, detail=f"Error al vincular GitHub: {str(e)}")
+    email = primary_email or f"{user_data['id']}@github.fake"
+    full_name = user_data.get("name") or user_data.get("login")
+    parts = full_name.strip().split()
+    if len(parts) >= 2:
+        first_name = " ".join(parts[:-1])
+        last_name = parts[-1]
+    else:
+        first_name = full_name
+        last_name = "GitHub"
 
-    # 4. Lógica para login normal con GitHub
+    # Verificamos si estamos enlazando la cuenta (estado link_account)
+    if state and state.startswith("link_account|"):
+        token = state.split("|")[1]
+        print("[DEBUG] Link_account flow con token:", token)
+
+        # Decodificar el token JWT para obtener el ID del usuario
+        from utils.jwt_utils import decode_access_token  # debes tener una función para decodificar token
+        payload = decode_access_token(token)
+        user_id = payload.get("sub")
+        if not user_id:
+            raise HTTPException(status_code=401, detail="Token inválido en link_account")
+
+        # Obtener el usuario de la base de datos
+        user = db.query(Employee).filter(Employee.id == user_id).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="Usuario no encontrado para link_account")
+
+        # **Actualizamos solo los campos `github_username` y `github_token`** si el usuario ya existe
+        user.github_username = github_username
+        user.github_token = access_token
+        db.commit()
+
+        print("[DEBUG] Cuenta de GitHub enlazada al usuario:", user.email)
+
+        # Redirigir al frontend después de enlazar la cuenta
+        return RedirectResponse(
+            url="http://code-mahindra-w4lk.vercel.app/reposlistpage?linked=true"
+        )
+
+    # Si no es un `link_account`, entonces procesamos como un login normal de GitHub
     user = get_user_by_email(db, email)
     if not user:
-        name = user_data.get("name") or github_username
-        user = create_employee(db, EmployeeCreate(
+        # Crear un nuevo usuario, solo si no existe
+        new_user = EmployeeCreate(
             email=email,
-            password="github_auth",
-            firstName=name.split()[0],
-            lastName=name.split()[-1] if " " in name else "GitHub",
+            password="github",  # Usamos una contraseña temporal
+            firstName=first_name,
+            lastName=last_name,
             nationality="No especificado",
             phoneNumber="0000000000",
             profilePicture=user_data.get("avatar_url"),
             github_username=github_username,
-            github_token=access_token,
-        ))
+            github_token=access_token,  # Guardamos el github_token
+        )
+        user = create_employee(db, new_user)
 
+    # Generar JWT con los datos del usuario
+    token = create_access_token(data={
+        "sub": str(user.id),
+        "email": user.email,
+        "firstName": user.firstName,
+        "lastName": user.lastName,
+        "phoneNumber": user.phoneNumber,
+        "isAdmin": user.isAdmin,
+        "coins": user.coins,
+        "profilePicture": user.profilePicture,
+        "position_id": user.position_id,
+        "team_id": user.team_id,
+        "github_username": github_username,
+        "github_token": access_token,
+    })
+
+    # Redirigir al frontend con el token
     return RedirectResponse(
-        url="http://frontend.com/login?" + urllib.parse.urlencode({
-            "token": create_access_token(data={"sub": str(user.id), **user.__dict__}),
-            "github_linked": "true"
+        url="http://code-mahindra-w4lk.vercel.app/login?" + urllib.parse.urlencode({
+            "token": token,
+            "user_id": str(user.id)
         })
     )
 
