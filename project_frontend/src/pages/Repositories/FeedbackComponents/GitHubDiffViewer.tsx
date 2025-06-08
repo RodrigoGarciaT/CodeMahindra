@@ -4,7 +4,7 @@ import { LayoutPanelLeft } from "lucide-react";
 import 'react-diff-view/style/index.css';
 import './diff-dark-theme.css';
 import { Change } from 'gitdiff-parser';
-import BotCommentBanner from './BotCommetBanner';
+import BotCommentBanner from './BotCommentBanner';
 
 type FeedbackComment = {
   filePath: string;

@@ -15,7 +15,7 @@ type Props = {
   resources: Resource[];
 };
 
-export default function CommitRecommendedResources({ resources }: Props) {
+export default function FeedbackRecommendedResources({ resources }: Props) {
   return (
     <div className="w-full px-2 py-4">
       <Swiper

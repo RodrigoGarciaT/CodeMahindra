@@ -4,7 +4,7 @@ import 'react-diff-view/style/index.css';
 import axios from 'axios';
 import './diff-dark-theme.css';
 import { Change } from 'gitdiff-parser';
-import BotCommentBanner from '../BotCommetBanner';
+import BotCommentBanner from '../../../FeedbackComponents/BotCommentBanner';
 
 const GitHubDiffViewer: React.FC = () => {
   const [owner, setOwner] = useState('RodrigoGarciaT');

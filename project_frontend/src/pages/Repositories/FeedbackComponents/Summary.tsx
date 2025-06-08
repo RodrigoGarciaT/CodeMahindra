@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import botImage from "../../../../images/robot_male_1.svg";
+import botImage from "../../../images/robot_male_1.svg";
 
 type Props = {
   summary: string;
 };
 
-export default function CommitSummary({ summary }: Props) {
+export default function Summary({ summary }: Props) {
   const [visibleText, setVisibleText] = useState("");
   const [isTyping, setIsTyping] = useState(true);
 

@@ -39,6 +39,7 @@ import CreateTeamPage from "@/pages/CreateTeamPage";
 import JoinTeamPage from "@/pages/JoinTeamPage";
 import Achievements from './pages/Achievements/Page';
 import AdminPanel from './pages/AdminPanel/Page';
+import PullRequestFeedback from './pages/Repositories/PullRequests/PullRequestFeedback/Page';
 
 // Layout con navbar
 function LayoutConNavbar() {
@@ -96,7 +97,8 @@ function App() {
                 <Route path="/repos/:repoFullName/Commits" element={<Commits />} />
                 <Route path="/repos/:repoFullName/PullRequests" element={<PullRequests />} />
                 <Route path="/repos/:repoFullName/RecommendedResources" element={<RecommendedResources />} />
-                <Route path="/repos/:repoFullName/commits/:sha/feedback" element={<CommitFeedback />} />
+                <Route path="/repos/:repoFullName/Commits/:sha/feedback" element={<CommitFeedback />} />
+                <Route path="/repos/:repoFullName/PullRequests/:pr_number/feedback" element={<PullRequestFeedback />} />
               </Route>
             </Route>
           </Routes>

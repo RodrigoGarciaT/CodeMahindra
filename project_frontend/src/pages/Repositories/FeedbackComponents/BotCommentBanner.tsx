@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Bot from '../../../../images/robot_male_1.svg';
+import Bot from '../../../images/robot_male_1.svg';
 
 type BotCommentProps = {
   comment: string;

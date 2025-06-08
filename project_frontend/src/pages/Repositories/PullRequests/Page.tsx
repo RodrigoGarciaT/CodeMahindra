@@ -4,12 +4,12 @@ import {
   GitMerge,
   XCircle,
   MessageSquare,
-  Settings,
-  CheckCircle,
-  GitCommitHorizontal,
-  CheckIcon
+  CheckIcon,
+  Loader,
+  CheckCheck,
+  CircleSlash
 } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 
 interface PullRequest {
@@ -23,29 +23,53 @@ interface PullRequest {
 }
 
 function RetroBadge({ retro }: { retro: string }) {
-  const common = "px-2 py-1 rounded-md text-xs font-medium inline-flex items-center gap-1";
+  const base = "text-xs px-2 py-1 rounded-md font-semibold inline-flex items-center gap-1";
+
   switch (retro) {
-    case "Analizando":
-      return <span className={`${common} bg-[#30363d]`}><Settings size={14} /> Analizando</span>;
-    case "Con retro":
-      return <span className={`${common} bg-green-700`}><CheckCircle size={14} /> Con retro</span>;
-    case "Sin cambios":
-      return <span className={`${common} bg-yellow-600`}><GitCommitHorizontal size={14} /> Sin cambios</span>;
+    case "analyzing":
+      return (
+        <span className={`${base} bg-blue-700`}>
+          <Loader size={14} className="animate-spin" />
+          Analyzing
+        </span>
+      );
+
+    case "analyzed":
+      return (
+        <span className={`${base} bg-green-600`}>
+          <CheckCheck size={14} />
+          Analyzed
+        </span>
+      );
+
+    case "not_analyzed":
+      return (
+        <span className={`${base} bg-gray-600`}>
+          <CircleSlash size={14} />
+          Not Analyzed
+        </span>
+      );
+
     default:
       return null;
   }
 }
 
 function PullRequestItem({ pr }: { pr: PullRequest }) {
+  const { repoFullName } = useParams();
+
   return (
     <div className="px-4 py-3 flex justify-between items-center hover:bg-[#161b22] transition">
       <div className="flex flex-col">
-        <div className="flex items-center gap-2 text-white font-semibold">
+        <Link
+          to={`/repos/${encodeURIComponent(repoFullName!)}/PullRequests/${pr.number}/feedback`}
+          className="text-white font-semibold leading-snug hover:text-blue-400 transition cursor-pointer text-lg"
+        >
           {pr.status === "open" && <GitPullRequest className="text-green-500" size={16} />}
           {pr.status === "merged" && <GitMerge className="text-purple-500" size={16} />}
           {pr.status === "closed" && <XCircle className="text-red-500" size={16} />}
           {pr.title}
-        </div>
+        </Link>
         <p className="text-xs text-gray-400 mt-1">
           #{pr.number} by {pr.author} was {pr.date}
         </p>
@@ -88,6 +112,7 @@ export default function PullRequests() {
         });
 
         setPullRequests(res.data);
+        console.log(pullRequests)
       } catch (error) {
         console.error("❌ Error fetching pull requests:", error);
       }
