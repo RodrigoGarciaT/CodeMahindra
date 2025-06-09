@@ -4,7 +4,8 @@ import { edges } from "./data/edges";
 import { nodes } from "./data/nodes";
 import FloatingBot from "./FloatingBot";
 import PlatformInfo from "./PlatformInfo";
-import GoBackButton from "@/components/GoBackButton";
+import { ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const getImage = (name: string) =>
   new URL(`../../images/platforms/${name}`, import.meta.url).href;
@@ -172,8 +173,20 @@ const Roadmap: React.FC = () => {
         </div>
 
         <div className="relative z-30 w-full h-full p-10">
-          <div className="fixed z-50">
-            <GoBackButton to="/problems" />
+
+          <div className="fixed top-24 left-6 z-[100] flex items-center bg-transparent pointer-events-auto">
+            <Link
+              to="/problems"
+              className="mr-4 p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
+            >
+              <ArrowLeft className="text-white h-6 w-6" />
+            </Link>
+            <div>
+              <h1 className="text-white text-3xl font-bold flex items-center gap-2">
+                Roadmap
+              </h1>
+              <p className="text-slate-400">Explore the interactive learning map</p>
+            </div>
           </div>
 
           <div

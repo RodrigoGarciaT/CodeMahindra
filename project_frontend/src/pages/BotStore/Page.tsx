@@ -3,7 +3,8 @@ import { motion, useAnimation } from 'framer-motion';
 import Toast from '@/components/Toast';
 import BotCard from './BotCard';
 import SelectedBotPanel from './SelectedBotPanel';
-import GoBackButton from '@/components/GoBackButton';
+import { Link } from 'react-router-dom';
+import { ArrowLeft, Bot } from 'lucide-react';
 
 export type Bot = {
   id: string;
@@ -132,7 +133,20 @@ function BotStore() {
       <Toast show={showToast} success={toastSuccess} msg={toastMessage} onClose={() => setShowToast(false)} />
 
       <div className="max-w-7xl mx-auto p-6">
-        <GoBackButton to="/home" />
+        <div className="mb-8 flex items-center">
+          <Link
+            to="/home"
+            className="mr-4 p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
+          >
+            <ArrowLeft className="text-white h-6 w-6" />
+          </Link>
+          <div>
+            <h1 className="text-white text-3xl font-bold flex items-center gap-2">
+              Bot Store
+            </h1>
+            <p className="text-slate-400">Buy, equip and manage your virtual assistants</p>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="bg-black/50 rounded-lg p-4 grid grid-cols-3 gap-2">

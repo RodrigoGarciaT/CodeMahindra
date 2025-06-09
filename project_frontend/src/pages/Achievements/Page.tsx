@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { motion } from "framer-motion"
-import GoBackButton from "@/components/GoBackButton"
+import { Link } from "react-router-dom"
+import { ArrowLeft } from "lucide-react"
 
 type Achievement = {
   id: string
@@ -43,7 +44,18 @@ const Achievements: React.FC = () => {
       <div className="max-w-7xl mx-auto space-y-10">
         {/* Header */}
         <div className="flex justify-between items-center">
-          <GoBackButton to="/home" />
+          <div className="mb-8 flex items-center">
+            <Link
+              to="/home"
+              className="mr-4 p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
+            >
+              <ArrowLeft className="text-white h-6 w-6" />
+            </Link>
+            <div>
+              <h1 className="text-white text-3xl font-bold">Achievements</h1>
+              <p className="text-slate-400">Unlock milestones and track your progress</p>
+            </div>
+          </div>
 
           <motion.div
             className="bg-[#2a2a2a] border border-red-500 text-white px-6 py-3 rounded-xl shadow-xl text-sm flex gap-8 items-center font-semibold"

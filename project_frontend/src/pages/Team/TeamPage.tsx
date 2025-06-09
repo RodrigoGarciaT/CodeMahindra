@@ -1,11 +1,11 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, ResponsiveContainer, Cell } from 'recharts';
 import { useParams } from "react-router-dom";
 import { useTeamMembers } from "../../hooks/useTeamMembers";
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import GoBackButton from '@/components/GoBackButton';
 import { motion } from 'framer-motion';
+import { ArrowLeft } from 'lucide-react';
 
 function ProfileAndTeamPage() {
   const navigate = useNavigate();
@@ -125,7 +125,18 @@ function ProfileAndTeamPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#1f1f22] to-[#363B41] text-white">
       <div className="max-w-6xl mx-auto p-6">
-        <GoBackButton to="/home" />
+        <div className="mb-8 flex items-center">
+          <Link
+            to="/home"
+            className="mr-4 p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
+          >
+            <ArrowLeft className="text-white h-6 w-6" />
+          </Link>
+          <div>
+            <h1 className="text-white text-3xl font-bold">Team</h1>
+            <p className="text-slate-400">Manage your team and track its performance</p>
+          </div>
+        </div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}

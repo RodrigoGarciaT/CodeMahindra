@@ -1,5 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { infoPlatforms } from "./data/infoPlatforms";
+import CodeMirror from "@uiw/react-codemirror";
+import { javascript } from "@codemirror/lang-javascript";
+import { cpp } from "@codemirror/lang-cpp";
+import { python } from "@codemirror/lang-python";
 
 interface Platform {
   id: string;
@@ -14,6 +18,22 @@ interface Props {
   setDraggingEnabled?: (enabled: boolean) => void; // ← nueva prop
   setZoomEnabled?: (enabled: boolean) => void;
 }
+
+const getLanguageExtension = (language: string) => {
+  switch (language.toLowerCase()) {
+    case "javascript":
+    case "js":
+      return javascript();
+    case "python":
+    case "py":
+      return python();
+    case "cpp":
+    case "c++":
+      return cpp();
+    default:
+      return javascript(); // fallback
+  }
+};
 
 const clamp = (value: number, min: number, max: number) =>
   Math.max(min, Math.min(value, max));
@@ -116,13 +136,24 @@ const PlatformInfo: React.FC<Props> = ({ platform, onClose, setDraggingEnabled, 
         {info?.implementations?.length ? (
           <div>
             <h3 className="text-xl text-red-400 font-semibold mb-2">💻 Implementations</h3>
-            <div className="space-y-2 text-sm text-gray-300">
+            <div className="space-y-3 text-sm text-gray-300">
               {info.implementations.map((impl, i) => (
                 <div key={i}>
                   <p className="font-semibold text-white">{impl.language}</p>
-                  <pre className="bg-black/40 p-3 rounded-md overflow-x-auto text-xs whitespace-pre-wrap">
-                    <code>{impl.snippet}</code>
-                  </pre>
+                  <div className="rounded-md overflow-hidden text-xs">
+                    <CodeMirror
+                      value={impl.snippet}
+                      extensions={[getLanguageExtension(impl.language)]}
+                      theme="dark"
+                      editable={false}
+                      basicSetup={{ lineNumbers: true }}
+                      style={{
+                        fontSize: 12,
+                        backgroundColor: "rgba(0,0,0,0.2)",
+                        borderRadius: "0.5rem",
+                      }}
+                    />
+                  </div>
                 </div>
               ))}
             </div>
@@ -199,9 +230,20 @@ const PlatformInfo: React.FC<Props> = ({ platform, onClose, setDraggingEnabled, 
               {info.extra_examples.map((ex, i) => (
                 <div key={i}>
                   <p className="font-semibold text-white">{ex.title} ({ex.language})</p>
-                  <pre className="bg-black/40 p-3 rounded-md overflow-x-auto text-xs whitespace-pre-wrap">
-                    <code>{ex.code}</code>
-                  </pre>
+                  <div className="rounded-md overflow-hidden text-xs">
+                    <CodeMirror
+                      value={ex.code}
+                      extensions={[getLanguageExtension(ex.language)]}
+                      theme="dark"
+                      editable={false}
+                      basicSetup={{ lineNumbers: true }}
+                      style={{
+                        fontSize: 12,
+                        backgroundColor: "rgba(0,0,0,0.2)",
+                        borderRadius: "0.5rem",
+                      }}
+                    />
+                  </div>
                 </div>
               ))}
             </div>
