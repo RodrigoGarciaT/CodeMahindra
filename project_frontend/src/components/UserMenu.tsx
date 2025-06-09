@@ -1,9 +1,12 @@
+"use client"
+
 import { useState, useRef, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { ChevronDown, User, Settings, LogOut } from "lucide-react"
+import { ChevronDown, Settings, LogOut, Crown, Coins } from "lucide-react"
+import { LucideUser } from "lucide-react"
 import axios from "axios"
 
-interface User {
+interface UserType {
   firstName: string
   lastName: string
   email: string
@@ -18,31 +21,32 @@ const UserMenu = () => {
   const [open, setOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<UserType | null>(null)
 
-useEffect(() => {
-      const token = localStorage.getItem("token");
-      console.log("Token en localStorage:", token);
-      console.log("user id: ", localStorage.getItem("user_id"));
+  useEffect(() => {
+    const token = localStorage.getItem("token")
+    console.log("Token in localStorage:", token)
+    console.log("user id: ", localStorage.getItem("user_id"))
 
-      if (!token) {
-        console.error("No hay token en localStorage");
-        return;
-      }
-    
-      axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
+    if (!token) {
+      console.error("No token in localStorage")
+      return
+    }
+
+    axios
+      .get(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
       .then((res) => {
-        console.log("Usuario autenticado:", res.data);
-        setUser(res.data);
+        console.log("Authenticated user:", res.data)
+        setUser(res.data)
       })
       .catch((err) => {
-        console.error("Error al obtener el perfil", err.response?.data || err.message);
-      });
-    }, []);
+        console.error("Error fetching profile", err.response?.data || err.message)
+      })
+  }, [])
 
   const handleLogout = () => {
     localStorage.removeItem("token")
@@ -63,64 +67,125 @@ useEffect(() => {
     }
   }, [])
 
-  const initials = user
-    ? `${user.firstName?.charAt(0) || ""}${user.lastName?.charAt(0) || ""}`.toUpperCase()
-    : "US"
-    
+  const initials = user ? `${user.firstName?.charAt(0) || ""}${user.lastName?.charAt(0) || ""}`.toUpperCase() : "US"
+
+  const currentLevel = Math.floor((user?.experience ?? 0) / 1000)
+
   return (
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center space-x-2 rounded-full border border-gray-200 bg-white px-3 py-1.5 transition-all hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+        className="flex items-center space-x-2 rounded-full bg-white px-3 py-1.5 transition-all hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
       >
-        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-200 text-gray-600">
-        {user?.profilePicture ? (
-          <img src={user.profilePicture} alt="Foto de perfil" className="h-7 w-7 rounded-full object-cover"/>): 
-          (
-          <span>{initials}</span>
-        )}
+        <div className="relative flex h-7 w-7 items-center justify-center rounded-full bg-gray-100 text-gray-600">
+          {user?.profilePicture ? (
+            <img
+              src={user.profilePicture || "/placeholder.svg"}
+              alt="Profile picture"
+              className="h-7 w-7 rounded-full object-cover"
+            />
+          ) : (
+            <span className="text-sm font-medium">{initials}</span>
+          )}
         </div>
-        <span className="text-sm font-medium">{`${user?.firstName || "Usuario"}`}</span>
+        <span className="text-sm font-medium">{`${user?.firstName || "User"}`}</span>
         <ChevronDown className={`h-4 w-4 text-gray-500 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-56 origin-top-right rounded-md border border-gray-200 bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50 animate-in fade-in slide-in-from-top-5 duration-200">
-          <div className="py-2 px-3 border-b border-gray-100">
-            <p className="text-sm font-medium text-gray-900 truncate">{`${user?.firstName} ${user?.lastName}`}</p>
-            <p className="text-xs text-gray-500 truncate">
-              {user?.email || "Correo no disponible"}
-            </p>
+        <div className="absolute right-0 mt-2 w-64 origin-top-right rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50 animate-in fade-in slide-in-from-top-5 duration-200 overflow-hidden">
+          {/* User Info Header */}
+          <div className="p-4 bg-red-50">
+            <div className="flex items-center space-x-3">
+              <div className="relative">
+                {user?.profilePicture ? (
+                  <img
+                    src={user.profilePicture || "/placeholder.svg"}
+                    alt="Profile picture"
+                    className="h-12 w-12 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="h-12 w-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 font-medium text-lg">
+                    {initials}
+                  </div>
+                )}
+                {user?.coins && user.coins > 0 && (
+                  <div className="absolute -bottom-1 -right-1 bg-orange-400 rounded-full p-1">
+                    <Coins className="w-3 h-3 text-white" />
+                  </div>
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-base font-semibold text-gray-900 truncate">
+                  {`${user?.firstName || "User"} ${user?.lastName || ""}`}
+                </p>
+                <p className="text-xs text-gray-500 truncate">{user?.email || "Email not available"}</p>
+                <div className="flex items-center space-x-3 mt-1">
+                  {user?.experience !== undefined && (
+                    <div className="flex items-center text-xs text-gray-500">
+                      <Crown className="w-3 h-3 mr-1 text-red-500" />
+                      <span>Level {currentLevel}</span>
+                    </div>
+                  )}
+                  {user?.coins !== undefined && (
+                    <div className="flex items-center text-xs text-gray-500">
+                      <Coins className="w-3 h-3 mr-1 text-orange-500" />
+                      <span>{user.coins} coins</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
+
+          {/* Menu Items */}
           <div className="py-1">
             <button
-              className="flex w-full items-center px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+              className="flex w-full items-center px-4 py-3 text-left text-sm text-gray-700 hover:bg-gray-50"
               onClick={() => {
                 navigate("/profile/view")
                 setOpen(false)
               }}
             >
-              <User className="mr-2 h-4 w-4 text-gray-500" />
-              Editar Información
+              <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-3">
+                <LucideUser className="h-4 w-4 text-gray-500" />
+              </div>
+              <div>
+                <div className="font-medium">Edit Profile</div>
+                <div className="text-xs text-gray-500">Update your information</div>
+              </div>
             </button>
+
             <button
-              className="flex w-full items-center px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+              className="flex w-full items-center px-4 py-3 text-left text-sm text-gray-700 hover:bg-gray-50"
               onClick={() => {
                 navigate("/settings")
                 setOpen(false)
               }}
             >
-              <Settings className="mr-2 h-4 w-4 text-gray-500" />
-              Ajustes
+              <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-3">
+                <Settings className="h-4 w-4 text-gray-500" />
+              </div>
+              <div>
+                <div className="font-medium">Settings</div>
+                <div className="text-xs text-gray-500">Preferences and configuration</div>
+              </div>
             </button>
           </div>
+
+          {/* Logout Section */}
           <div className="py-1 border-t border-gray-100">
             <button
-              className="flex w-full items-center px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50"
+              className="flex w-full items-center px-4 py-3 text-left text-sm text-red-600 hover:bg-red-50"
               onClick={handleLogout}
             >
-              <LogOut className="mr-2 h-4 w-4 text-red-500" />
-              Cerrar Sesión
+              <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center mr-3">
+                <LogOut className="h-4 w-4 text-red-500" />
+              </div>
+              <div>
+                <div className="font-medium">Sign Out</div>
+                <div className="text-xs text-red-500">End your current session</div>
+              </div>
             </button>
           </div>
         </div>
