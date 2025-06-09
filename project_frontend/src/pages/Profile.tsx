@@ -176,7 +176,7 @@ export default function ProfilePage() {
             {/* Profile Card */}
             <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
               {/* Profile Header with Gradient */}
-              <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white">
+              <div className="bg-gradient-to-r from-red-500 to-rose-600 p-6 text-white">
                 <div className="flex items-center space-x-4">
                   <div className="relative">
                     <div className="w-20 h-20 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white">
@@ -226,14 +226,14 @@ export default function ProfilePage() {
                     <Star className="w-6 h-6 text-yellow-500 mr-2" />
                     <h3 className="text-lg font-bold text-gray-900">Level Progress</h3>
                   </div>
-                  <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold">
+                  <div className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-semibold">
                     Level {currentLevel}
                   </div>
                 </div>
                 <Progress
                   value={progressToNextLevel}
                   className="h-3 bg-gray-200"
-                  indicatorClassName="bg-gradient-to-r from-blue-500 to-purple-600"
+                  indicatorClassName="bg-gradient-to-r from-red-500 to-rose-600"
                 />
                 <div className="mt-3 flex justify-between text-sm text-gray-600">
                   <span>{user?.experience ?? 0} XP</span>
@@ -249,7 +249,7 @@ export default function ProfilePage() {
                     Personal Information
                   </h3>
                   <button
-                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                     onClick={() => navigate("/profile/view")}
                   >
                     <Edit className="h-5 w-5" />
@@ -283,8 +283,8 @@ export default function ProfilePage() {
                     <p className="text-gray-600 text-sm font-medium">Total Problems</p>
                     <p className="text-3xl font-bold text-gray-900">{totalProblems}</p>
                   </div>
-                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                    <Target className="w-6 h-6 text-blue-600" />
+                  <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+                    <Target className="w-6 h-6 text-red-600" />
                   </div>
                 </div>
               </div>
@@ -295,8 +295,8 @@ export default function ProfilePage() {
                     <p className="text-gray-600 text-sm font-medium">Current Level</p>
                     <p className="text-3xl font-bold text-gray-900">{currentLevel}</p>
                   </div>
-                  <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                    <Award className="w-6 h-6 text-purple-600" />
+                  <div className="w-12 h-12 bg-rose-100 rounded-xl flex items-center justify-center">
+                    <Award className="w-6 h-6 text-rose-600" />
                   </div>
                 </div>
               </div>
@@ -307,8 +307,8 @@ export default function ProfilePage() {
                     <p className="text-gray-600 text-sm font-medium">Total XP</p>
                     <p className="text-3xl font-bold text-gray-900">{user?.experience ?? 0}</p>
                   </div>
-                  <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                    <TrendingUp className="w-6 h-6 text-green-600" />
+                  <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                    <TrendingUp className="w-6 h-6 text-orange-600" />
                   </div>
                 </div>
               </div>
@@ -317,7 +317,7 @@ export default function ProfilePage() {
             {/* Rating Chart */}
             <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-200">
               <div className="flex items-center mb-6">
-                <TrendingUp className="w-6 h-6 text-blue-600 mr-3" />
+                <TrendingUp className="w-6 h-6 text-red-600 mr-3" />
                 <div>
                   <h2 className="text-xl font-bold text-gray-900">Experience Progress</h2>
                   <p className="text-gray-600 text-sm">Track your XP growth over time</p>
@@ -343,13 +343,13 @@ export default function ProfilePage() {
                         dataKey="experience"
                         stroke="url(#gradient)"
                         strokeWidth={3}
-                        dot={{ fill: "#3b82f6", strokeWidth: 2, r: 4 }}
-                        activeDot={{ r: 6, fill: "#1d4ed8" }}
+                        dot={{ fill: "#ef4444", strokeWidth: 2, r: 4 }}
+                        activeDot={{ r: 6, fill: "#dc2626" }}
                       />
                       <defs>
                         <linearGradient id="gradient" x1="0" y1="0" x2="1" y2="0">
-                          <stop offset="0%" stopColor="#3b82f6" />
-                          <stop offset="100%" stopColor="#8b5cf6" />
+                          <stop offset="0%" stopColor="#ef4444" />
+                          <stop offset="100%" stopColor="#f43f5e" />
                         </linearGradient>
                       </defs>
                     </LineChart>
@@ -368,7 +368,7 @@ export default function ProfilePage() {
             {/* Problem Difficulty Chart */}
             <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-200">
               <div className="flex items-center mb-6">
-                <Target className="w-6 h-6 text-green-600 mr-3" />
+                <Target className="w-6 h-6 text-red-600 mr-3" />
                 <div>
                   <h3 className="text-xl font-bold text-gray-900">Problem Difficulty Distribution</h3>
                   <p className="text-gray-600 text-sm">Problems solved by difficulty level</p>
@@ -386,14 +386,14 @@ export default function ProfilePage() {
                         level === "Easy"
                           ? "bg-gradient-to-t from-green-400 to-green-500"
                           : level === "Medium"
-                            ? "bg-gradient-to-t from-yellow-400 to-yellow-500"
-                            : "bg-gradient-to-t from-red-400 to-red-500"
+                            ? "bg-gradient-to-t from-orange-400 to-orange-500"
+                            : "bg-gradient-to-t from-red-500 to-red-600"
 
                       const bgColor =
                         level === "Easy"
                           ? "bg-green-100 text-green-800"
                           : level === "Medium"
-                            ? "bg-yellow-100 text-yellow-800"
+                            ? "bg-orange-100 text-orange-800"
                             : "bg-red-100 text-red-800"
 
                       return (
@@ -435,14 +435,14 @@ export default function ProfilePage() {
             <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-200">
               <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center">
-                  <Calendar className="w-6 h-6 text-purple-600 mr-3" />
+                  <Calendar className="w-6 h-6 text-red-600 mr-3" />
                   <div>
                     <h2 className="text-xl font-bold text-gray-900">Activity Calendar</h2>
                     <p className="text-gray-600 text-sm">Your coding activity throughout the year</p>
                   </div>
                 </div>
                 <select
-                  className="px-4 py-2 border border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-100 focus:border-purple-500 transition-all duration-200"
+                  className="px-4 py-2 border border-gray-200 rounded-xl focus:ring-red-100 focus:border-red-500 transition-all duration-200"
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(Number(e.target.value))}
                 >
@@ -460,9 +460,9 @@ export default function ProfilePage() {
                   values={heatmapValues}
                   classForValue={(value) => {
                     if (!value || value.count === 0) return "fill-gray-200"
-                    if (value.count === 1) return "fill-green-200"
-                    if (value.count === 2) return "fill-green-400"
-                    return "fill-green-600"
+                    if (value.count === 1) return "fill-red-200"
+                    if (value.count === 2) return "fill-red-400"
+                    return "fill-red-600"
                   }}
                   titleForValue={(value) => (value ? `${value.date}: ${value.count} submission(s)` : "No submissions")}
                 />
@@ -471,9 +471,9 @@ export default function ProfilePage() {
                 <span>Less</span>
                 <div className="flex items-center space-x-1">
                   <div className="w-3 h-3 bg-gray-200 rounded-sm"></div>
-                  <div className="w-3 h-3 bg-green-200 rounded-sm"></div>
-                  <div className="w-3 h-3 bg-green-400 rounded-sm"></div>
-                  <div className="w-3 h-3 bg-green-600 rounded-sm"></div>
+                  <div className="w-3 h-3 bg-red-200 rounded-sm"></div>
+                  <div className="w-3 h-3 bg-red-400 rounded-sm"></div>
+                  <div className="w-3 h-3 bg-red-600 rounded-sm"></div>
                 </div>
                 <span>More</span>
               </div>

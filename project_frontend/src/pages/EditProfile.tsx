@@ -193,7 +193,7 @@ export default function EditProfile() {
   return (
     <div className="min-h-screen bg-black">
       {/* Header */}
-      <div className="bg-gradient-to-r from-slate-900 to-slate-800 shadow-2xl border-b border-slate-700">
+      <div className="bg-transparent shadow-lg border-b border-slate-700/30 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex items-center h-20">
             <button
@@ -205,7 +205,7 @@ export default function EditProfile() {
             </button>
             <div>
               <h1 className="text-2xl font-bold text-white">Edit Profile</h1>
-              <p className="text-slate-400 text-sm">Update your personal information and preferences</p>
+              <p className="text-white/70 text-sm">Update your personal information and preferences</p>
             </div>
           </div>
         </div>
@@ -215,8 +215,8 @@ export default function EditProfile() {
       <div className="max-w-6xl mx-auto px-6 py-8">
         {loading ? (
           <div className="bg-white rounded-2xl shadow-2xl p-12 flex flex-col items-center justify-center min-h-[500px] border border-gray-200">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6">
-              <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-6">
+              <Loader2 className="h-8 w-8 text-red-600 animate-spin" />
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">Loading Profile</h3>
             <p className="text-gray-500">Please wait while we fetch your information...</p>
@@ -229,11 +229,11 @@ export default function EditProfile() {
                 {/* Profile Picture Card */}
                 <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-200">
                   <h2 className="text-xl font-bold mb-6 flex items-center">
-                    <Camera className="w-6 h-6 mr-3 text-blue-600" />
+                    <Camera className="w-6 h-6 mr-3 text-red-600" />
                     Profile Photo
                   </h2>
                   <div className="flex flex-col items-center">
-                    <div className="relative group w-32 h-32 rounded-full overflow-hidden bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center shadow-xl border-4 border-white">
+                    <div className="relative group w-32 h-32 rounded-full overflow-hidden bg-gradient-to-br from-red-100 to-rose-100 flex items-center justify-center shadow-xl border-4 border-white">
                       {user?.profilePicture ? (
                         <img
                           src={user.profilePicture || "/placeholder.svg"}
@@ -286,10 +286,10 @@ export default function EditProfile() {
                 </div>
 
                 {/* Level Progress Card */}
-                <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl shadow-xl p-6 border border-purple-200">
+                <div className="bg-gradient-to-br from-red-50 to-rose-50 rounded-2xl shadow-xl p-6 border border-red-200">
                   <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mr-4">
-                      <Star className="h-6 w-6 text-purple-600" />
+                    <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mr-4">
+                      <Star className="h-6 w-6 text-red-600" />
                     </div>
                     <div>
                       <h3 className="font-bold text-gray-900">Level Progress</h3>
@@ -303,7 +303,7 @@ export default function EditProfile() {
                     </div>
                     <div className="h-3 w-full bg-gray-200 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full transition-all duration-500"
+                        className="h-full bg-gradient-to-r from-red-500 to-rose-500 rounded-full transition-all duration-500"
                         style={{ width: `${progressToNextLevel}%` }}
                       ></div>
                     </div>
@@ -316,7 +316,7 @@ export default function EditProfile() {
                 <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-200">
                   <div className="flex justify-between items-center mb-8">
                     <div className="flex items-center">
-                      <User className="w-6 h-6 text-blue-600 mr-3" />
+                      <User className="w-6 h-6 text-red-600 mr-3" />
                       <div>
                         <h2 className="text-2xl font-bold text-gray-900">Personal Information</h2>
                         <p className="text-gray-600">Update your profile details</p>
@@ -352,7 +352,7 @@ export default function EditProfile() {
                           name="firstName"
                           value={user.firstName}
                           onChange={handleChange}
-                          className="block w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 text-gray-900 placeholder-gray-500"
+                          className="block w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-red-100 focus:border-red-500 transition-all duration-200 text-gray-900 placeholder-gray-500"
                           placeholder="Enter your first name"
                           required
                         />
@@ -374,7 +374,7 @@ export default function EditProfile() {
                           name="lastName"
                           value={user.lastName}
                           onChange={handleChange}
-                          className="block w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 text-gray-900 placeholder-gray-500"
+                          className="block w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-red-100 focus:border-red-500 transition-all duration-200 text-gray-900 placeholder-gray-500"
                           placeholder="Enter your last name"
                           required
                         />
@@ -422,7 +422,7 @@ export default function EditProfile() {
                           name="phoneNumber"
                           value={user.phoneNumber}
                           onChange={handleChange}
-                          className="block w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 text-gray-900 placeholder-gray-500"
+                          className="block w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-red-100 focus:border-red-500 transition-all duration-200 text-gray-900 placeholder-gray-500"
                           placeholder="+1 234 567 890"
                         />
                       </div>
@@ -442,7 +442,7 @@ export default function EditProfile() {
                           name="nationality"
                           value={user.nationality}
                           onChange={handleChange}
-                          className="block w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 appearance-none bg-white text-gray-900"
+                          className="block w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-red-100 focus:border-red-500 transition-all duration-200 appearance-none bg-white text-gray-900"
                         >
                           <option value="">Select a country</option>
                           <option value="AF">Afghanistan</option>
@@ -536,7 +536,7 @@ export default function EditProfile() {
                     <button
                       type="submit"
                       disabled={saving}
-                      className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-200 flex items-center justify-center min-w-[140px] shadow-lg hover:shadow-xl"
+                      className="px-6 py-3 bg-gradient-to-r from-red-500 to-rose-600 text-white rounded-xl font-semibold hover:from-red-600 hover:to-rose-700 transition-all duration-200 flex items-center justify-center min-w-[140px] shadow-lg hover:shadow-xl"
                     >
                       {saving ? (
                         <>
