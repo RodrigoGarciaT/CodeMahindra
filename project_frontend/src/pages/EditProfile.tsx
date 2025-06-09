@@ -278,6 +278,7 @@ export default function EditProfile() {
                     <span className="text-3xl font-bold text-gray-900">{user.coins}</span>
                     <button
                       type="button"
+                      onClick={() => navigate("/store")}
                       className="text-sm text-yellow-600 hover:text-yellow-700 font-semibold bg-yellow-100 px-3 py-1 rounded-lg hover:bg-yellow-200 transition-colors"
                     >
                       View Store
