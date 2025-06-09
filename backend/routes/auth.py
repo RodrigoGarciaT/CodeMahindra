@@ -272,8 +272,9 @@ def github_callback(
             return RedirectResponse("http://code-mahindra-w4lk.vercel.app/repos?linked=true")
 
         except Exception as e:
-            print(f"❌ Error vinculación: {str(e)}")
-            raise HTTPException(status_code=400, detail=f"Error al vincular GitHub: {str(e)}")
+            error_message = f"Error al vincular GitHub: {str(e)}"
+            print(f"❌ {error_message}")
+            return JSONResponse(status_code=400, content={"detail": error_message})
 
     # --- FLUJO 2: LOGIN NORMAL CON GITHUB ---
     user = get_user_by_email(db, email)
