@@ -1,21 +1,29 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from typing import List
 from sqlalchemy.orm import Session
-from database import get_db
+from database import get_db  # Asegúrate de que esto sea el path correcto para tu base de datos
 from uuid import UUID
-from schemas.achievement_status import AchievementStatusResponse
-from controllers.achievement_controller import get_achievement_status_for_employee
+from schemas.achievement_status import AchievementStatusResponse  # Asegúrate de que este sea el path correcto
 from controllers.achievement_controller import (
+    get_achievement_status_for_employee,
     get_all_achievements,
     get_achievement_by_id,
     create_achievement,
     update_achievement,
     delete_achievement,
-    evaluate_achievements_for_employee  # 🆕 nueva función
+    evaluate_achievements_for_employee
 )
-from schemas.achievement import AchievementCreate, AchievementUpdate, AchievementOut
+from schemas.achievement import AchievementCreate, AchievementUpdate, AchievementOut  # Asegúrate de que este sea el path correcto
+from models.employee import Employee  # Asegúrate de que este sea el path correcto para el modelo Employee
 
 router = APIRouter(prefix="/achievements", tags=["Achievements"])
+
+# Función de ayuda para verificar si el empleado existe
+def get_employee(employee_id: UUID, db: Session) -> Employee:
+    employee = db.query(Employee).filter(Employee.id == employee_id).first()
+    if not employee:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    return employee
 
 @router.get("/", response_model=List[AchievementOut])
 def list_achievements(db: Session = Depends(get_db)):
@@ -37,12 +45,14 @@ def update_existing_achievement(achievement_id: int, data: AchievementUpdate, db
 def delete_existing_achievement(achievement_id: int, db: Session = Depends(get_db)):
     delete_achievement(achievement_id, db)
 
-# 🆕 Nuevo endpoint para evaluación de logros
 @router.post("/evaluate/{employee_id}")
-def evaluate_achievements(employee_id: str, db: Session = Depends(get_db)):
+def evaluate_achievements(employee_id: UUID, db: Session = Depends(get_db)):
+    # Usamos la función de ayuda para verificar si el empleado existe
+    get_employee(employee_id, db)
     return evaluate_achievements_for_employee(employee_id, db)
-
 
 @router.get("/status/{employee_id}", response_model=AchievementStatusResponse)
 def get_status(employee_id: UUID, db: Session = Depends(get_db)):
+    # Usamos la función de ayuda para verificar si el empleado existe
+    get_employee(employee_id, db)
     return get_achievement_status_for_employee(employee_id, db)
