@@ -42,4 +42,3 @@ class Employee(Base):
     # Campos para autenticación con Jira
     jira_email = Column(String(255))
     jira_api_token = Column(String(255))
-

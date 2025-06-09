@@ -16,17 +16,23 @@ def get_employee_achievement(employee_id: UUID, achievement_id: int, db: Session
         EmployeeAchievement.employee_id == employee_id,
         EmployeeAchievement.achievement_id == achievement_id
     ).first()
+    
     if not link:
         raise HTTPException(status_code=404, detail="Employee-Achievement not found")
+    
     return link
 
 def create_employee_achievement(data: EmployeeAchievementCreate, db: Session) -> EmployeeAchievement:
+    # Verificar si el logro ya está asignado usando exists()
     existing = db.query(EmployeeAchievement).filter(
         EmployeeAchievement.employee_id == data.employee_id,
         EmployeeAchievement.achievement_id == data.achievement_id
-    ).first()
+    ).count() > 0  # Usamos count() para verificar existencia sin cargar el objeto
+    
     if existing:
-        raise HTTPException(status_code=400, detail="Already assigned")
+        raise HTTPException(status_code=400, detail="Achievement already assigned")
+    
+    # Crear el vínculo Employee-Achievement
     link = EmployeeAchievement(**data.dict())
     db.add(link)
     db.commit()
@@ -34,11 +40,14 @@ def create_employee_achievement(data: EmployeeAchievementCreate, db: Session) ->
     return link
 
 def delete_employee_achievement(employee_id: UUID, achievement_id: int, db: Session):
+    # Eliminar un vínculo entre empleado y logro
     link = db.query(EmployeeAchievement).filter(
         EmployeeAchievement.employee_id == employee_id,
         EmployeeAchievement.achievement_id == achievement_id
     ).first()
+    
     if not link:
         raise HTTPException(status_code=404, detail="Employee-Achievement not found")
+    
     db.delete(link)
     db.commit()

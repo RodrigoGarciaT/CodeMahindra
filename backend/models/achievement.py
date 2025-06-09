@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime
 from sqlalchemy.sql import func
 from database import Base
+from sqlalchemy.orm import relationship
 
 class Achievement(Base):
     __tablename__ = "Achievement"
@@ -14,3 +15,7 @@ class Achievement(Base):
     criterion_type = Column(String(50))  # e.g., "count_solved"
     threshold = Column(Integer)
     creationDate = Column(DateTime, server_default=func.now())
+    
+    # Relación inversa con EmployeeAchievement
+    employee_achievements = relationship("EmployeeAchievement", back_populates="achievement")
+    
