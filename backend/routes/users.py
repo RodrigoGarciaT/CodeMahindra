@@ -50,7 +50,9 @@ def read_current_user(current_user: Employee = Depends(get_current_user)):
         "nationality":current_user.nationality,
         "experience":current_user.experience, 
         "id": current_user.id,
-        "team_id": current_user.team_id
+        "team_id": current_user.team_id,
+        "github_username": current_user.github_username,
+        "github_token": current_user.github_token, 
         
     }
 @router.put("/user/me")
