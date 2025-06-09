@@ -18,91 +18,81 @@ export default function ReposListPage() {
   const [error, setError] = useState("");
   const [githubLinked, setGithubLinked] = useState<boolean | null>(null); // Para verificar si está enlazado
   const navigate = useNavigate();
+  const [token, setToken] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        console.log("🔐 Token found in localStorage:", token);
+  // Verifica si GitHub está vinculado y carga los repos
+  const checkGithubLink = async (token: string) => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      const isLinked = !!data.github_username && !!data.github_token;
+      setGithubLinked(isLinked);
+      return isLinked;
+    } catch (err) {
+      console.error("Error checking GitHub link:", err);
+      return false;
+    }
+  };
 
-        if (!token) {
-          console.warn("⚠️ Token not found. Redirecting to login...");
-          navigate("/");  // Si no hay token, redirigimos al login
-          return;
-        }
+  // Obtiene los repositorios de GitHub
+  const fetchRepos = async (token: string) => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_REPOSITORIES_BACKEND_URL}/github/repos`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data: Repo[] = await res.json();
+      setRepos(data);
+    } catch (err) {
+      setError("Failed to fetch repositories");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        // Hacemos la solicitud para obtener los datos del perfil
-        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+  // Efecto principal: verifica autenticación y carga datos
+    useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (!storedToken) {
+      navigate("/");
+      return;
+    }
 
-        if (!res.ok) {
-          throw new Error("Failed to fetch profile");
-        }
-
-        const data = await res.json();
-        console.log("🧑‍💻 Profile received:", data);
-
-        // Verificamos si tiene github_username y github_token
-        const isLinked = !!data.github_username && !!data.github_token;
-        setGithubLinked(isLinked);
-
-        if (isLinked) {
-          fetchRepos(token);  // Si ya está enlazado, traemos los repos
-        } else {
-          setLoading(false);  // Si no está enlazado, solo mostramos el botón
-        }
-      } catch (err: any) {
-        console.error("💥 Fetch profile error:", err.message);
-        setError(err.message);
-        setLoading(false);
-      }
+    setToken(storedToken); // ✅ Guardamos el token para uso seguro
+    const init = async () => {
+      const isLinked = await checkGithubLink(storedToken);
+      if (isLinked) await fetchRepos(storedToken);
+      else setLoading(false);
     };
 
-    const fetchRepos = async (token: string) => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_REPOSITORIES_BACKEND_URL}/github/repos`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+    init();
 
-        if (!res.ok) {
-          throw new Error("Failed to fetch repositories");
-        }
-
-        const data: Repo[] = await res.json();
-        console.log("✅ Repositories received:", data);
-        setRepos(data);
-      } catch (err: any) {
-        console.error("💥 Fetch error:", err.message);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProfile();  // Llamamos a la función que verifica el perfil
+    const queryParams = new URLSearchParams(window.location.search);
+    if (queryParams.get("linked") === "true") {
+      setGithubLinked(true);
+      fetchRepos(storedToken);
+    }
   }, [navigate]);
 
+  // Si no está vinculado, muestra el modal de GitHub
+  if (githubLinked === false) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0d1117] to-[#111827] text-white px-6 py-10">
-      <h1 className="text-3xl font-bold mb-8 text-center">Repositories</h1>
-
-      {/* Si el usuario no tiene GitHub enlazado, mostramos el botón de "Link GitHub Account" */}
-      {githubLinked === false && (
-        <div className="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50">
-          <GitHubLinkButton
-            redirectUrl={`${import.meta.env.VITE_BACKEND_URL}/auth/github?link_account=true&token=${localStorage.getItem("token")}`}
-          />
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-[#0d1117] to-[#111827] flex items-center justify-center">
+      {token && (
+        <GitHubLinkButton
+          redirectUrl={`${import.meta.env.VITE_BACKEND_URL}/auth/github?state=link_account|${token}`}
+        />
       )}
+    </div>
+  );
+}
 
-      {/* Mostrar repos si están disponibles */}
+
+  return (
+        <div className="min-h-screen bg-gradient-to-br from-[#0d1117] to-[#111827] text-white px-6 py-10">
+      <h1 className="text-3xl font-bold mb-8 text-center">Repositories</h1>
+      
       {loading ? (
         <p className="text-center text-gray-400">Loading repositories...</p>
       ) : error ? (
