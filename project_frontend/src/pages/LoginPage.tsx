@@ -176,11 +176,11 @@ const LoginPage: React.FC = () => {
   }
 
   return (
-    <div className="relative min-h-[calc(100vh-64px)] overflow-hidden">
+    <div className="relative h-screen overflow-hidden">
       <canvas ref={canvasRef} className="absolute inset-0 z-0" />
       <div className="absolute inset-0 bg-gradient-to-br from-[#2A2D34] to-[#1a1c21] z-0" />
 
-      <div className="relative z-10 flex items-center justify-center min-h-[calc(100vh-64px)] py-8 px-4">
+      <div className="relative z-10 flex items-center justify-center h-screen py-8 px-4">
         <div className={`w-full max-w-5xl transition-all duration-700 ease-out ${animateForm ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"}`}>
           <div className="bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
             
@@ -191,8 +191,8 @@ const LoginPage: React.FC = () => {
                 <img src={logo} alt="CodeMahindra Logo" className="h-12 object-contain" />
               </div>
 
-              <h2 className="text-2xl font-bold mb-2 text-[#2A2D34]">Iniciar Sesión</h2>
-              <p className="text-gray-500 mb-8">Bienvenido de nuevo, ingresa tus credenciales</p>
+              <h2 className="text-2xl font-bold mb-2 text-[#2A2D34]">Sign In</h2>
+              <p className="text-gray-500 mb-8">Welcome back, please enter your credentials</p>
 
               {/* Botones de redes sociales */}
               <div className="space-y-3">
@@ -202,7 +202,7 @@ const LoginPage: React.FC = () => {
 
               <div className="relative flex items-center mb-6">
                 <div className="flex-grow border-t border-gray-200"></div>
-                <span className="flex-shrink mx-4 text-gray-400 text-sm">o utiliza tu correo</span>
+                <span className="flex-shrink mx-4 text-gray-400 text-sm">or use your email</span>
                 <div className="flex-grow border-t border-gray-200"></div>
               </div>
 
@@ -212,7 +212,7 @@ const LoginPage: React.FC = () => {
 
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Correo electrónico</label>
+                  <label className="block text-sm font-medium text-gray-700">Email Address</label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <Mail className="h-5 w-5 text-gray-400" />
@@ -230,8 +230,8 @@ const LoginPage: React.FC = () => {
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <label className="block text-sm font-medium text-gray-700">Contraseña</label>
-                    <a href="#" className="text-sm text-[#E63946] hover:underline">¿Olvidaste tu contraseña?</a>
+                    <label className="block text-sm font-medium text-gray-700">Password</label>
+                    <a href="#" className="text-sm text-[#E63946] hover:underline">Forgot your password?</a>
                   </div>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -257,7 +257,7 @@ const LoginPage: React.FC = () => {
 
                 <div className="flex items-center">
                   <input id="remember-me" name="remember-me" type="checkbox" className="h-4 w-4 text-[#E63946] border-gray-300 rounded" />
-                  <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">Recordarme</label>
+                  <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">Remember me</label>
                 </div>
 
                 <button
@@ -271,10 +271,10 @@ const LoginPage: React.FC = () => {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0..." />
                       </svg>
-                      Iniciando...
+                      Signing in...
                     </span>
                   ) : (
-                    <>Iniciar sesión <ArrowRight size={18} /></>
+                    <>Sign In <ArrowRight size={18} /></>
                   )}
                 </button>
               </form>
@@ -289,15 +289,15 @@ const LoginPage: React.FC = () => {
               </div>
 
               <div className="relative z-10 text-center">
-                <h2 className="text-3xl md:text-4xl font-bold mb-6">¡Hola, Amigo!</h2>
+                <h2 className="text-3xl md:text-4xl font-bold mb-6">Hello, Friend!</h2>
                 <p className="text-white/80 mb-8 max-w-xs mx-auto">
-                  ¿Aún no tienes una cuenta? Regístrate para acceder a todas las funciones.
+                  Don't have an account? Sign up to access all features
                 </p>
                 <Link
                   to="/GoogleReg"
                   className="inline-block border-2 border-white text-white font-medium py-3 px-8 rounded-lg hover:bg-white hover:text-[#E63946] transition-colors duration-300"
                 >
-                  Registrarse
+                  Sign Up
                 </Link>
               </div>
             </div>

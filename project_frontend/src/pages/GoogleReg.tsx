@@ -85,13 +85,13 @@ const GoogleReg: React.FC = () => {
             }, [])
             
         return (
-            <div className="relative min-h-[calc(100vh-64px)] overflow-hidden">
+            <div className="relative h-screen overflow-hidden">
             <canvas ref={canvasRef} className="absolute inset-0 z-[-20] pointer-events-none" />
             <div className="absolute inset-0 bg-gradient-to-br from-[#2A2D34] to-[#1a1c21] z-0 pointer-events-none" />
 
-            <div className="flex flex-col md:flex-row items-center justify-center min-h-[calc(100vh-64px)]">
+            <div className="flex flex-col md:flex-row items-center justify-center h-screen">
 
-                <div className="relative z-10 flex items-center justify-center min-h-[calc(100vh-64px)] py-8 px-4"> 
+                <div className="relative z-10 flex items-center justify-center h-screen py-8 px-4">
                 <div className={`w-full max-w-5xl transition-all duration-700 ease-out ${animateForm ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"}`}>
                 <div className="bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
                 {/* Left side with red background */}
@@ -101,16 +101,16 @@ const GoogleReg: React.FC = () => {
                     <div className="absolute bottom-10 right-10 w-80 h-80 rounded-full bg-red-400 opacity-20 animate-float-medium"></div>
                     <div className="absolute -bottom-20 -left-20 w-72 h-72 rounded-full bg-red-400 opacity-20 animate-float-fast"></div>
 
-                    <h1 className="text-4xl font-bold mb-6">¡Bienvenido!</h1>
+                    <h1 className="text-4xl font-bold mb-6">Welcome!</h1>
                     <p className="text-center mb-8">
-                    ¿Ya tienes una cuenta con nosotros? Inicia sesión para continuar tu experiencia.
+                    Already have an account? Sign in to continue your experience.
                     </p>
 
                     <button
                         className="bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-8 rounded-md transition-colors w-64 animate-fadeIn animation-delay-400"
                         onClick={() => navigate("/login")}
                     >
-                        Iniciar sesión
+                        Sign In
                     </button>
                 </div>
 
@@ -128,8 +128,8 @@ const GoogleReg: React.FC = () => {
                         </div>
                     </div>
 
-                    <h2 className="text-2xl font-bold mb-2">Crear cuenta</h2>
-                    <p className="text-gray-600 mb-6">Completa tus datos para registrarte</p>
+                    <h2 className="text-2xl font-bold mb-2">Create Account</h2>
+                    <p className="text-gray-600 mb-6">Complete your details to register</p>
 
                     {/* Form fields would go here */}
 
@@ -138,7 +138,7 @@ const GoogleReg: React.FC = () => {
                             className="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-4 rounded-md transition-colors flex items-center justify-center"
                             onClick={() => navigate("/register")}
                         >
-                        <span>Registrarme</span>
+                        <span>Register</span>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             className="h-5 w-5 ml-2"
@@ -155,7 +155,7 @@ const GoogleReg: React.FC = () => {
 
                         <div className="relative flex items-center">
                         <div className="flex-grow border-t border-gray-300"></div>
-                        <span className="flex-shrink mx-4 text-gray-600">o</span>
+                        <span className="flex-shrink mx-4 text-gray-600">or</span>
                         <div className="flex-grow border-t border-gray-300"></div>
                         </div>
                         <GoogleButton />

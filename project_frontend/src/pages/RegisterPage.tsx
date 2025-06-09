@@ -6,10 +6,10 @@ import logo from "../images/logo-codemahindra.png"
 
 
 const countryList = [
-  "Afganistán", "Alemania", "Argentina", "Australia", "Brasil", "Canadá", "Chile", "China", "Colombia", "Corea del Sur", "Cuba",
-  "Dinamarca", "Ecuador", "Egipto", "El Salvador", "España", "Estados Unidos", "Francia", "Grecia", "Guatemala", "Honduras",
-  "India", "Indonesia", "Irlanda", "Italia", "Japón", "México", "Nicaragua", "Noruega", "Panamá", "Paraguay", "Perú", "Polonia",
-  "Portugal", "Reino Unido", "República Dominicana", "Rusia", "Suecia", "Suiza", "Tailandia", "Turquía", "Uruguay", "Venezuela", "Vietnam"
+  "Afghanistan", "Germany", "Argentina", "Australia", "Brazil", "Canada", "Chile", "China", "Colombia", "South Korea", "Cuba",
+  "Denmark", "Ecuador", "Egypt", "El Salvador", "Spain", "United States", "France", "Greece", "Guatemala", "Honduras",
+  "India", "Indonesia", "Ireland", "Italy", "Japan", "Mexico", "Nicaragua", "Norway", "Panama", "Paraguay", "Peru", "Poland",
+  "Portugal", "United Kingdom", "Dominican Republic", "Russia", "Sweden", "Switzerland", "Thailand", "Turkey", "Uruguay", "Venezuela", "Vietnam"
 ]
 
 const RegisterPage: React.FC = () => {
@@ -119,12 +119,12 @@ const RegisterPage: React.FC = () => {
     setError(null)
 
     if (password !== confirm) {
-      setError("Las contraseñas no coinciden")
+      setError("Passwords do not match")
       return
     }
 
     if (passwordStrength < 3) {
-      setError("Tu contraseña no es lo suficientemente segura")
+      setError("Your password is not secure enough")
       return
     }
 
@@ -159,7 +159,7 @@ const RegisterPage: React.FC = () => {
       const data = await response.json()
       console.log(data);
       console.log("Usuario registrado:", JSON.stringify(data, null, 2))
-      setSuccessMessage("Usuario registrado exitosamente ✅")
+      setSuccessMessage("User successfully registered ✅")
       setTimeout(() => setSuccessMessage(null), 4000) // desaparece después de 4s
 
   
@@ -172,7 +172,7 @@ const RegisterPage: React.FC = () => {
 
   
   const getPasswordStrengthText = () => {
-    return ["", "Débil", "Moderada", "Buena", "Fuerte"][passwordStrength] || ""
+    return ["", "Weak", "Moderate", "Good", "Strong"][passwordStrength] || ""
   }
 
   const getPasswordStrengthColor = () => {
@@ -195,12 +195,12 @@ const RegisterPage: React.FC = () => {
                 <div className="absolute top-1/2 right-0 w-20 h-20 bg-white opacity-10 rounded-full animate-float3" />
               </div>
               <div className="relative z-10 text-center">
-                <h2 className="text-3xl md:text-4xl font-bold mb-6">¡Bienvenido!</h2>
+                <h2 className="text-3xl md:text-4xl font-bold mb-6">Welcome!</h2>
                 <p className="text-white/80 mb-8 max-w-xs mx-auto">
-                  ¿Ya tienes una cuenta con nosotros? Inicia sesión para continuar tu experiencia.
+                  Already have an account? Sign in to continue your experience.
                 </p>
                 <Link to="/login" className="inline-block border-2 border-white text-white font-medium py-3 px-8 rounded-lg hover:bg-white hover:text-[#E63946] transition-colors duration-300">
-                  Iniciar sesión
+                  Sign In
                 </Link>
               </div>
             </div>
@@ -210,8 +210,8 @@ const RegisterPage: React.FC = () => {
               <div className="flex justify-center md:justify-start mb-6">
                 <img src={logo} alt="CodeMahindra Logo" className="h-12 object-contain" />
               </div>
-              <h2 className="text-2xl font-bold mb-2 text-[#2A2D34]">Crear cuenta</h2>
-              <p className="text-gray-500 mb-6">Completa tus datos para registrarte</p>
+              <h2 className="text-2xl font-bold mb-2 text-[#2A2D34]">Create Account</h2>
+              <p className="text-gray-500 mb-6">Complete your details to register</p>
 
               {error && <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6 text-sm animate-fadeIn">{error}</div>}
 
@@ -221,11 +221,11 @@ const RegisterPage: React.FC = () => {
                     {successMessage}
                   </div>
                 )}
-                <InputField label="Nombre completo" icon={<User />} value={name} onChange={setName} placeholder="Tu nombre" />
-                <InputField label="Apellido" icon={<User />} value={lastName} onChange={setLastName} placeholder="Tu apellido" />
-                <InputField label="Correo electrónico" icon={<Mail />} value={email} onChange={setEmail} placeholder="tu@correo.com" type="email" />
-                <PasswordField label="Contraseña" value={password} onChange={setPassword} show={showPassword} setShow={setShowPassword} placeholder="Crea tu contraseña" />
-                <PasswordField label="Confirmar contraseña" value={confirm} onChange={setConfirm} show={showConfirmPassword} setShow={setShowConfirmPassword} placeholder="Repite tu contraseña"/>
+                <InputField label="First Name" icon={<User />} value={name} onChange={setName} placeholder="Your Name" />
+                <InputField label="Last Name" icon={<User />} value={lastName} onChange={setLastName} placeholder="Your last name" />
+                <InputField label="Email Address" icon={<Mail />} value={email} onChange={setEmail} placeholder="Your@email.com" type="email" />
+                <PasswordField label="Password" value={password} onChange={setPassword} show={showPassword} setShow={setShowPassword} placeholder="Create your password" />
+                <PasswordField label="Confirm Password" value={confirm} onChange={setConfirm} show={showConfirmPassword} setShow={setShowConfirmPassword} placeholder="Repeat your password"/>
                 {password && (
                   <div className="mt-2">
                     <div className="flex justify-between items-center mb-1">
@@ -236,8 +236,8 @@ const RegisterPage: React.FC = () => {
                     </div>
                   </div>
                 )}
-                <DropdownField label="Nacionalidad" value={nationality} onChange={setNationality} options={countryList} placeholder="Selecciona tu país"/>
-                <InputField label="Teléfono" icon={<CheckCircle />} value={phone} onChange={setPhone} placeholder="+34 612 345 678" type="tel"/>
+                <DropdownField label="Nationality" value={nationality} onChange={setNationality} options={countryList} placeholder="Selecciona tu país"/>
+                <InputField label="Phone Number" icon={<CheckCircle />} value={phone} onChange={setPhone} placeholder="+34 612 345 678" type="tel"/>
 
 
                 <button
@@ -253,10 +253,10 @@ const RegisterPage: React.FC = () => {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0..." />
                       </svg>
-                      Registrando...
+                      Registering...
                     </span>
                   ) : (
-                    <>Registrarme <ArrowRight size={18} /></>
+                    <>Register <ArrowRight size={18} /></>
                   )}
                 </button>
               </form>
