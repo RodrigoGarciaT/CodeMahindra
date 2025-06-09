@@ -1,21 +1,11 @@
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, ResponsiveContainer, Cell } from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, ResponsiveContainer, Cell } from 'recharts';
 import { useParams } from "react-router-dom";
-import { useTeamMembers } from "../hooks/useTeamMembers";
+import { useTeamMembers } from "../../hooks/useTeamMembers";
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-
-const lineChartData = [
-  { name: 'Jan 2024', value: 1200 },
-  { name: 'Apr 2024', value: 1600 },
-  { name: 'Jul 2024', value: 1550 },
-  { name: 'Oct 2024', value: 1700 },
-  { name: 'Jan 2025', value: 1800 },
-  { name: 'Apr 2025', value: 2000 },
-  { name: 'Jul 2025', value: 2200 },
-  { name: 'Oct 2025', value: 2400 },
-];
+import GoBackButton from '@/components/GoBackButton';
+import { motion } from 'framer-motion';
 
 function ProfileAndTeamPage() {
   const navigate = useNavigate();
@@ -133,70 +123,73 @@ function ProfileAndTeamPage() {
       ];
 
   return (
-    <div className="min-h-screen bg-[#363B41]">
-      <div className="max-w-7xl mx-auto p-6 text-gray-900">
-        <button 
-          onClick={() => navigate('/home')}
-          className="flex items-center gap-2 bg-white text-black hover:bg-gray-200 p-2 rounded-md mb-6"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          <span>Volver</span>
-        </button>
+    <div className="min-h-screen bg-gradient-to-b from-[#1f1f22] to-[#363B41] text-white">
+      <div className="max-w-6xl mx-auto p-6">
+        <GoBackButton to="/home" />
 
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold mb-6 text-white">Equipo</h1>
-          
-          <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
-            <h2 className="text-xl font-semibold mb-4">{teamInfo?.name ?? "Nombre del equipo"}</h2>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+
+          {/* Team Info */}
+          <div className="bg-white text-gray-900 rounded-2xl p-6 shadow-xl mb-6 border border-gray-200">
+            <h2 className="text-2xl font-bold mb-4">{teamInfo?.name ?? "Team Name"}</h2>
             {teamInfo?.code && (
-              <div className="text-sm text-gray-500 mb-2">
-                Código del equipo: <span className="font-mono bg-gray-100 px-2 py-1 rounded">{teamInfo.code}</span>
-              </div>
+              <p className="text-sm text-gray-500 mb-2">
+                Team Code: <span className="font-mono bg-gray-100 px-2 py-1 rounded">{teamInfo.code}</span>
+              </p>
             )}
-            <div className="mb-6">
-              <div className="flex justify-between text-sm mb-2">
-                <span>Nivel del equipo: {teamLevel}</span>
-                <span>Experiencia del equipo: {totalExperience} XP</span>
+
+            <div className="mb-4">
+              <div className="flex justify-between text-sm font-medium text-gray-700 mb-1">
+                <span>Team Level: <span className="font-bold">{teamLevel}</span></span>
+                <span>Total XP: {totalExperience} XP</span>
               </div>
-              <div className="bg-red-500 h-2 rounded-full"
-                style={{
-                  width: `${(totalExperience % 1000) / 10}%`,
-                }}
-              ></div>
+              <div className="relative w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+                <motion.div
+                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-red-500 to-red-700 rounded-full"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${(totalExperience % 1000) / 10}%` }}
+                  transition={{ duration: 1 }}
+                />
+              </div>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="min-w-full table-auto">
-                <thead className="bg-gray-200">
+            {/* Members Table */}
+            <div className="overflow-x-auto mt-6">
+              <table className="min-w-full text-sm rounded-lg overflow-hidden">
+                <thead className="bg-gray-100 text-gray-600 uppercase tracking-wider text-xs">
                   <tr>
-                    <th className="px-4 py-2 text-left">Miembro</th>
-                    <th className="px-4 py-2 text-left">XP</th>
-                    <th className="px-4 py-2 text-left">Nivel</th>
+                    <th className="px-4 py-3 text-left">Member</th>
+                    <th className="px-4 py-3 text-left">XP</th>
+                    <th className="px-4 py-3 text-left">Level</th>
                   </tr>
                 </thead>
                 <tbody>
                   {loading ? (
                     <tr>
-                      <td colSpan={3} className="text-center py-4">Cargando...</td>
+                      <td colSpan={3} className="text-center py-6">Loading...</td>
                     </tr>
                   ) : members.length === 0 ? (
                     <tr>
-                      <td colSpan={3} className="text-center py-4">No hay miembros en este equipo.</td>
+                      <td colSpan={3} className="text-center py-6">No members in this team.</td>
                     </tr>
                   ) : (
                     members.map((member) => {
                       const experience = member.experience ?? 0;
                       const level = Math.floor(experience / 1000);
                       return (
-                        <tr key={member.id}>
-                          <td className="border px-4 py-2 flex items-center gap-2">
+                        <tr key={member.id} className="hover:bg-gray-50 transition-colors">
+                          <td className="border-b px-4 py-3 flex items-center gap-2">
                             {member.profilePicture && (
-                              <img src={member.profilePicture} alt="foto" className="w-6 h-6 rounded-full" />
+                              <img src={member.profilePicture} alt="Profile" className="w-6 h-6 rounded-full shadow" />
                             )}
-                            {member.firstName} {member.lastName}
+                            <span>{member.firstName} {member.lastName}</span>
                           </td>
-                          <td className="border px-4 py-2">{experience}</td>
-                          <td className="border px-4 py-2">Nivel {level}</td>
+                          <td className="border-b px-4 py-3">{experience}</td>
+                          <td className="border-b px-4 py-3">Level {level}</td>
                         </tr>
                       );
                     })
@@ -205,12 +198,14 @@ function ProfileAndTeamPage() {
               </table>
             </div>
           </div>
-          <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
-            <h2 className="text-xl font-semibold mb-4">Clasificación por dificultad</h2>
+
+          {/* Difficulty Chart */}
+          <div className="bg-white text-gray-900 rounded-2xl p-6 shadow-xl border border-gray-200 mb-10">
+            <h2 className="text-2xl font-bold mb-4">Performance by Difficulty</h2>
             {difficultyLoading ? (
-              <div className="text-center py-8">Cargando datos de dificultad...</div>
+              <div className="text-center py-12 text-gray-500">Loading difficulty data...</div>
             ) : (
-              <div className="h-64">
+              <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={barChartData} margin={{ top: 20, right: 30, left: 20, bottom: 30 }}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -228,23 +223,26 @@ function ProfileAndTeamPage() {
             )}
           </div>
 
-          <div className="flex justify-center mt-10">
-            <button
+          {/* Leave Team Button */}
+          <div className="flex justify-center">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 200, damping: 15 }}
               onClick={() => {
-                const confirmLeave = window.confirm("¿Estás seguro de que quieres salir del equipo?");
-                if (confirmLeave) {
+                if (window.confirm("Are you sure you want to leave the team?")) {
                   leaveTeam();
                 }
               }}
-              className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded"
+              className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold shadow-lg"
             >
-              Salir del equipo
-            </button>
+              Leave Team
+            </motion.button>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
 }
 
-export default ProfileAndTeamPage;
+export default ProfileAndTeamPage

@@ -2,7 +2,7 @@
 import type React from "react"
 import type { User } from "@/types/user"
 import { motion } from "framer-motion"
-import { ChevronLeft, ChevronRight, Trophy } from "lucide-react"
+import { ChevronLeft, ChevronRight, Trophy, Users } from "lucide-react"
 
 type RankingListProps = {
   users: User[]
@@ -98,8 +98,8 @@ const RankingList: React.FC<RankingListProps> = ({ users, currentPage, totalPage
   return (
     <div className="flex flex-col h-full">
       <h2 className="text-xl font-bold mb-4 text-white flex items-center gap-2">
-        <Trophy className="h-5 w-5 text-yellow-400" />
-        <span>Ranking</span>
+        <Users className="h-5 w-5 text-cyan-300" />
+        <span>Top Users List</span>
       </h2>
 
       <motion.div
@@ -167,7 +167,7 @@ const RankingList: React.FC<RankingListProps> = ({ users, currentPage, totalPage
                 </div>
                 {user.team && (
                   <p className="text-xs text-gray-400 mb-1 truncate">
-                    Equipo: <span className="text-blue-300">{user.team}</span>
+                    Team: <span className="text-blue-300">{user.team}</span>
                   </p>
                 )}
                 <div className="flex items-center gap-2">

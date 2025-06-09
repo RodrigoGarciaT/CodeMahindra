@@ -1,6 +1,5 @@
 import React from "react"
 import { motion } from "framer-motion"
-import { Crown } from "lucide-react"
 import type { User } from "@/types/user"
 
 const getFlagForUser = (user: User | undefined): string => {
@@ -100,12 +99,15 @@ const PodiumUserCard: React.FC<PodiumUserCardProps> = ({ user, place }) => {
       {/* Crown for first place */}
       {place === 1 && (
         <motion.div
-          className="mb-3 w-12 h-12 bg-yellow-400 rounded-md flex items-center justify-center"
+          className="mb-2 w-14 h-14 bg-gradient-to-br from-yellow-300 to-yellow-500 shadow-lg flex items-center justify-center text-3xl"
+          style={{
+            clipPath: "polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%)",
+          }}
           initial={{ y: -10 }}
           animate={{ y: [-5, 0, -5] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
         >
-          <Crown className="h-8 w-8 text-yellow-900" />
+          👑
         </motion.div>
       )}
 

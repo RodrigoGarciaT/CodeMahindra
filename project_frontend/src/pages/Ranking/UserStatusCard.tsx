@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { motion } from "framer-motion"
-import { Trophy, Star, Users, MapPin } from "lucide-react"
+import { Star, Users, MapPin, Flame } from "lucide-react"
 
 type User = {
   id: string
@@ -120,9 +120,11 @@ const UserStatusCard: React.FC<UserStatusCardProps> = ({ user, percentile }) => 
             📊
           </motion.div>
           <p className="text-2xl font-bold mb-3 bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
-            Sin Clasificar
+            Unranked
           </p>
-          <p className="text-sm opacity-80 leading-relaxed">Necesitas ganar experiencia para aparecer en el ranking.</p>
+          <p className="text-sm opacity-80 leading-relaxed">
+            You need to gain experience to appear in the leaderboard.
+          </p>
           <div className="mt-6 bg-slate-500/30 h-3 rounded-full overflow-hidden">
             <motion.div
               className="h-full bg-gradient-to-r from-slate-400 to-slate-300 rounded-full"
@@ -220,7 +222,7 @@ const UserStatusCard: React.FC<UserStatusCardProps> = ({ user, percentile }) => 
             transition={{ duration: 0.2 }}
           >
             <div className="flex items-center gap-2">
-              <Trophy className="w-5 h-5 text-white" />
+              <Flame className="w-5 h-5 text-white" />
               <span className="text-white text-xl font-bold">#{user.rank}</span>
             </div>
           </motion.div>
@@ -245,7 +247,7 @@ const UserStatusCard: React.FC<UserStatusCardProps> = ({ user, percentile }) => 
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <p className="text-white/90 font-semibold text-lg mb-1">Estás mejor que el</p>
+            <p className="text-white/90 font-semibold text-lg mb-1">You're better than</p>
             <div className="flex items-center gap-2">
               <motion.p
                 className="text-white text-4xl font-extrabold"
@@ -257,7 +259,7 @@ const UserStatusCard: React.FC<UserStatusCardProps> = ({ user, percentile }) => 
               </motion.p>
               <Star className="w-6 h-6 text-yellow-200 fill-current" />
             </div>
-            <p className="text-white/80 text-sm">de otros jugadores</p>
+            <p className="text-white/80 text-sm">of other users</p>
           </motion.div>
 
           {/* Información adicional con iconos */}
@@ -270,7 +272,7 @@ const UserStatusCard: React.FC<UserStatusCardProps> = ({ user, percentile }) => 
             <div className="flex items-center gap-3 bg-white/10 rounded-lg p-3 backdrop-blur-sm">
               <Star className="w-4 h-4 text-yellow-200 flex-shrink-0" />
               <div>
-                <span className="font-semibold">Experiencia: </span>
+                <span className="font-semibold">Experience: </span>
                 <span className="font-bold text-yellow-100">{user.experience?.toLocaleString() || 0} XP</span>
               </div>
             </div>
@@ -279,7 +281,7 @@ const UserStatusCard: React.FC<UserStatusCardProps> = ({ user, percentile }) => 
               <div className="flex items-center gap-3 bg-white/10 rounded-lg p-3 backdrop-blur-sm">
                 <Users className="w-4 h-4 text-blue-200 flex-shrink-0" />
                 <div>
-                  <span className="font-semibold">Equipo: </span>
+                  <span className="font-semibold">Team: </span>
                   <span className="font-bold text-blue-100">{user.team}</span>
                 </div>
               </div>
@@ -289,7 +291,7 @@ const UserStatusCard: React.FC<UserStatusCardProps> = ({ user, percentile }) => 
               <div className="flex items-center gap-3 bg-white/10 rounded-lg p-3 backdrop-blur-sm">
                 <MapPin className="w-4 h-4 text-green-200 flex-shrink-0" />
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold">Nacionalidad: </span>
+                  <span className="font-semibold">Nationality: </span>
                   <span className="font-bold text-green-100">{user.nationality}</span>
                   <img
                     src={getFlagForUser(user) || "/placeholder.svg"}
@@ -310,7 +312,7 @@ const UserStatusCard: React.FC<UserStatusCardProps> = ({ user, percentile }) => 
         {/* Barra de progreso mejorada */}
         <motion.div className="mt-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
           <div className="flex justify-between items-center mb-2">
-            <span className="text-white/80 text-sm font-medium">Progreso en el ranking</span>
+            <span className="text-white/80 text-sm font-medium">Ranking progress</span>
             <span className="text-white font-bold text-sm">{Math.min(percentile, 100)}%</span>
           </div>
           <div className="bg-white/20 h-3 rounded-full overflow-hidden backdrop-blur-sm border border-white/30">

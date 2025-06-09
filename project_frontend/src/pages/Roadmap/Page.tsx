@@ -4,8 +4,7 @@ import { edges } from "./data/edges";
 import { nodes } from "./data/nodes";
 import FloatingBot from "./FloatingBot";
 import PlatformInfo from "./PlatformInfo";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import GoBackButton from "@/components/GoBackButton";
 
 const getImage = (name: string) =>
   new URL(`../../images/platforms/${name}`, import.meta.url).href;
@@ -14,7 +13,6 @@ const clamp = (value: number, min: number, max: number) =>
   Math.max(min, Math.min(value, max));
 
 const Roadmap: React.FC = () => {
-  const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
   const [zoom, setZoom] = useState(1);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -174,14 +172,9 @@ const Roadmap: React.FC = () => {
         </div>
 
         <div className="relative z-30 w-full h-full p-10">
-          <button
-            onClick={() => navigate('/home')}
-            className="relative z-50 flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#ff003c] to-[#ff5e3a] text-white font-semibold shadow-lg border border-red-500 mb-6 transition-transform duration-300 hover:scale-105 active:scale-95"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span>Go back</span>
-          </button>
-
+          <div className="fixed z-50">
+            <GoBackButton to="/problems" />
+          </div>
 
           <div
             style={{
