@@ -4,6 +4,7 @@ import { Link } from "react-router-dom"
 import { ArrowRight, ChevronLeft, ChevronRight, LogIn } from "lucide-react"
 import { useEffect, useState, useRef } from "react"
 import { motion } from "framer-motion"
+import logo from '../../images/logo-codemahindra.png'
 
 const getImage = (name: string) =>
   new URL(`../../images/${name}`, import.meta.url).href;
@@ -141,9 +142,9 @@ export default function LandingPage() {
           {/* Logo + Texto */}
           <Link to="/" className="flex items-center space-x-2 h-full">
             <img
-              src="/logo-codemahindra.png"
-              alt="Logo"
-              className="h-full w-auto object-contain"
+              src={logo}
+              alt="CodeMahindra Logo"
+              className="h-[55%] w-auto object-contain mr-1"
             />
             <span className="text-xl font-bold text-gray-900">
               <span className="text-gray-700">Code</span>

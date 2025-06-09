@@ -50,7 +50,7 @@ const isAdmin = user?.isAdmin === true;
             <img
               src={logo}
               alt="CodeMahindra Logo"
-              className="h-full w-auto object-contain"
+              className="h-[55%] w-auto object-contain"
             />
           </Link>
           <button
