@@ -16,6 +16,8 @@ import {
   User,
   Tag,
   Timer,
+  Kanban,
+  BarChart3,
 } from "lucide-react"
 
 import { Avatar } from "@/components/avatar"
@@ -106,10 +108,10 @@ export default function Tasks() {
   const getTagColor = (tag?: string) => {
     if (!tag) return "bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 border-gray-300"
     const colors = [
-      "bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border-blue-300",
-      "bg-gradient-to-r from-green-100 to-green-200 text-green-800 border-green-300",
-      "bg-gradient-to-r from-purple-100 to-purple-200 text-purple-800 border-purple-300",
-      "bg-gradient-to-r from-orange-100 to-orange-200 text-orange-800 border-orange-300",
+      "bg-gradient-to-r from-red-100 to-rose-200 text-red-800 border-red-300",
+      "bg-gradient-to-r from-pink-100 to-rose-200 text-pink-800 border-pink-300",
+      "bg-gradient-to-r from-red-50 to-red-100 text-red-700 border-red-200",
+      "bg-gradient-to-r from-rose-100 to-pink-200 text-rose-800 border-rose-300",
     ]
     return colors[tag.length % colors.length]
   }
@@ -119,9 +121,9 @@ export default function Tasks() {
       case "Alta":
         return <ArrowUp className="text-red-500 w-4 h-4" />
       case "Media":
-        return <ArrowUp className="text-amber-500 w-4 h-4" />
+        return <ArrowUp className="text-red-400 w-4 h-4" />
       case "Baja":
-        return <ArrowDown className="text-emerald-500 w-4 h-4" />
+        return <ArrowDown className="text-red-300 w-4 h-4" />
       default:
         return null
     }
@@ -130,28 +132,28 @@ export default function Tasks() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "Done":
-        return <CheckCircle className="text-emerald-500 w-4 h-4" />
+        return <CheckCircle className="text-red-500 w-4 h-4" />
       case "In Progress":
-        return <Clock className="text-blue-500 w-4 h-4" />
+        return <Clock className="text-red-500 w-4 h-4" />
       case "Code Review":
-        return <AlertCircle className="text-purple-500 w-4 h-4" />
+        return <AlertCircle className="text-red-500 w-4 h-4" />
       default:
-        return <Plus className="text-gray-400 w-4 h-4" />
+        return <Plus className="text-red-400 w-4 h-4" />
     }
   }
 
   const getColumnColor = (status: string) => {
     switch (status) {
       case "To Do":
-        return "border-t-gray-400 bg-gradient-to-b from-gray-50 to-white"
+        return "border-t-red-400 bg-white"
       case "In Progress":
-        return "border-t-blue-400 bg-gradient-to-b from-blue-50 to-white"
+        return "border-t-red-500 bg-white"
       case "Code Review":
-        return "border-t-purple-400 bg-gradient-to-b from-purple-50 to-white"
+        return "border-t-rose-500 bg-white"
       case "Done":
-        return "border-t-emerald-400 bg-gradient-to-b from-emerald-50 to-white"
+        return "border-t-red-600 bg-white"
       default:
-        return "border-t-gray-400 bg-gradient-to-b from-gray-50 to-white"
+        return "border-t-red-400 bg-white"
     }
   }
 
@@ -177,8 +179,12 @@ export default function Tasks() {
     setJiraModalOpen(false)
   }
 
+  const totalTasks = tasks.length
+  const completedTasks = tasks.filter((task) => task.status === "Done").length
+  const inProgressTasks = tasks.filter((task) => task.status === "In Progress").length
+
   return (
-    <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen">
+    <div className="bg-black min-h-screen">
       {/* Modal de Jira */}
       <Dialog open={jiraModalOpen} onClose={() => {}} className="relative z-50">
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" aria-hidden="true" />
@@ -192,8 +198,8 @@ export default function Tasks() {
               <X className="w-5 h-5" />
             </button>
             <div className="text-center mb-6">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-red-600" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 6.62 5.367 11.987 11.988 11.987s11.987-5.367 11.987-11.987C24.004 5.367 18.637.001 12.017.001zM8.232 4.609c0-.733.6-1.326 1.326-1.326s1.326.6 1.326 1.326v4.302c0 .733-.6 1.326-1.326 1.326s-1.326-.6-1.326-1.326V4.609zm7.51 0c0-.733.6-1.326 1.326-1.326s1.326.6 1.326 1.326v4.302c0 .733-.6 1.326-1.326 1.326s-1.326-.6-1.326-1.326V4.609z" />
                 </svg>
               </div>
@@ -222,7 +228,7 @@ export default function Tasks() {
               </div>
               <Button
                 onClick={handleSubmitJira}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-medium transition-colors"
+                className="w-full bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white py-3 rounded-xl font-medium transition-all duration-200"
               >
                 Continue
               </Button>
@@ -233,31 +239,76 @@ export default function Tasks() {
 
       {/* Dashboard Principal */}
       <div className="max-w-[1600px] mx-auto p-6">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Task Management</h1>
-            <p className="text-slate-400">Organize and track your team's progress</p>
+        {/* Header Section */}
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex items-center">
+              <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-rose-600 rounded-xl flex items-center justify-center mr-4">
+                <Kanban className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-4xl font-bold text-white">Task Management</h1>
+                <p className="text-gray-400 mt-1">Organize and track your team's progress</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setJiraModalOpen(true)}
+                className="flex items-center gap-2 bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-sm"
+              >
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 6.62 5.367 11.987 11.988 11.987s11.987-5.367 11.987-11.987C24.004 5.367 18.637.001 12.017.001zM8.232 4.609c0-.733.6-1.326 1.326-1.326s1.326.6 1.326 1.326v4.302c0 .733-.6 1.326-1.326 1.326s-1.326-.6-1.326-1.326V4.609zm7.51 0c0-.733.6-1.326 1.326-1.326s1.326.6 1.326 1.326v4.302c0 .733-.6 1.326-1.326 1.326s-1.326-.6-1.326-1.326V4.609z" />
+                </svg>
+                Connect Jira
+              </Button>
+              <Button
+                variant="outline"
+                onClick={fetchTasks}
+                className="flex items-center gap-2 bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-sm"
+                disabled={isLoading}
+              >
+                <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
+                Refresh
+              </Button>
+            </div>
           </div>
-          <div className="flex items-center gap-3">
-            <Button
-              variant="outline"
-              onClick={() => setJiraModalOpen(true)}
-              className="flex items-center gap-2 bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-sm"
-            >
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 6.62 5.367 11.987 11.988 11.987s11.987-5.367 11.987-11.987C24.004 5.367 18.637.001 12.017.001zM8.232 4.609c0-.733.6-1.326 1.326-1.326s1.326.6 1.326 1.326v4.302c0 .733-.6 1.326-1.326 1.326s-1.326-.6-1.326-1.326V4.609zm7.51 0c0-.733.6-1.326 1.326-1.326s1.326.6 1.326 1.326v4.302c0 .733-.6 1.326-1.326 1.326s-1.326-.6-1.326-1.326V4.609z" />
-              </svg>
-              Connect Jira
-            </Button>
-            <Button
-              variant="outline"
-              onClick={fetchTasks}
-              className="flex items-center gap-2 bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-sm"
-              disabled={isLoading}
-            >
-              <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
-              Refresh
-            </Button>
+
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div className="bg-white rounded-xl p-6 shadow-2xl border border-gray-200">
+              <div className="flex items-center">
+                <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-4">
+                  <BarChart3 className="h-5 w-5 text-red-600" />
+                </div>
+                <div>
+                  <p className="text-gray-600 text-sm">Total Tasks</p>
+                  <p className="text-2xl font-bold text-gray-900">{totalTasks}</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl p-6 shadow-2xl border border-gray-200">
+              <div className="flex items-center">
+                <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-4">
+                  <Clock className="h-5 w-5 text-red-600" />
+                </div>
+                <div>
+                  <p className="text-gray-600 text-sm">In Progress</p>
+                  <p className="text-2xl font-bold text-gray-900">{inProgressTasks}</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl p-6 shadow-2xl border border-gray-200">
+              <div className="flex items-center">
+                <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-4">
+                  <CheckCircle className="h-5 w-5 text-red-600" />
+                </div>
+                <div>
+                  <p className="text-gray-600 text-sm">Completed</p>
+                  <p className="text-2xl font-bold text-gray-900">{completedTasks}</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -267,13 +318,13 @@ export default function Tasks() {
             return (
               <div
                 key={status}
-                className={`rounded-2xl shadow-xl border-t-4 ${getColumnColor(status)} backdrop-blur-sm flex flex-col overflow-hidden`}
+                className={`rounded-2xl shadow-2xl border-t-4 ${getColumnColor(status)} flex flex-col overflow-hidden`}
               >
-                <div className="p-5 border-b border-gray-100/50">
+                <div className="p-5 border-b border-gray-100">
                   <h2 className="font-bold text-gray-800 flex items-center gap-3 text-lg">
                     {getStatusIcon(status)}
                     {status}
-                    <Badge className="ml-auto bg-gray-100 text-gray-700 font-semibold px-2 py-1">
+                    <Badge className="ml-auto bg-red-100 text-red-700 font-semibold px-2 py-1">
                       {tasksInColumn.length}
                     </Badge>
                   </h2>
@@ -281,12 +332,12 @@ export default function Tasks() {
                 <div className="p-4 flex-1 overflow-auto max-h-[calc(100vh-280px)] space-y-4">
                   {isLoading ? (
                     <div className="text-center text-gray-400 py-8">
-                      <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-2" />
+                      <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-2 text-red-500" />
                       <p>Loading tasks...</p>
                     </div>
                   ) : tasksInColumn.length === 0 ? (
                     <div className="text-center py-12 text-gray-400">
-                      <Plus className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                      <Plus className="w-12 h-12 mx-auto mb-3 opacity-50 text-red-300" />
                       <p className="font-medium">No tasks</p>
                       <p className="text-sm">Tasks will appear here</p>
                     </div>
@@ -294,21 +345,21 @@ export default function Tasks() {
                     tasksInColumn.map((task) => (
                       <div
                         key={task.id}
-                        className="p-4 bg-white border border-gray-200 rounded-xl hover:shadow-lg transition-all duration-200 cursor-pointer hover:scale-[1.02] group"
+                        className="p-4 bg-white border border-gray-200 rounded-xl hover:shadow-lg transition-all duration-200 cursor-pointer hover:scale-[1.02] group hover:border-red-200"
                         onClick={() => {
                           setSelectedTask(task)
                           setIsOpen(true)
                         }}
                       >
                         <div className="flex justify-between items-start mb-3">
-                          <div className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-md">
+                          <div className="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded-md">
                             {task.taskId}
                           </div>
                           {task.priority && (
                             <TooltipProvider>
                               <Tooltip>
                                 <TooltipTrigger asChild>
-                                  <div className="p-1 rounded-full bg-gray-50 group-hover:bg-gray-100 transition-colors">
+                                  <div className="p-1 rounded-full bg-red-50 group-hover:bg-red-100 transition-colors">
                                     {getPriorityIcon(task.priority)}
                                   </div>
                                 </TooltipTrigger>
@@ -357,11 +408,11 @@ export default function Tasks() {
             <Dialog.Panel className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-0 max-h-[90vh] overflow-hidden border border-gray-200">
               {selectedTask && (
                 <>
-                  <div className="border-b border-gray-200 p-6 bg-gradient-to-r from-gray-50 to-white">
+                  <div className="border-b border-gray-200 p-6 bg-gradient-to-r from-red-50 to-white">
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <Badge className="bg-blue-100 text-blue-800 font-bold px-3 py-1">{selectedTask.taskId}</Badge>
+                          <Badge className="bg-red-100 text-red-800 font-bold px-3 py-1">{selectedTask.taskId}</Badge>
                           {selectedTask.tag && (
                             <Badge variant="outline" className={`${getTagColor(selectedTask.tag)} border font-medium`}>
                               <Tag className="w-3 h-3 mr-1" />
@@ -393,29 +444,29 @@ export default function Tasks() {
                       <InfoBlock
                         label="Sprint"
                         value={selectedTask.sprint}
-                        icon={<Calendar className="w-4 h-4 text-gray-500" />}
+                        icon={<Calendar className="w-4 h-4 text-red-500" />}
                       />
                       <InfoBlock
                         label="Reporter"
                         value={selectedTask.reporter}
-                        icon={<User className="w-4 h-4 text-gray-500" />}
+                        icon={<User className="w-4 h-4 text-red-500" />}
                       />
                       <InfoBlock
                         label="Labels"
                         value={selectedTask.labels}
-                        icon={<Tag className="w-4 h-4 text-gray-500" />}
+                        icon={<Tag className="w-4 h-4 text-red-500" />}
                       />
                       <InfoBlock
                         label="Estimated Time"
                         value={selectedTask.estimatedTime ? `${selectedTask.estimatedTime}h` : "Not set"}
-                        icon={<Timer className="w-4 h-4 text-gray-500" />}
+                        icon={<Timer className="w-4 h-4 text-red-500" />}
                       />
                     </div>
 
                     {selectedTask.description && (
                       <div className="mb-6">
                         <h3 className="text-lg font-semibold text-gray-900 mb-3">Description</h3>
-                        <div className="text-gray-700 bg-gray-50 p-4 rounded-xl border border-gray-200 leading-relaxed">
+                        <div className="text-gray-700 bg-red-50 p-4 rounded-xl border border-red-200 leading-relaxed">
                           {selectedTask.description}
                         </div>
                       </div>
@@ -423,10 +474,10 @@ export default function Tasks() {
 
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-3">Activity</h3>
-                      <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                      <div className="bg-red-50 p-4 rounded-xl border border-red-200">
                         {selectedTask.createdAt ? (
                           <div className="flex items-center gap-3 text-gray-600">
-                            <Calendar className="w-4 h-4" />
+                            <Calendar className="w-4 h-4 text-red-500" />
                             <span>
                               Created on{" "}
                               {new Date(selectedTask.createdAt).toLocaleDateString("en-US", {
@@ -443,7 +494,7 @@ export default function Tasks() {
                     </div>
                   </div>
 
-                  <div className="border-t border-gray-200 p-6 bg-gray-50 flex justify-between">
+                  <div className="border-t border-gray-200 p-6 bg-red-50 flex justify-between">
                     <Button
                       variant="outline"
                       onClick={() => setIsOpen(false)}
@@ -451,7 +502,9 @@ export default function Tasks() {
                     >
                       Close
                     </Button>
-                    <Button className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white">Update Status</Button>
+                    <Button className="px-6 py-2 bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white">
+                      Update Status
+                    </Button>
                   </div>
                 </>
               )}
@@ -464,7 +517,7 @@ export default function Tasks() {
 }
 
 const InfoBlock = ({ label, value, icon }: { label: string; value?: string; icon?: JSX.Element }) => (
-  <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+  <div className="bg-red-50 p-4 rounded-xl border border-red-200">
     <h3 className="text-sm font-semibold text-gray-600 mb-2">{label}</h3>
     <div className="flex items-center gap-2 font-semibold text-gray-900">
       {icon}
