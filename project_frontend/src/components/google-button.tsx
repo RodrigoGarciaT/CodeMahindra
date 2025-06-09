@@ -37,9 +37,9 @@ export default function GoogleButton() {
 
         // Redirige dependiendo si es un usuario nuevo o ya existente
         if (data.user.firstName === "Google User") {
-          navigate("/complete-profile"); // Usuario nuevo sin datos completos
+          navigate("/home"); // Usuario nuevo sin datos completos
         } else {
-          navigate("/dashboard"); // Usuario existente
+          navigate("/home"); // Usuario existente
         }
       } else {
         const errorText = await res.text();
