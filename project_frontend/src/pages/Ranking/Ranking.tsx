@@ -188,8 +188,8 @@ export default function Ranking() {
           transition={{ duration: 0.5 }}
         >
           <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <div className="text-white text-xl font-medium">Cargando ranking...</div>
-          <div className="text-gray-400 text-sm mt-2">Obteniendo los mejores jugadores</div>
+          <div className="text-white text-xl font-medium">Loading leaderboard...</div>
+          <div className="text-gray-400 text-sm mt-2">Fetching top players</div>
         </motion.div>
       </div>
     )
@@ -205,13 +205,13 @@ export default function Ranking() {
           transition={{ duration: 0.5 }}
         >
           <div className="text-6xl mb-4">⚠️</div>
-          <div className="text-red-400 text-xl font-medium mb-2">Error al cargar</div>
+          <div className="text-red-400 text-xl font-medium mb-2">Failed to load</div>
           <div className="text-gray-300 text-sm">{error}</div>
           <button
             onClick={() => window.location.reload()}
             className="mt-4 bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition-colors"
           >
-            Reintentar
+            Retry
           </button>
         </motion.div>
       </div>
@@ -236,7 +236,7 @@ export default function Ranking() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              🏆 Ranking de Jugadores
+              🏆 Ranking
             </motion.h1>
 
             <motion.div
@@ -246,7 +246,7 @@ export default function Ranking() {
               transition={{ duration: 0.5, delay: 0.2 }}
             >
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="text-sm text-gray-300">{userData.length} jugadores activos</span>
+              <span className="text-sm text-gray-300">{userData.length} active users</span>
             </motion.div>
           </div>
 
@@ -380,13 +380,13 @@ export default function Ranking() {
           >
             <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
               <div className="text-2xl font-bold text-orange-400">{userData.length}</div>
-              <div className="text-sm text-gray-400">Jugadores</div>
+              <div className="text-sm text-gray-400">Users</div>
             </div>
             <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
               <div className="text-2xl font-bold text-blue-400">
                 {podiumUsers[0]?.experience.toLocaleString() || "0"}
               </div>
-              <div className="text-sm text-gray-400">XP Máximo</div>
+              <div className="text-sm text-gray-400">Maximum XP</div>
             </div>
             <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
               <div className="text-2xl font-bold text-green-400">
@@ -394,11 +394,11 @@ export default function Ranking() {
                   userData.reduce((acc, user) => acc + user.experience, 0) / userData.length,
                 ).toLocaleString() || "0"}
               </div>
-              <div className="text-sm text-gray-400">XP Promedio</div>
+              <div className="text-sm text-gray-400">Average XP</div>
             </div>
             <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
               <div className="text-2xl font-bold text-purple-400">{totalPages}</div>
-              <div className="text-sm text-gray-400">Páginas</div>
+              <div className="text-sm text-gray-400">Pages</div>
             </div>
           </motion.div>
         </div>

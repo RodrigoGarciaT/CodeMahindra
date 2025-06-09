@@ -89,7 +89,7 @@ const PlatformInfo: React.FC<Props> = ({ platform, onClose, setDraggingEnabled, 
 
       <div className="p-6 overflow-y-auto text-white h-full flex flex-col space-y-6">
         <h2 className="text-3xl font-extrabold text-red-400 drop-shadow-[0_0_8px_rgba(255,0,70,0.6)]">
-          🚀 {platform.label}
+          {platform.label}
         </h2>
 
         <img
@@ -217,7 +217,7 @@ const PlatformInfo: React.FC<Props> = ({ platform, onClose, setDraggingEnabled, 
             }}              
             className="w-full bg-gradient-to-r from-red-600 to-pink-600 hover:from-pink-600 hover:to-red-700 text-white py-2 rounded-xl shadow-lg hover:shadow-red-600/50 transition-all"
           >
-            ✖ Cerrar
+            ✖ Close
           </button>
         </div>
       </div>

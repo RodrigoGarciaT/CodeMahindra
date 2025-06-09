@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react"
-import { ArrowLeft } from "lucide-react"
-import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
+import GoBackButton from "@/components/GoBackButton"
 
 type Achievement = {
   id: string
@@ -15,7 +14,6 @@ type Achievement = {
 
 const Achievements: React.FC = () => {
   const [achievements, setAchievements] = useState<Achievement[]>([])
-  const navigate = useNavigate()
 
   useEffect(() => {
     const userId = localStorage.getItem("user_id")
@@ -45,13 +43,7 @@ const Achievements: React.FC = () => {
       <div className="max-w-7xl mx-auto space-y-10">
         {/* Header */}
         <div className="flex justify-between items-center">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back
-          </button>
+          <GoBackButton to="/home" />
 
           <motion.div
             className="bg-[#2a2a2a] border border-red-500 text-white px-6 py-3 rounded-xl shadow-xl text-sm flex gap-8 items-center font-semibold"

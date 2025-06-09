@@ -28,13 +28,11 @@ const isAdmin = user?.isAdmin === true;
     { path: '/admin', label: 'Admin', icon: <Settings className="h-4 w-4 mr-1" /> },
   ];
 
-  // Filtramos los ítems visibles según si es admin
   const visibleNavItems = navItems.filter(item => {
-    // Si no es admin, ocultamos solo la ruta /admin
     if (!isAdmin && item.path === "/admin") {
       return false;
     }
-    return true; // Mostrar todo lo demás
+    return true;
   });
 
 

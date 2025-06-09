@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
 import { motion, useAnimation } from 'framer-motion';
 import Toast from '@/components/Toast';
 import BotCard from './BotCard';
 import SelectedBotPanel from './SelectedBotPanel';
+import GoBackButton from '@/components/GoBackButton';
 
 export type Bot = {
   id: string;
@@ -26,7 +25,6 @@ const selectedBotVariants = {
 };
 
 function BotStore() {
-  const navigate = useNavigate();
   const [bots, setBots] = useState<Bot[]>([]);
   const [selectedBot, setSelectedBot] = useState<Bot | null>(null);
   const [isPurchasing, setIsPurchasing] = useState(false);
@@ -134,15 +132,7 @@ function BotStore() {
       <Toast show={showToast} success={toastSuccess} msg={toastMessage} onClose={() => setShowToast(false)} />
 
       <div className="max-w-7xl mx-auto p-6">
-        <motion.button
-          onClick={() => navigate('/home')}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#ff003c] to-[#ff5e3a] text-white font-semibold shadow-lg shadow-red-500/20 border border-red-500 hover:scale-105 transition-all duration-300 mb-6"
-          whileHover={{ scale: 1.07 }}
-          whileTap={{ scale: 0.97 }}
-        >
-          <ArrowLeft className="w-5 h-5" />
-          <span>Go back</span>
-        </motion.button>
+        <GoBackButton to="/home" />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="bg-black/50 rounded-lg p-4 grid grid-cols-3 gap-2">
