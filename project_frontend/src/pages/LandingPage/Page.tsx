@@ -227,7 +227,7 @@ export default function LandingPage() {
               </p>
               <motion.a
                 href="/login"
-                className="inline-flex items-center gap-2 bg-yellow-400 text-black font-semibold px-6 py-3 rounded-full shadow-lg shadow-red-500/50"
+                className="inline-flex items-center gap-2 bg-yellow-400 text-black font-semibold px-6 py-3 rounded-full shadow-lg shadow-red-500/50 mb-8"
                 whileHover={{
                   scale: 1.07,
                   rotateX: -3,

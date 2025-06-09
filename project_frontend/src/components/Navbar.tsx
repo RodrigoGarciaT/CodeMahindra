@@ -48,7 +48,7 @@ const isAdmin = user?.isAdmin === true;
       <div className="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
         {/* Logo + Hamburguesa */}
         <div className="flex items-center gap-2 h-full">
-          <Link to="/landing-page" className="flex items-center h-full">
+          <Link to="/" className="flex items-center h-full">
             <img
               src={logo}
               alt="CodeMahindra Logo"

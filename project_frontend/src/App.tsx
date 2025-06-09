@@ -40,6 +40,7 @@ import JoinTeamPage from "@/pages/JoinTeamPage";
 import Achievements from './pages/Achievements/Page';
 import AdminPanel from './pages/AdminPanel/Page';
 import PullRequestFeedback from './pages/Repositories/PullRequests/PullRequestFeedback/Page';
+import Intro from './pages/LandingPage/Intro';
 
 // Layout con navbar
 function LayoutConNavbar() {
@@ -63,6 +64,7 @@ function App() {
             <Route path="/GoogleReg" element={<GoogleReg />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/intro" element={<Intro />} />
 
             {/* Páginas con navbar */}
             <Route element={<LayoutConNavbar />}>
