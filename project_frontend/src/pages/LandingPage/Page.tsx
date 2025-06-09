@@ -1,7 +1,7 @@
 import type React from "react"
 
 import { Link } from "react-router-dom"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ArrowRight, ChevronLeft, ChevronRight, LogIn } from "lucide-react"
 import { useEffect, useState, useRef } from "react"
 import { motion } from "framer-motion"
 
@@ -153,10 +153,10 @@ export default function LandingPage() {
           {/* Menú de navegación */}
           <nav className="hidden md:flex space-x-6">
             {[
-              { href: "#sobre", label: "Sobre" },
-              { href: "#beneficios", label: "Beneficios" },
-              { href: "#como-funciona", label: "Cómo funciona" },
-              { href: "#caracteristicas", label: "Características" }
+              { href: "#about", label: "📘 About" },
+              { href: "#benefits", label: "🎯 Benefits" },
+              { href: "#how-it-works", label: "⚙️ How it works" },
+              { href: "#features", label: "💡 Features" }
             ].map(({ href, label }) => (
               <a
                 key={label}
@@ -170,12 +170,12 @@ export default function LandingPage() {
             ))}
           </nav>
 
-          {/* Botón Iniciar sesión */}
           <Link
             to="/login"
-            className="ml-4 px-4 py-1.5 rounded-full text-sm font-semibold text-red-600 hover:text-white hover:bg-red-600 transition border border-red-600"
+            className="ml-4 px-4 py-1.5 rounded-full text-sm font-semibold text-red-600 hover:text-white hover:bg-red-600 transition border border-red-600 inline-flex items-center gap-2"
           >
-            Iniciar Sesión
+            <LogIn className="w-4 h-4" />
+            Log In
           </Link>
         </div>
       </header>
@@ -218,19 +218,39 @@ export default function LandingPage() {
               className="max-w-xs md:max-w-sm drop-shadow-lg"
             />
 
-            <div className="w-full h-full flex flex-col justify-center items-center text-center px-4 mt-8 md:mt-0">
-              <h1 className="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
-                Programar nunca fue tan <span className="text-yellow-400">divertido</span>
+            <div className="w-full h-full flex flex-col justify-center items-center text-center px-4 mt-10 md:mt-0">
+              <h1 className="text-4xl md:text-5xl font-extrabold leading-tight text-white drop-shadow-lg mb-6">
+                A new era for <span className="text-yellow-400">developers</span> has begun
               </h1>
-              <p className="text-gray-300 text-lg mb-6 max-w-md">
-                Pon a prueba tus habilidades de programación, desbloquea logros, sube de nivel y deja que la IA te ayude a dominar el código.
+              <p className="text-gray-300 text-lg mb-6 max-w-2xl">
+                CodeMahindra turns every line of code into progress: solve real challenges, analyze your commits with AI, get automated feedback, complete tasks, earn rewards, and level up in a fully gamified experience.
               </p>
-              <a
+              <motion.a
                 href="/login"
-                className="inline-block bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-6 py-3 rounded-full transition-transform transform hover:scale-105 shadow-md shadow-red-500/60"
+                className="inline-flex items-center gap-2 bg-yellow-400 text-black font-semibold px-6 py-3 rounded-full shadow-lg shadow-red-500/50"
+                whileHover={{
+                  scale: 1.07,
+                  rotateX: -3,
+                  rotateY: 3,
+                  boxShadow: "0px 10px 25px rgba(255, 193, 7, 0.35)",
+                  transition: { type: "spring", stiffness: 150, damping: 12 },
+                }}
+                whileTap={{
+                  scale: 0.95,
+                  rotateX: 0,
+                  rotateY: 0,
+                  boxShadow: "0px 6px 12px rgba(255, 193, 7, 0.2)",
+                }}
               >
-                Únete Ahora →
-              </a>
+                <motion.span
+                  animate={{ y: [0, -4, 0] }}
+                  transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+                  className="inline-flex items-center gap-2"
+                >
+                  Join Now
+                  <ArrowRight className="w-4 h-4" />
+                </motion.span>
+              </motion.a>
             </div>
           </div>
 
@@ -255,22 +275,25 @@ export default function LandingPage() {
         </section>
 
         {/* About Section */}
-        <div className="md:px-52 overflow-hidden">
-          <section id="sobre" className="py-20 bg-white overflow-hidden" ref={sobreRef}>
+        <div className="overflow-hidden">
+          <section id="about" className="py-20 bg-white overflow-hidden md:px-52" ref={sobreRef}>
             <div
               className={`container mx-auto px-4 transition-all duration-1000 transform ${sobreVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
             >
               <div className="flex flex-col md:flex-row items-center">
-                <div className="md:w-1/2 mb-8 md:mb-0">
-                  <h2 className="text-4xl md:text-2xl font-extrabold text-gray-800 text-center mb-2">
-                    Sobre
-                  </h2>
-                  <div className="w-24 h-1 bg-red-600 mx-auto rounded mb-12" />
-                  <p className="text-gray-700 max-w-lg">
-                    CodeMahindra es una plataforma de gamificación impulsada por AI que ayuda a desarrolladores a mejorar
-                    sus códigos, utilizar buenas prácticas y mantener un formato de código consistente.
-                  </p>
-                </div>
+                  <div className="md:w-1/2 mb-8 md:mb-0">
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      <h2 className="text-4xl md:text-2xl font-extrabold text-gray-800 text-center">
+                        📘 About
+                      </h2>
+                    </div>
+                    <div className="w-24 h-1 bg-red-600 mx-auto rounded mb-12" />
+                    <p className="text-gray-700 max-w-lg text-center mx-auto leading-relaxed">
+                      CodeMahindra is a full-stack platform designed to accelerate your growth as a developer.  
+                      It analyzes your contributions using AI, delivers line-by-line feedback, recommends tailored resources like videos, articles, and websites, and guides your progress through a technical roadmap.  
+                      All within a gamified experience featuring real-world rewards, an active community, and integrations with tools like GitHub and Jira.
+                    </p>
+                  </div>
                 <div className="md:w-1/2 flex md:justify-end justify-center">
                   <div className="relative w-[60%] h-auto animate-float animation-delay-300">
                     <img
@@ -285,9 +308,16 @@ export default function LandingPage() {
           </section>
 
           {/* Benefits Section */}
-          <section id="beneficios" className="py-20 bg-[#fff5f5] overflow-hidden" ref={beneficiosRef}>
+          <section id="benefits" className="relative w-full overflow-hidden py-20" ref={beneficiosRef}>
             <div
-              className={`container mx-auto px-4 transition-all duration-1000 transform ${beneficiosVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+              className="absolute inset-0 bg-[#fff5f5] z-0"
+              style={{
+                transform: "skewY(-8deg)",
+                transformOrigin: "top right",
+              }}
+            />
+            <div
+              className={`relative z-10 container mx-auto px-4 md:px-32 transition-all duration-1000 transform ${beneficiosVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
             >
               <div className="flex flex-col md:flex-row items-center">
                 <div className="md:w-1/2 flex justify-start mb-8 md:mb-0">
@@ -300,13 +330,14 @@ export default function LandingPage() {
                   </div>
                 </div>
                 <div className="md:w-1/2">
-                  <h2 className="text-4xl md:text-2xl font-extrabold text-gray-800 text-center mb-2">
-                    Beneficios
-                  </h2>
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <h2 className="text-4xl md:text-2xl font-extrabold text-gray-800 text-center">
+                      🎯 Benefits
+                    </h2>
+                  </div>
                   <div className="w-24 h-1 bg-red-600 mx-auto rounded mb-12" />
-                  <p className="text-gray-700 max-w-lg">
-                    Mejora tu código mientras que te diviertes. El sistema de gamificación junto resultar en un beneficio
-                    real en la reducción de errores, mejora de la calidad del código y optimización de recursos.
+                  <p className="text-gray-700 max-w-lg text-center mx-auto leading-relaxed">
+                    CodeMahindra helps you grow as a developer through automated feedback on every commit and pull request, tailored learning resources, and progress tracking via interactive dashboards. Earn experience, unlock badges, complete Jira-linked tasks, collaborate with teams, and exchange your progress for real-world rewards—all within a gamified, AI-powered environment built for serious growth.
                   </p>
                 </div>
               </div>
@@ -314,27 +345,32 @@ export default function LandingPage() {
           </section>
 
           {/* How it Works Section */}
-          <section id="como-funciona" className="py-20 bg-white overflow-hidden" ref={funcionaRef}>
+          <section id="how-it-works" className="py-20 bg-white overflow-hidden md:px-52" ref={funcionaRef}>
             <div
               className={`container mx-auto px-4 transition-all duration-1000 transform ${funcionaVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
             >
-              <h2 className="text-4xl md:text-2xl font-extrabold text-gray-800 text-center mb-2">
-                ¿Cómo funciona?
-              </h2>
-              <div className="w-24 h-1 bg-red-600 mx-auto rounded mb-12" />
-
-              <p className="text-gray-700 max-w-3xl mx-auto text-center">
-                Los desarrolladores mejoran sus habilidades resolviendo desafíos, recibiendo mentorías de IA y
-                participando en competencias. Cada acción suma XP que puede canjear por recompensas exclusivas en la
-                tienda.
-              </p>
+              <div className="w-full">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <h2 className="text-4xl md:text-2xl font-extrabold text-gray-800 text-center">
+                    ⚙️ How it works
+                  </h2>
+                </div>
+                <div className="w-24 h-1 bg-red-600 mx-auto rounded mb-12" />
+                <p className="text-gray-700 max-w-3xl mx-auto text-center leading-relaxed">
+                  In CodeMahindra, every action has purpose. Developers enhance their skills by solving real-world coding challenges, receiving automated line-by-line feedback powered by AI, and getting personalized recommendations based on their performance. As users interact—through pull requests, commits, Jira-linked tasks, or problem-solving—they earn XP, unlock achievements, and climb levels.
+                  <br /><br />
+                  All progress is reflected in interactive dashboards, where users can track their evolution, view detailed metrics, and visualize technical growth over time. Experience can be redeemed for real rewards or used to customize bots—virtual companions that represent your journey.
+                  <br /><br />
+                  Whether you’re collaborating with a team, competing in weekly rankings, exploring the learning roadmap for algorithms and data structures, or participating in community discussions, everything is designed to keep you learning, building, and growing—faster and smarter.
+                </p>
+              </div>
             </div>
           </section>
 
           {/* Features Section */}
           <section
-            id="caracteristicas"
-            className="relative bg-[#fff5f5] overflow-hidden py-20"
+            id="features"
+            className="relative bg-[#fff5f5] overflow-hidden py-20 md:px-52"
             ref={caracteristicasRef}
           >
             <div
@@ -343,7 +379,7 @@ export default function LandingPage() {
               }`}
             >
               <h2 className="text-4xl md:text-2xl font-extrabold text-gray-800 text-center mb-2">
-                Características
+                💡 Features
               </h2>
               <div className="w-24 h-1 bg-red-600 mx-auto rounded mb-12" />
 
@@ -406,16 +442,12 @@ export default function LandingPage() {
                 <div className="md:w-[40%] w-full md:pl-8 mt-10 md:mt-0">
                   <ul className="space-y-4 text-gray-700 text-lg">
                     {[
-                      "Plataforma Gamificada",
-                      "Desafíos de Programación",
-                      "Rankings y Leaderboard",
-                      "Análisis Técnico",
-                      "Tienda de Recompensas",
-                      "Rangos de Desarrollador",
-                      "Perfiles de Usuarios Personalizados",
-                      "Colección de Insignias",
-                      "Recursos con IA",
-                      "Plataforma Multiplataforma",
+                      "AI-powered feedback, commit analysis, and auto-grading",
+                      "Gamification: XP, levels, badges, and real-world rewards",
+                      "Learning roadmap with coding challenges and progress tracking",
+                      "Custom profiles, virtual bots, and performance dashboards",
+                      "Team collaboration, Jira integration, and task-based XP",
+                      "Community forums, rankings, and curated learning resources"
                     ].map((feature, index) => (
                       <li
                         key={index}
@@ -440,16 +472,35 @@ export default function LandingPage() {
         <div className="absolute top-0 left-0 w-full h-2 bg-red-500 shadow-[0_4px_0_rgba(255,255,255,0.1)]" />
 
         <div className="container mx-auto px-6 text-center z-10 relative">
-          <h3 className="text-2xl md:text-3xl font-bold mb-8 max-w-2xl mx-auto leading-relaxed">
-            ¿Listo para el reto? <span className="text-yellow-400">Únete ahora</span> y empieza a mejorar tu código mientras te diviertes.
+          <h3 className="text-2xl md:text-3xl font-bold mb-8 max-w-2xl mx-auto leading-relaxed text-white">
+            Ready to level up your skills? <span className="text-yellow-400">Join now</span> and start coding smarter, faster, and with real rewards.
           </h3>
-
-          <a
+          <motion.a
             href="/login"
-            className="inline-block bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-6 py-3 rounded-full transition-transform transform hover:scale-105 shadow-md shadow-red-500/60"
+            className="inline-flex items-center gap-2 bg-yellow-400 text-black font-semibold px-6 py-3 rounded-full shadow-lg shadow-red-500/50"
+            whileHover={{
+              scale: 1.07,
+              rotateX: -3,
+              rotateY: 3,
+              boxShadow: "0px 10px 25px rgba(255, 193, 7, 0.35)",
+              transition: { type: "spring", stiffness: 150, damping: 12 },
+            }}
+            whileTap={{
+              scale: 0.95,
+              rotateX: 0,
+              rotateY: 0,
+              boxShadow: "0px 6px 12px rgba(255, 193, 7, 0.2)",
+            }}
           >
-            Únete Ahora →
-          </a>
+            <motion.span
+              animate={{ y: [0, -4, 0] }}
+              transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+              className="inline-flex items-center gap-2"
+            >
+              Join Now
+              <ArrowRight className="w-4 h-4" />
+            </motion.span>
+          </motion.a>
         </div>
       </footer>
     </div>
