@@ -64,7 +64,9 @@ def create_problem_with_testcases(data: ProblemCreateWithTestCases, db: Session)
         creationDate=data.creationDate,
         expirationDate=data.expirationDate,
         solution=data.solution,
-        language=data.language
+        language=data.language,
+        successful_submissions=0,
+        total_submissions=0
     )
     
     db.add(new_problem)
@@ -99,7 +101,7 @@ def create_problem_with_testcases(data: ProblemCreateWithTestCases, db: Session)
         creationDate=new_problem.creationDate,
         expirationDate=new_problem.expirationDate,
         solution=new_problem.solution,
-        language = new_problem.language,
+        language=new_problem.language,
         testcases=testcases  # Now this is a list of Pydantic model instances, not raw TestCase objects
     )
     
