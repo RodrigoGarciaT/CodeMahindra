@@ -75,7 +75,7 @@ const UserMenu = () => {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center space-x-2 rounded-full bg-white px-3 py-1.5 transition-all hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+        className="flex items-center space-x-2 rounded-full border border-gray-200 bg-white px-3 py-1.5 transition-all hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
       >
         <div className="relative flex h-7 w-7 items-center justify-center rounded-full bg-gray-100 text-gray-600">
           {user?.profilePicture ? (
