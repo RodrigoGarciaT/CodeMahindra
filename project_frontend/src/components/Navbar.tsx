@@ -19,13 +19,13 @@ const isAdmin = user?.isAdmin === true;
 
 
   const navItems = [
-    { path: '/home', label: 'Home', icon: <Home className="h-4 w-4 mr-1" />, includes: ["/home", "/profile", "/team"] },
+    { path: '/home', label: 'Home', icon: <Home className="h-4 w-4 mr-1" />, includes: ["/home", "/profile", "/team", "/achievements", "/bot-store"] },
     { path: '/problems', label: 'Problems', icon: <Code2 className="h-4 w-4 mr-1" />, includes: ["/problems", "/roadmap", "/problemList/problem"] },
     { path: '/tasks', label: 'Tasks', icon: <ListTodo className="h-4 w-4 mr-1" /> },
     { path: '/repos', label: 'Repositories', icon: <GithubIcon className="h-4 w-4 mr-1" />, includes: ["/repos", "/Dashboard", "/Commits", "/PullRequests", "/RecommendedResources"] },
     { path: '/ranking', label: 'Ranking', icon: <Trophy className="h-4 w-4 mr-1" /> },
     { path: '/store', label: 'Store', icon: <ShoppingBag className="h-4 w-4 mr-1" /> },
-    { path: '/admin', label: 'Admin', icon: <Settings className="h-4 w-4 mr-1" /> },
+    { path: '/admin', label: 'Admin', icon: <Settings className="h-4 w-4 mr-1" />, includes: ["/admin", "/manage-store", "/create-problems", "/manage-users", "/manage-problems", "/manage-purchase"] },
   ];
 
   const visibleNavItems = navItems.filter(item => {

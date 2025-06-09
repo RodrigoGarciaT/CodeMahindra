@@ -77,11 +77,11 @@ function App() {
               <Route path="/roadmap" element={<ProtectedRoute><Roadmap /></ProtectedRoute>} />
               <Route path="/problemList/problem/:problemId" element={<ProtectedRoute><Problems /></ProtectedRoute>} />
               <Route path="/problems" element={<ProtectedRoute><ProblemList /></ProtectedRoute>} />
-              <Route path="/problems/create" element={<ProtectedRoute><CreateProblem /></ProtectedRoute>} />
+              <Route path="/create-problems" element={<ProtectedRoute><CreateProblem /></ProtectedRoute>} />
               <Route path="/tasks" element={<ProtectedRoute><Tasks /></ProtectedRoute>} />
               <Route path="/ranking" element={<ProtectedRoute><Ranking /></ProtectedRoute>} />
               <Route path="/store" element={<ProtectedRoute><Store /></ProtectedRoute>} />
-              <Route path="/store/manage" element={<AdminRoute><StoreManagement /></AdminRoute>} />
+              <Route path="/manage-store" element={<AdminRoute><StoreManagement /></AdminRoute>} />
               <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
               <Route path="/team" element={<ProtectedRoute><ProfileAndTeamPage /></ProtectedRoute>} />
               <Route path="/team/:teamId" element={<ProtectedRoute><ProfileAndTeamPage /></ProtectedRoute>} />

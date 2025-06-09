@@ -13,14 +13,14 @@ const AdminPanel = () => {
       title: 'Store Management',
       description: 'Manage store items, prices, and inventory',
       icon: Store,
-      path: '/store/manage',
+      path: '/manage-store',
       color: 'from-purple-500 to-purple-700',
     },
     {
       title: 'Create Problem',
       description: 'Add new coding problems and challenges',
       icon: PlusCircle,
-      path: '/problems/create',
+      path: '/create-problems',
       color: 'from-blue-500 to-blue-700',
     },
     {
