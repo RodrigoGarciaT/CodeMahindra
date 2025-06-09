@@ -1,4 +1,4 @@
-import React from "react";
+//import React from "react";
 import { Github } from "lucide-react";  // usa tu librería actual de íconos
 
 type GitHubLinkButtonProps = {

@@ -56,6 +56,7 @@ export default function GoogleButton() {
       google.accounts.id.initialize({
         client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
         callback: handleGoogleResponse, // Aquí pasas handleGoogleResponse como el callback
+        locale: "en",
       });
 
       const googleButtonContainer = document.getElementById("google-button");
