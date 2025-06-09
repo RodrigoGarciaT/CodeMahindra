@@ -64,7 +64,7 @@ def get_my_ranking(
                 return EmployeeRankingOut(
                     id=emp.id,
                     name=f"{emp.firstName} {emp.lastName}".strip() or emp.email,
-                    profileEpic=emp.profileEpic or emp.profilePicture,  # Cambiado a profileEpic
+                    profileEpic=emp.profilePicture,  # Cambiado a profileEpic
                     experience=emp.experience,
                     position=emp.position.name if emp.position else None,
                     team=emp.team.name if emp.team else None,

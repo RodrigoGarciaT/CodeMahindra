@@ -4,11 +4,7 @@ from schemas.ranking import EmployeeRankingOut
 from typing import List
 
 def get_profile_image(emp: Employee) -> str | None:
-    if emp.profileEpic and emp.profileEpic.strip() != "":
-        return emp.profileEpic
-    if emp.profilePicture and emp.profilePicture.strip() != "":
-        return emp.profilePicture
-    return None
+    return emp.profilePicture if emp.profilePicture else None
 
 def get_employee_ranking(db: Session) -> List[EmployeeRankingOut]:
     employees = (
