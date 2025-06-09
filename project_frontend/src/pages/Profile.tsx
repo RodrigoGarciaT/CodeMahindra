@@ -1,10 +1,10 @@
 "use client"
 
 import { Link } from "react-router-dom"
-import { ArrowLeft, Edit, Mail, MapPin, Phone, Trophy, Target, Calendar, TrendingUp, Award, Star } from "lucide-react"
+import { ArrowLeft, Edit, Mail, MapPin, Phone, Trophy, Target, Calendar, TrendingUp, Award, Star, Coins } from "lucide-react"
 import { Progress } from "../components/progress"
 import profilePic from "../images/robot_male_1.svg"
-import coinIcon from "../images/coin.svg"
+//import coinIcon from "../images/coin.svg"
 import { useEffect, useMemo, useState } from "react"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
@@ -18,7 +18,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianG
 const formatDate = (date: Date) => date.toISOString().split("T")[0]
 
 export default function ProfilePage() {
-  const [activeTab, setActiveTab] = useState("current")
+  //const [activeTab, setActiveTab] = useState("current")
   interface User {
     firstName: string
     lastName: string
@@ -114,7 +114,7 @@ export default function ProfilePage() {
       })
   }, [])
 
-  const chartHeightPx = 90
+  //const chartHeightPx = 90
   console.log("this is the data: ", difficultyData)
   const allZero = difficultyData !== null && Object.values(difficultyData).every((v) => v === 0)
 
@@ -126,7 +126,7 @@ export default function ProfilePage() {
     dateCounts[formattedDate] = (dateCounts[formattedDate] || 0) + 1
   })
 
-  const currentYear = new Date().getFullYear()
+  //const currentYear = new Date().getFullYear()
 
   const years = useMemo(() => {
     const yearSet = new Set(ratingHistory.map((dateStr) => new Date(dateStr).getFullYear()))
@@ -208,7 +208,7 @@ export default function ProfilePage() {
                 <div className="mt-4 bg-white/20 rounded-xl p-4 backdrop-blur-sm">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
-                      <img src={coinIcon || "/placeholder.svg"} alt="Coins" className="w-8 h-8 mr-3" />
+                      <Coins className="h-8 w-8 mr-3 text-yellow-300" />
                       <div>
                         <p className="text-white/80 text-sm">Total Coins</p>
                         <p className="text-2xl font-bold">{user?.coins ?? 0}</p>
