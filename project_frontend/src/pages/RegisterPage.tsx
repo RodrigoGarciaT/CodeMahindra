@@ -236,7 +236,7 @@ const RegisterPage: React.FC = () => {
                     </div>
                   </div>
                 )}
-                <DropdownField label="Nationality" value={nationality} onChange={setNationality} options={countryList} placeholder="Selecciona tu país"/>
+                <DropdownField label="Nationality" value={nationality} onChange={setNationality} options={countryList} placeholder="Select your country"/>
                 <InputField label="Phone Number" icon={<CheckCircle />} value={phone} onChange={setPhone} placeholder="+34 612 345 678" type="tel"/>
 
 

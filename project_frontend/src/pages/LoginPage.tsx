@@ -220,7 +220,7 @@ const LoginPage: React.FC = () => {
                     <input
                       type="email"
                       className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E63946] bg-[#FFF5F5]"
-                      placeholder="tu@correo.com"
+                      placeholder="your@email.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
