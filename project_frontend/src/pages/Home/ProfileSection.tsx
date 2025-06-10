@@ -152,8 +152,8 @@ const ProfileSection: React.FC<Props> = ({ user }) => {
           </div>
 
           <div className="flex justify-between text-[11px] text-gray-600 mt-1">
-            <span>Level {level}</span>
-            <span className="font-semibold">{Math.round(progress)}% to next</span>
+            <span>Progress to Level {level + 1}</span>
+            <span className="font-semibold">{Math.round(progress)}%</span>
           </div>
         </div>
       </motion.div>
