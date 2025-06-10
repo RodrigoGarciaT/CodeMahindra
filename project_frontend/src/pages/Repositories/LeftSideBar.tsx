@@ -1,5 +1,5 @@
 import {
-  BookOpen,
+//  BookOpen,
   GitCommitHorizontal,
   GitPullRequest,
   LayoutDashboard,
@@ -10,7 +10,7 @@ const navItems = [
   { icon: <LayoutDashboard size={24} />, subpath: "Dashboard", title: "Dashboard" },
   { icon: <GitCommitHorizontal size={24} />, subpath: "Commits", title: "Commits" },
   { icon: <GitPullRequest size={24} />, subpath: "PullRequests", title: "Pull Requests" },
-  { icon: <BookOpen size={24} />, subpath: "RecommendedResources", title: "Resources" },
+  //{ icon: <BookOpen size={24} />, subpath: "RecommendedResources", title: "Resources" },
 ];
 
 export default function LeftSidebar() {

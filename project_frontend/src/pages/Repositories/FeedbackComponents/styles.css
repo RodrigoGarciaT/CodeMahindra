@@ -1,0 +1,13 @@
+:root {
+  /* ... */
+
+  --diff-font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+
+  --diff-code-insert-background-color: #12261D;
+  --diff-code-insert-text-color: #c9f4d1;
+
+  --diff-code-delete-background-color: #25171B;
+  --diff-code-delete-text-color: #f9d0d0;
+
+  /* ... */
+}

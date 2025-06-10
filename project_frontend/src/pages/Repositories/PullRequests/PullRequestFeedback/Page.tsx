@@ -9,7 +9,8 @@ import {
   CircleSlash,
   GitPullRequest,
   XCircle,
-  GitMerge
+  GitMerge,
+  BookOpen,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import DetailsSection from "../../FeedbackComponents/DetailsSection";
@@ -17,6 +18,7 @@ import FeedbackRecommendedResources from "../../FeedbackComponents/FeedbackRecom
 import Summary from "../../FeedbackComponents/Summary";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { motion } from "framer-motion";
 
 type Resource = {
   title: string;
@@ -208,16 +210,50 @@ export default function PullRequestFeedback() {
         </div>
       </div>
 
-      <h2 className="text-red-500 font-semibold text-sm mb-3 mt-10">Summary</h2>
+      <div className="flex items-center gap-4 mb-3 mt-10">
+        <motion.div
+          className="p-3 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-2xl border border-red-500/30"
+          whileHover={{ scale: 1.1, rotate: -5 }}
+        >
+          <BookOpen className="w-6 h-6 text-red-400" />
+        </motion.div>
+        <div>
+          <h2 className="text-2xl font-bold text-white">Summary</h2>
+          <p className="text-gray-400 text-sm">Generated overview of the commit</p>
+        </div>
+      </div>
       <Summary summary={data.summary} />
 
-      <h2 className="text-red-500 font-semibold text-sm mb-3 mt-10">Details</h2>
-      <DetailsSection files={data.files} fileTree={data.file_tree} stats={data.stats} feedback={data.feedback}/>
-      {/*
-      <GitHubDiffViewer/>
-      */}
 
-      <h2 className="text-red-500 font-semibold text-sm mb-3 mt-10">Recommended Rosources</h2>
+      <div className="flex items-center gap-4 mb-3 mt-10">
+        <motion.div
+          className="p-3 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-2xl border border-red-500/30"
+          whileHover={{ scale: 1.1, rotate: -5 }}
+        >
+          <GitPullRequest className="w-6 h-6 text-red-400" />
+        </motion.div>
+        <div>
+          <h2 className="text-2xl font-bold text-white">Details</h2>
+          <p className="text-gray-400 text-sm">Dive into code changes and insights</p>
+        </div>
+      </div>
+      <DetailsSection files={data.files} fileTree={data.file_tree} stats={data.stats} feedback={data.feedback}/>
+      
+
+      <div className="flex items-center gap-4 mb-3 mt-10">
+        <div className="flex items-center gap-3">
+          <motion.div
+            className="p-3 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-2xl border border-red-500/30"
+            whileHover={{ scale: 1.1, rotate: 5 }}
+          >
+            <BookOpen className="w-6 h-6 text-red-400" />
+          </motion.div>
+          <div>
+            <h2 className="text-2xl font-bold text-white">Recommended Resources</h2>
+            <p className="text-gray-400 text-sm">Curated learning materials for you</p>
+          </div>
+        </div>
+      </div>
       <FeedbackRecommendedResources resources={data.resources}/>
 
     </div>
