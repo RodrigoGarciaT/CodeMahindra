@@ -168,7 +168,7 @@ const AdminPanel = () => {
             <div className="space-y-4 text-sm">
               <StatusDot label="System" value={systemStatus.system_status} expected="All systems operational" />
               <StatusDot label="Database" value={systemStatus.database} expected="Connected" />
-              <StatusDot label="API" value={systemStatus.api} expected="Connected" />
+              <StatusDot label="API" value={systemStatus.api} expected="Healthy" />
             </div>
           </motion.div>
         </div>
