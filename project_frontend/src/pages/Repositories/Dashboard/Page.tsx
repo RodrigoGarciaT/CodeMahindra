@@ -8,28 +8,14 @@ import {
   GitCommit,
   Star,
   Clock,
-  FileText,
   TrendingUp,
   Activity,
-  Code,
-  AlertCircle,
-  CheckCircle,
   XCircle,
-  BookOpen,
-  ExternalLink,
-  Zap,
-  BarChart3,
-  Calendar,
   User,
   Target,
-  Flame,
-  Sparkles,
-  Trophy,
-  Rocket,
-  Shield,
-  Crown,
-  Gamepad2,
   TrendingDown,
+  BarChart3,
+  Code,
 } from "lucide-react"
 
 // Custom Card Component
@@ -52,24 +38,6 @@ const CardTitle = ({ children, className = "" }: any) => (
   <h3 className={`text-lg font-semibold text-white ${className}`}>{children}</h3>
 )
 
-// Custom Badge Component
-const Badge = ({ children, variant = "default", className = "" }: any) => {
-  const variants = {
-    default: "bg-red-500/20 text-red-400 border-red-500/30",
-    secondary: "bg-gray-500/20 text-gray-400 border-gray-500/30",
-    success: "bg-green-500/20 text-green-400 border-green-500/30",
-    warning: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
-  }
-
-  return (
-    <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${variants[variant]} ${className}`}
-    >
-      {children}
-    </span>
-  )
-}
-
 // Custom Avatar Component
 const Avatar = ({ src, alt, fallback, className = "" }: any) => (
   <div className={`relative inline-block ${className}`}>
@@ -79,10 +47,13 @@ const Avatar = ({ src, alt, fallback, className = "" }: any) => (
       className="w-full h-full rounded-full object-cover border-2 border-red-500/50"
       onError={(e) => {
         e.currentTarget.style.display = "none"
-        e.currentTarget.nextElementSibling.style.display = "flex"
+        const fallbackEl = e.currentTarget.nextElementSibling as HTMLElement | null
+        if (fallbackEl) {
+          fallbackEl.style.display = "flex"
+        }
       }}
     />
-    <div className="w-full h-full rounded-full bg-red-500 text-white font-bold flex items-center justify-center text-lg hidden">
+    <div className="w-full h-full rounded-full bg-red-500 text-white font-bold items-center justify-center text-lg hidden">
       {fallback}
     </div>
   </div>
@@ -169,7 +140,7 @@ const AnimatedCounter = ({ value, duration = 2000 }: { value: number; duration?:
   return <span>{count}</span>
 }
 
-// Add this new Timeline Chart Component after the AnimatedCounter component
+// Timeline Chart Component
 const TimelineChart = ({
   title,
   data,
@@ -181,9 +152,6 @@ const TimelineChart = ({
   color?: string
   icon: any
 }) => {
-  //const maxQuality = Math.max(...data.quality)
-  //const minQuality = Math.min(...data.quality)
-
   if (data.days.length === 0) {
     return (
       <Card>
@@ -317,218 +285,6 @@ const TimelineChart = ({
         </div>
       </CardContent>
     </Card>
-  )
-}
-
-// Add this new Achievement Component after TimelineChart
-const AchievementBadge = ({
-  title,
-  description,
-  icon: Icon,
-  unlocked = false,
-  progress = 0,
-}: {
-  title: string
-  description: string
-  icon: any
-  unlocked?: boolean
-  progress?: number
-}) => (
-  <motion.div
-    className={`p-4 rounded-lg border-2 transition-all ${
-      unlocked
-        ? "bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 border-yellow-500/50"
-        : "bg-gray-800/50 border-gray-600/50"
-    }`}
-    whileHover={{ scale: 1.05 }}
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-  >
-    <div className="flex items-center space-x-3">
-      <motion.div
-        className={`p-2 rounded-full ${unlocked ? "bg-yellow-500/30" : "bg-gray-600/30"}`}
-        animate={unlocked ? { rotate: [0, 10, -10, 0] } : {}}
-        transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
-      >
-        <Icon className={`w-5 h-5 ${unlocked ? "text-yellow-400" : "text-gray-500"}`} />
-      </motion.div>
-      <div className="flex-1">
-        <h4 className={`font-semibold ${unlocked ? "text-yellow-400" : "text-gray-400"}`}>{title}</h4>
-        <p className="text-xs text-gray-500">{description}</p>
-        {!unlocked && progress > 0 && (
-          <div className="mt-2">
-            <div className="w-full bg-gray-700 rounded-full h-1">
-              <motion.div
-                className="bg-yellow-500 h-1 rounded-full"
-                initial={{ width: 0 }}
-                animate={{ width: `${progress}%` }}
-                transition={{ duration: 1 }}
-              />
-            </div>
-            <span className="text-xs text-gray-500">{progress}%</span>
-          </div>
-        )}
-      </div>
-    </div>
-  </motion.div>
-)
-
-
-
-import { Lightbulb } from "lucide-react";
-
-export const DeveloperMessageCard = () => {
-  return (
-    <div className="bg-[#161b22] rounded-xl border border-purple-700/50 shadow-lg overflow-hidden">
-      <div className="bg-gradient-to-r from-purple-600/20 to-purple-900/10 px-6 py-4 border-b border-purple-700/30">
-        <h2 className="text-purple-300 text-xl font-semibold flex items-center gap-2">
-          <motion.div
-            animate={{ rotate: [0, 360] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-          >
-            <Lightbulb className="w-5 h-5 text-purple-400" />
-          </motion.div>
-          A Message for You
-        </h2>
-      </div>
-
-      <div className="px-6 py-5 space-y-4 text-white">
-        <p className="text-base leading-relaxed text-gray-300">
-          Every commit tells a story. Every pull request is a step toward mastery.
-        </p>
-
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="text-lg italic text-purple-300"
-        >
-          “Consistency beats perfection. Keep pushing.”
-        </motion.p>
-
-        <div className="flex items-center justify-end text-sm text-purple-400">
-          <Sparkles className="w-4 h-4 mr-1" />
-          You're building more than code — you're building yourself.
-        </div>
-      </div>
-    </div>
-  );
-};
-
-
-// Add this new Gamification Stats Component
-const GamificationStats = ({ data }: { data: DashboardData }) => {
-  const achievements = [
-    {
-      title: "Code Quality Master",
-      description: "Maintain 8+ average quality",
-      icon: Crown,
-      unlocked: data.kpis.avg_quality_prs >= 8,
-      progress: (data.kpis.avg_quality_prs / 10) * 100,
-    },
-    {
-      title: "Prolific Contributor",
-      description: "Create 50+ pull requests",
-      icon: Rocket,
-      unlocked: data.kpis.total_prs >= 50,
-      progress: Math.min((data.kpis.total_prs / 50) * 100, 100),
-    },
-    {
-      title: "Code Reviewer",
-      description: "Review 100+ commits",
-      icon: Shield,
-      unlocked: data.kpis.total_commits >= 100,
-      progress: Math.min((data.kpis.total_commits / 100) * 100, 100),
-    },
-    {
-      title: "Speed Demon",
-      description: "Average merge time < 2 days",
-      icon: Zap,
-      unlocked: data.kpis.avg_merge_time_days < 2,
-      progress: Math.max(100 - (data.kpis.avg_merge_time_days / 5) * 100, 0),
-    },
-  ]
-
-  const unlockedCount = achievements.filter((a) => a.unlocked).length
-  const totalXP = data.kpis.total_prs * 10 + data.kpis.total_commits * 5 + unlockedCount * 100
-
-  return (
-    <Card>
-      <CardHeader className="bg-gradient-to-r from-purple-500/20 to-purple-600/20 border-b border-purple-500/30">
-        <CardTitle className="flex items-center justify-between text-purple-400">
-          <div className="flex items-center">
-            <motion.div
-              animate={{ rotate: [0, 360] }}
-              transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-            >
-              <Gamepad2 className="w-6 h-6 mr-2" />
-            </motion.div>
-            Developer Achievements
-          </div>
-          <div className="flex items-center space-x-4 text-sm">
-            <div className="flex items-center space-x-1">
-              <Trophy className="w-4 h-4" />
-              <span>
-                {unlockedCount}/{achievements.length}
-              </span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <Sparkles className="w-4 h-4" />
-              <span>{totalXP} XP</span>
-            </div>
-          </div>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {achievements.map((achievement, index) => (
-            <AchievementBadge key={index} {...achievement} />
-          ))}
-        </div>
-
-        {/* Level Progress */}
-        <div className="mt-6 p-4 bg-gradient-to-r from-purple-500/10 to-purple-600/10 rounded-lg border border-purple-500/30">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-purple-400 font-semibold">Developer Level</span>
-            <span className="text-purple-400">Level {Math.floor(totalXP / 500) + 1}</span>
-          </div>
-          <div className="w-full bg-gray-700 rounded-full h-3">
-            <motion.div
-              className="bg-gradient-to-r from-purple-500 to-purple-600 h-3 rounded-full"
-              initial={{ width: 0 }}
-              animate={{ width: `${((totalXP % 500) / 500) * 100}%` }}
-              transition={{ duration: 2 }}
-            />
-          </div>
-          <div className="flex justify-between text-xs text-gray-400 mt-1">
-            <span>{totalXP % 500} XP</span>
-            <span>{500 - (totalXP % 500)} XP to next level</span>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  )
-}
-
-// Quality Indicator Component
-const QualityIndicator = ({ quality }: { quality: number }) => {
-  const getColor = (q: number) => {
-    if (q >= 8) return "text-green-400"
-    if (q >= 6) return "text-yellow-400"
-    return "text-red-400"
-  }
-
-  const getIcon = (q: number) => {
-    if (q >= 8) return <CheckCircle className="w-4 h-4" />
-    if (q >= 6) return <AlertCircle className="w-4 h-4" />
-    return <XCircle className="w-4 h-4" />
-  }
-
-  return (
-    <div className={`flex items-center space-x-1 ${getColor(quality)}`}>
-      {getIcon(quality)}
-      <span className="font-bold">{quality}/10</span>
-    </div>
   )
 }
 
@@ -747,453 +503,190 @@ export default function Dashboard() {
             </motion.div>
           </motion.div>
 
-          {/* KPI Cards */}
-          <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="bg-gradient-to-br from-red-500/20 to-red-600/20 border-red-500/30">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-red-300 text-sm font-medium mb-1">Total PRs</p>
-                    <p className="text-3xl font-bold text-white">
-                      <AnimatedCounter value={data.kpis.total_prs} />
-                    </p>
-                    <div className="flex items-center mt-2 text-green-400 text-sm">
-                      <TrendingUp className="w-4 h-4 mr-1" />
-                      <span>{data.kpis.analyzed_prs} analyzed</span>
-                    </div>
-                  </div>
-                  <motion.div
-                    className="bg-red-500/20 p-3 rounded-full"
-                    whileHover={{ rotate: 360 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <GitPullRequest className="w-8 h-8 text-red-400" />
-                  </motion.div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 border-yellow-500/30">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-yellow-300 text-sm font-medium mb-1">Total Commits</p>
-                    <p className="text-3xl font-bold text-white">
-                      <AnimatedCounter value={data.kpis.total_commits} />
-                    </p>
-                    <div className="flex items-center mt-2 text-green-400 text-sm">
-                      <TrendingUp className="w-4 h-4 mr-1" />
-                      <span>{data.kpis.analyzed_commits} analyzed</span>
-                    </div>
-                  </div>
-                  <motion.div
-                    className="bg-yellow-500/20 p-3 rounded-full"
-                    whileHover={{ rotate: 360 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <GitCommit className="w-8 h-8 text-yellow-400" />
-                  </motion.div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-green-500/20 to-green-600/20 border-green-500/30">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-green-300 text-sm font-medium mb-1">Avg PR Quality</p>
-                    <p className="text-3xl font-bold text-white">{data.kpis.avg_quality_prs}/10</p>
-                    <QualityIndicator quality={data.kpis.avg_quality_prs} />
-                  </div>
-                  <motion.div
-                    className="bg-green-500/20 p-3 rounded-full"
-                    whileHover={{ scale: 1.2 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <Star className="w-8 h-8 text-green-400" />
-                  </motion.div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-blue-500/20 to-blue-600/20 border-blue-500/30">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-blue-300 text-sm font-medium mb-1">Avg Merge Time</p>
-                    <p className="text-3xl font-bold text-white">{data.kpis.avg_merge_time_days}d</p>
-                    <div className="flex items-center mt-2 text-blue-400 text-sm">
-                      <Clock className="w-4 h-4 mr-1" />
-                      <span>Average</span>
-                    </div>
-                  </div>
-                  <motion.div
-                    className="bg-blue-500/20 p-3 rounded-full"
-                    whileHover={{ rotate: 360 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <Clock className="w-8 h-8 text-blue-400" />
-                  </motion.div>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Timeline Charts Section - ADD THIS AFTER THE KPI CARDS */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <motion.div variants={itemVariants}>
-              <TimelineChart
-                title="Pull Request Quality Over Time"
-                data={data.timeline.prs}
-                color="#ef4444"
-                icon={GitPullRequest}
-              />
-            </motion.div>
-            <motion.div variants={itemVariants}>
-              <TimelineChart
-                title="Commit Quality Over Time"
-                data={data.timeline.commits}
-                color="#eab308"
-                icon={GitCommit}
-              />
-            </motion.div>
-          </div>
-
-          {/* Gamification Section - ADD THIS AFTER THE TIMELINE CHARTS */}
-          {
-          <motion.div variants={itemVariants}>
-            <GamificationStats data={data} />
-          </motion.div>
-          }
-          {/*
-          <motion.div variants={itemVariants}>
-            <DeveloperMessageCard/>
-          </motion.div>
-          */}
-          
-          {/* Charts Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Feedback Distribution */}
-            <motion.div variants={itemVariants}>
-              <Card>
-                <CardHeader className="bg-gradient-to-r from-red-500/20 to-red-600/20 border-b border-red-500/30">
-                  <CardTitle className="flex items-center text-red-400">
-                    <BarChart3 className="w-6 h-6 mr-2" />
-                    Feedback Distribution
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {Object.keys(data.feedback_distribution).length === 0 ? (
-                    <div className="text-center py-8">
-                      <AlertCircle className="w-12 h-12 text-gray-500 mx-auto mb-2" />
-                      <p className="text-gray-400">No feedback data available</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {Object.entries(data.feedback_distribution).map(([status, count], index) => {
-                        const maxCount = Math.max(...Object.values(data.feedback_distribution))
-                        const percentage = (count / maxCount) * 100
-
-                        const statusColors = {
-                          excellent: "bg-green-500",
-                          good: "bg-yellow-500",
-                          needs_improvement: "bg-red-500",
-                          not_analyzed: "bg-gray-500",
-                        }
-
-                        const statusIcons = {
-                          excellent: <CheckCircle className="w-4 h-4 text-green-400" />,
-                          good: <AlertCircle className="w-4 h-4 text-yellow-400" />,
-                          needs_improvement: <XCircle className="w-4 h-4 text-red-400" />,
-                          not_analyzed: <XCircle className="w-4 h-4 text-gray-400" />,
-                        }
-
-                        return (
-                          <motion.div
-                            key={status}
-                            className="flex items-center justify-between"
-                            initial={{ x: -20, opacity: 0 }}
-                            animate={{ x: 0, opacity: 1 }}
-                            transition={{ delay: index * 0.1 }}
-                          >
-                            <div className="flex items-center space-x-3">
-                              {statusIcons[status as keyof typeof statusIcons]}
-                              <span className="text-white font-medium capitalize">{status.replace("_", " ")}</span>
-                            </div>
-                            <div className="flex items-center space-x-3">
-                              <div className="w-32 bg-gray-700 rounded-full h-2 overflow-hidden">
-                                <motion.div
-                                  className={`h-full ${statusColors[status as keyof typeof statusColors]}`}
-                                  initial={{ width: 0 }}
-                                  animate={{ width: `${percentage}%` }}
-                                  transition={{ duration: 1, delay: index * 0.1 }}
-                                />
-                              </div>
-                              <span className="text-white font-bold w-8">{count}</span>
-                            </div>
-                          </motion.div>
-                        )
-                      })}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            {/* Top Modified Files */}
-            <motion.div variants={itemVariants}>
-              <Card>
-                <CardHeader className="bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border-b border-yellow-500/30">
-                  <CardTitle className="flex items-center text-yellow-400">
-                    <FileText className="w-6 h-6 mr-2" />
-                    Top Modified Files
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {data.top_modified_files.length === 0 ? (
-                    <div className="text-center py-8">
-                      <FileText className="w-12 h-12 text-gray-500 mx-auto mb-2" />
-                      <p className="text-gray-400">No file data available</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {data.top_modified_files.map((file, index) => (
-                        <motion.div
-                          key={file.file}
-                          className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800/70 transition-colors"
-                          initial={{ y: 20, opacity: 0 }}
-                          animate={{ y: 0, opacity: 1 }}
-                          transition={{ delay: index * 0.1 }}
-                          whileHover={{ scale: 1.02 }}
-                        >
-                          <div className="flex items-center space-x-3">
-                            <motion.div
-                              className="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold"
-                              whileHover={{ rotate: 360 }}
-                              transition={{ duration: 0.5 }}
-                            >
-                              {index + 1}
-                            </motion.div>
-                            <Code className="w-4 h-4 text-gray-400" />
-                            <span className="font-mono text-sm text-white">{file.file}</span>
-                          </div>
-                          <Badge variant="secondary">
-                            <Flame className="w-3 h-3 mr-1" />
-                            {file.count} changes
-                          </Badge>
-                        </motion.div>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
-
-          {/* Recent Activity */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Recent PRs */}
-            <motion.div variants={itemVariants}>
-              <Card>
-                <CardHeader className="bg-gradient-to-r from-red-500/20 to-red-600/20 border-b border-red-500/30">
-                  <CardTitle className="flex items-center text-red-400">
-                    <GitPullRequest className="w-6 h-6 mr-2" />
-                    Recent Pull Requests
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {data.recent.prs.length === 0 ? (
-                    <div className="text-center py-8">
-                      <GitPullRequest className="w-12 h-12 text-gray-500 mx-auto mb-2" />
-                      <p className="text-gray-400">No recent PRs</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {data.recent.prs.map((pr, index) => (
-                        <motion.div
-                          key={index}
-                          className="border-l-4 border-red-500 pl-4 py-3 bg-gray-800/30 rounded-r-lg"
-                          initial={{ x: -20, opacity: 0 }}
-                          animate={{ x: 0, opacity: 1 }}
-                          transition={{ delay: index * 0.1 }}
-                          whileHover={{ x: 5 }}
-                        >
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <h4 className="font-semibold text-white mb-2">{pr.title}</h4>
-                              <div className="flex items-center space-x-4 text-sm text-gray-400">
-                                <div className="flex items-center space-x-1">
-                                  <FileText className="w-3 h-3" />
-                                  <span>{pr.file}</span>
-                                </div>
-                                <div className="flex items-center space-x-1">
-                                  <Calendar className="w-3 h-3" />
-                                  <span>{new Date(pr.created_at).toLocaleDateString()}</span>
-                                </div>
-                                <span>{pr.comments} comments</span>
-                              </div>
-                            </div>
-                            <div className="flex flex-col items-end space-y-2">
-                              <QualityIndicator quality={8} />
-                              <Badge variant={pr.state === "merged" ? "success" : "secondary"}>{pr.state}</Badge>
-                            </div>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            {/* Recent Commits */}
-            <motion.div variants={itemVariants}>
-              <Card>
-                <CardHeader className="bg-gradient-to-r from-gray-600/20 to-gray-700/20 border-b border-gray-600/30">
-                  <CardTitle className="flex items-center text-gray-400">
-                    <GitCommit className="w-6 h-6 mr-2" />
-                    Recent Commits
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {data.recent.commits.length === 0 ? (
-                    <div className="text-center py-8">
-                      <GitCommit className="w-12 h-12 text-gray-500 mx-auto mb-2" />
-                      <p className="text-gray-400">No recent commits</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {data.recent.commits.map((commit, index) => (
-                        <motion.div
-                          key={commit.sha}
-                          className="border-l-4 border-gray-500 pl-4 py-3 bg-gray-800/30 rounded-r-lg"
-                          initial={{ x: -20, opacity: 0 }}
-                          animate={{ x: 0, opacity: 1 }}
-                          transition={{ delay: index * 0.1 }}
-                          whileHover={{ x: 5 }}
-                        >
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <h4 className="font-semibold text-white mb-2">{commit.message}</h4>
-                              <div className="flex items-center space-x-4 text-sm text-gray-400">
-                                <code className="bg-gray-700 px-2 py-1 rounded text-xs">{commit.sha.slice(0, 7)}</code>
-                                <div className="flex items-center space-x-1">
-                                  <Calendar className="w-3 h-3" />
-                                  <span>{new Date(commit.created_at).toLocaleDateString()}</span>
-                                </div>
-                              </div>
-                            </div>
-                            <QualityIndicator quality={7} />
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
-
-          {/* Recommendations and Resources */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* AI Recommendations */}
-            <motion.div variants={itemVariants}>
-              <Card>
-                <CardHeader className="bg-gradient-to-r from-red-500/20 to-red-600/20 border-b border-red-500/30">
-                  <CardTitle className="flex items-center text-red-400">
-                    <Zap className="w-6 h-6 mr-2" />
-                    AI Recommendations
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {data.recommendations.filter((r) => r.trim() !== "").length === 0 ? (
-                    <div className="text-center py-8">
-                      <Sparkles className="w-12 h-12 text-gray-500 mx-auto mb-2" />
-                      <p className="text-gray-400">No recommendations available</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {data.recommendations
-                        .filter((r) => r.trim() !== "")
-                        .map((rec, index) => (
-                          <motion.div
-                            key={index}
-                            className="flex items-start space-x-3 p-4 bg-red-500/10 rounded-lg border-l-4 border-red-500"
-                            initial={{ x: -20, opacity: 0 }}
-                            animate={{ x: 0, opacity: 1 }}
-                            transition={{ delay: index * 0.1 }}
-                            whileHover={{ scale: 1.02 }}
-                          >
-                            <AlertCircle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
-                            <p className="text-gray-300 text-sm">{rec}</p>
-                          </motion.div>
-                        ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            {/* Learning Resources */}
-            <motion.div variants={itemVariants}>
-              <Card>
-                <CardHeader className="bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border-b border-yellow-500/30">
-                  <CardTitle className="flex items-center text-yellow-400">
-                    <BookOpen className="w-6 h-6 mr-2" />
-                    Learning Resources
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {data.resources.length === 0 ? (
-                    <div className="text-center py-8">
-                      <BookOpen className="w-12 h-12 text-gray-500 mx-auto mb-2" />
-                      <p className="text-gray-400">No resources available</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {data.resources.map((resource, index) => (
-                        <motion.a
-                          key={index}
-                          href={resource.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center justify-between p-4 bg-yellow-500/10 rounded-lg border-l-4 border-yellow-500 hover:bg-yellow-500/20 transition-colors group"
-                          initial={{ x: -20, opacity: 0 }}
-                          animate={{ x: 0, opacity: 1 }}
-                          transition={{ delay: index * 0.1 }}
-                          whileHover={{ scale: 1.02 }}
-                        >
-                          <div className="flex items-center space-x-3">
-                            <BookOpen className="w-4 h-4 text-yellow-400" />
-                            <span className="font-medium text-white">{resource.title}</span>
-                          </div>
-                          <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-yellow-400 transition-colors" />
-                        </motion.a>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
-
-          {/* Code Statistics */}
+          {/* 1. REPOSITORY OVERVIEW - Métricas generales */}
           <motion.div variants={itemVariants}>
             <Card>
-              <CardHeader className="bg-gradient-to-r from-gray-600/20 to-gray-700/20 border-b border-gray-600/30">
-                <CardTitle className="flex items-center text-gray-400">
-                  <Activity className="w-6 h-6 mr-2" />
-                  Code Statistics
+              <CardHeader className="bg-gradient-to-r from-blue-500/20 to-blue-600/20 border-b border-blue-500/30">
+                <CardTitle className="flex items-center text-blue-400">
+                  <BarChart3 className="w-6 h-6 mr-2" />
+                  Repository Overview
                 </CardTitle>
               </CardHeader>
               <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {/* Total Activity */}
+                  <motion.div className="text-center" whileHover={{ scale: 1.05 }}>
+                    <div className="flex items-center justify-center space-x-4 mb-4">
+                      <div className="text-center">
+                        <motion.div
+                          className="text-3xl font-bold text-red-400 mb-1"
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ delay: 0.5, type: "spring" }}
+                        >
+                          <AnimatedCounter value={data.kpis.total_prs} />
+                        </motion.div>
+                        <p className="text-gray-400 text-sm flex items-center justify-center">
+                          <GitPullRequest className="w-4 h-4 mr-1" />
+                          Total PRs
+                        </p>
+                      </div>
+                      <div className="text-center">
+                        <motion.div
+                          className="text-3xl font-bold text-yellow-400 mb-1"
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ delay: 0.6, type: "spring" }}
+                        >
+                          <AnimatedCounter value={data.kpis.total_commits} />
+                        </motion.div>
+                        <p className="text-gray-400 text-sm flex items-center justify-center">
+                          <GitCommit className="w-4 h-4 mr-1" />
+                          Total Commits
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  {/* Analysis Coverage */}
+                  <motion.div className="text-center" whileHover={{ scale: 1.05 }}>
+                    <motion.div
+                      className="text-3xl font-bold text-green-400 mb-2"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.7, type: "spring" }}
+                    >
+                      {((data.kpis.analyzed_prs / Math.max(data.kpis.total_prs, 1)) * 100).toFixed(0)}%
+                    </motion.div>
+                    <p className="text-gray-400 flex items-center justify-center">
+                      <TrendingUp className="w-4 h-4 mr-1" />
+                      PR Analysis Coverage
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {data.kpis.analyzed_prs} of {data.kpis.total_prs} analyzed
+                    </p>
+                  </motion.div>
+
+                  {/* Commit Coverage */}
+                  <motion.div className="text-center" whileHover={{ scale: 1.05 }}>
+                    <motion.div
+                      className="text-3xl font-bold text-purple-400 mb-2"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.8, type: "spring" }}
+                    >
+                      {((data.kpis.analyzed_commits / Math.max(data.kpis.total_commits, 1)) * 100).toFixed(0)}%
+                    </motion.div>
+                    <p className="text-gray-400 flex items-center justify-center">
+                      <Activity className="w-4 h-4 mr-1" />
+                      Commit Analysis Coverage
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {data.kpis.analyzed_commits} of {data.kpis.total_commits} analyzed
+                    </p>
+                  </motion.div>
+
+                  {/* Merge Time */}
+                  <motion.div className="text-center" whileHover={{ scale: 1.05 }}>
+                    <motion.div
+                      className="text-3xl font-bold text-cyan-400 mb-2"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.9, type: "spring" }}
+                    >
+                      {data.kpis.avg_merge_time_days}d
+                    </motion.div>
+                    <p className="text-gray-400 flex items-center justify-center">
+                      <Clock className="w-4 h-4 mr-1" />
+                      Avg Merge Time
+                    </p>
+                  </motion.div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* 2. QUALITY METRICS - Todo relacionado con calidad */}
+          <motion.div variants={itemVariants}>
+            <Card>
+              <CardHeader className="bg-gradient-to-r from-green-500/20 to-green-600/20 border-b border-green-500/30">
+                <CardTitle className="flex items-center text-green-400">
+                  <Star className="w-6 h-6 mr-2" />
+                  Quality Metrics
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                  {/* PR Quality */}
+                  <motion.div className="text-center" whileHover={{ scale: 1.05 }}>
+                    <motion.div
+                      className="text-4xl font-bold text-red-400 mb-2"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 1.0, type: "spring" }}
+                    >
+                      {data.kpis.avg_quality_prs}/10
+                    </motion.div>
+                    <p className="text-gray-400 flex items-center justify-center mb-2">
+                      <GitPullRequest className="w-4 h-4 mr-1" />
+                      Average PR Quality
+                    </p>
+                  </motion.div>
+
+                  {/* Commit Quality */}
+                  <motion.div className="text-center" whileHover={{ scale: 1.05 }}>
+                    <motion.div
+                      className="text-4xl font-bold text-yellow-400 mb-2"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 1.1, type: "spring" }}
+                    >
+                      {data.kpis.avg_quality_commits}/10
+                    </motion.div>
+                    <p className="text-gray-400 flex items-center justify-center mb-2">
+                      <GitCommit className="w-4 h-4 mr-1" />
+                      Average Commit Quality
+                    </p>
+                  </motion.div>
+                </div>
+
+                {/* Quality Timeline Charts */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <TimelineChart
+                    title="PR Quality Trend"
+                    data={data.timeline.prs}
+                    color="#ef4444"
+                    icon={GitPullRequest}
+                  />
+                  <TimelineChart
+                    title="Commit Quality Trend"
+                    data={data.timeline.commits}
+                    color="#eab308"
+                    icon={GitCommit}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* 3. CODE ACTIVITY - Todo relacionado con código y actividad */}
+          <motion.div variants={itemVariants}>
+            <Card>
+              <CardHeader className="bg-gradient-to-r from-orange-500/20 to-orange-600/20 border-b border-orange-500/30">
+                <CardTitle className="flex items-center text-orange-400">
+                  <Code className="w-6 h-6 mr-2" />
+                  Code Activity
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {/* Code Statistics */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   <motion.div className="text-center" whileHover={{ scale: 1.05 }}>
                     <motion.div
                       className="text-4xl font-bold text-green-400 mb-2"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      transition={{ delay: 0.5, type: "spring" }}
+                      transition={{ delay: 1.2, type: "spring" }}
                     >
                       +<AnimatedCounter value={data.kpis.total_lines_added} />
                     </motion.div>
@@ -1207,7 +700,7 @@ export default function Dashboard() {
                       className="text-4xl font-bold text-red-400 mb-2"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      transition={{ delay: 0.6, type: "spring" }}
+                      transition={{ delay: 1.3, type: "spring" }}
                     >
                       -<AnimatedCounter value={data.kpis.total_lines_deleted} />
                     </motion.div>
@@ -1221,7 +714,7 @@ export default function Dashboard() {
                       className="text-4xl font-bold text-blue-400 mb-2"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      transition={{ delay: 0.7, type: "spring" }}
+                      transition={{ delay: 1.4, type: "spring" }}
                     >
                       {data.kpis.total_lines_added > 0
                         ? (

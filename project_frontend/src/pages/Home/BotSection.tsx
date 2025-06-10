@@ -165,7 +165,7 @@ const BotSection: React.FC<Props> = ({ equippedBot, purchasedBot }) => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.8 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              className="absolute -top-16 left-1/2 transform -translate-x-1/2 z-20"
+              className="absolute -top-12 left-2/5 transform -translate-x-1/2 z-20"
             >
               <div className="bg-white/95 backdrop-blur-sm text-gray-800 px-4 py-2 rounded-2xl font-semibold text-sm whitespace-nowrap max-w-xs shadow-2xl border border-white/20 relative">
                 💬 {dialogue}

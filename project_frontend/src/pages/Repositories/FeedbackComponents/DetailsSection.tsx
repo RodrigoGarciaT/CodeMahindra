@@ -19,9 +19,10 @@ type Props = {
     total: number;
   };
   feedback: FeedbackComment[];
+  botImage: string;
 };
 
-export default function DetailsSection({ files, fileTree, stats, feedback }: Props) {
+export default function DetailsSection({ files, fileTree, stats, feedback, botImage }: Props) {
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
 
   return (
@@ -36,6 +37,7 @@ export default function DetailsSection({ files, fileTree, stats, feedback }: Pro
           selectedPath={selectedPath}
           stats={stats}
           feedback={feedback}
+          botImage={botImage}
         />
       </div>
     </div>

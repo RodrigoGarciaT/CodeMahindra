@@ -5,10 +5,11 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Bot, MessageSquare, ChevronDown, Sparkles, Zap, Activity } from "lucide-react"
 
 type BotCommentProps = {
-  comment: string
+  comment: string;
+  botImage: string;
 }
 
-const BotCommentBanner = ({ comment }: BotCommentProps) => {
+const BotCommentBanner = ({ comment, botImage }: BotCommentProps) => {
   const [expanded, setExpanded] = useState(false)
 
   return (
@@ -81,7 +82,12 @@ const BotCommentBanner = ({ comment }: BotCommentProps) => {
 
                 {/* Bot Icon Container */}
                 <div className="relative w-12 h-12 bg-gradient-to-br from-slate-700 to-slate-800 rounded-2xl flex items-center justify-center border border-red-500/30 shadow-lg">
-                  <Bot className="w-7 h-7 text-red-400" />
+                  <img
+                    src={botImage}
+                    alt="Bot Avatar"
+                    className="absolute h-12 w-auto object-cover"
+                    style={{ transform: "translateY(0%)" }} // solo se ve de la mitad para arriba
+                  />
 
                   {/* Activity indicator */}
                   <motion.div

@@ -11,6 +11,7 @@ const FloatingBot: React.FC = () => {
   const [animationClass, setAnimationClass] = useState("bot-animate-fun")
   const [visible, setVisible] = useState(true)
   const [isHovered, setIsHovered] = useState(false)
+  const [botImageUrl, setBotImageUrl] = useState(botImage); // por defecto el actual
 
   const expressions = [
     "Hi! 🤖", "Yay! 🎉", "?!", ":D", "!!", "Hehe 😄", "<3 ❤️", "Oof 😅", "Bzzt! ⚡", "Uh? 🤔", "*blip*", "+1 👍", "Hey!", "Yo!", "Woop! 🙌",
@@ -19,6 +20,27 @@ const FloatingBot: React.FC = () => {
     "Wow! 🤩", "Nice! 😎", "Glitch? 🤖", "Wait! ⏳", "Flyin'! 🛫", "Spin! 🌀", "Boom! 💣", "Pop! 🎈", "Eek!", "Pow! 💢",
     "Whoosh! 🌪️", "Shiny! ✨", "Brrr! ❄️", "Kaboom! 💥", "Zap! ⚡", "Meep! 🤖", "Nyoom! 🚀", "Blink! 💫"
   ];
+
+  useEffect(() => {
+    const fetchEquippedBot = async () => {
+      try {
+        const employeeId = localStorage.getItem("user_id");
+        if (!employeeId) return;
+
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/bots/employee/${employeeId}/equipped`);
+        if (!res.ok) return;
+
+        const data = await res.json();
+        if (data.image) {
+          setBotImageUrl(data.image);
+        }
+      } catch (error) {
+        console.error("Error loading equipped bot:", error);
+      }
+    };
+
+    fetchEquippedBot();
+  }, []);
 
   // Movement physics
   useEffect(() => {
@@ -157,7 +179,7 @@ const FloatingBot: React.FC = () => {
         <AnimatePresence>
           {visible && (
             <motion.img
-              src={botImage}
+              src={botImageUrl}
               alt="Floating Bot"
               className={`w-20 h-20 relative z-10 ${animationClass} bot-trail cursor-pointer`}
               draggable={false}

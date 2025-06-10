@@ -35,6 +35,7 @@ type Props = {
     deletions: number
     total: number
   }
+  botImage: string;
 }
 
 type Feedback = {
@@ -46,7 +47,7 @@ type Feedback = {
   }[]
 }[]
 
-const GitHubDiffViewer: React.FC<Props> = ({ files, selectedPath, stats, feedback = [] }) => {
+const GitHubDiffViewer: React.FC<Props> = ({ files, selectedPath, stats, feedback = [], botImage }) => {
   const [viewType, setViewType] = useState<"unified" | "split">("unified")
   const [expandedFiles, setExpandedFiles] = useState<Record<string, boolean>>({})
 
@@ -92,7 +93,7 @@ const GitHubDiffViewer: React.FC<Props> = ({ files, selectedPath, stats, feedbac
         )
 
         if (comment) {
-          widgets[key] = <BotCommentBanner comment={comment.comment} />
+          widgets[key] = <BotCommentBanner comment={comment.comment} botImage={botImage}/>
         }
       })
     })

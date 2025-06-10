@@ -11,11 +11,20 @@ const Navbar = () => {
   const { itemCount } = useCart();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+
+  const notifications = [
+    { icon: "🚀", message: "New Pull Request analysis available", time: "2m ago" },
+    { icon: "🏆", message: "You've unlocked the 'Bug Hunter' achievement!", time: "10m ago" },
+    { icon: "🧠", message: "You solved the problem 'Two Sum'", time: "30m ago" },
+    { icon: "📈", message: "You leveled up to Level 3!", time: "1h ago" },
+    { icon: "✅", message: "Task 'Fix login bug' completed", time: "2h ago" },
+  ];
 
   // Obtenemos usuario desde localStorage
-const userRaw = localStorage.getItem("user");
-const user = userRaw ? JSON.parse(userRaw) : null;
-const isAdmin = user?.isAdmin === true;
+  const userRaw = localStorage.getItem("user");
+  const user = userRaw ? JSON.parse(userRaw) : null;
+  const isAdmin = user?.isAdmin === true;
 
 
   const navItems = [
@@ -81,12 +90,56 @@ const isAdmin = user?.isAdmin === true;
               </span>
             )}
           </Link>
-          <button className="p-2 hover:bg-gray-100 rounded-full">
+          <button
+            className="relative p-2 hover:bg-gray-100 rounded-full"
+            onClick={() => setShowNotifications(!showNotifications)}
+          >
             <Bell className="h-5 w-5" />
+            {notifications.length > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                {notifications.length}
+              </span>
+            )}
           </button>
           <UserMenu />
         </div>
       </div>
+
+      {showNotifications && (
+        <div className="absolute right-4 top-16 w-80 bg-white rounded-2xl shadow-2xl border border-red-200 z-50 animate-fade-in">
+          {/* Header */}
+          <div className="flex items-center justify-between px-4 py-3 border-b border-red-100 bg-red-50 rounded-t-2xl">
+            <h3 className="text-sm font-semibold text-red-700">Notifications</h3>
+            <span className="text-xs text-red-400 font-medium">{notifications.length} New</span>
+          </div>
+
+          {/* List */}
+          <ul className="max-h-96 overflow-y-auto divide-y divide-gray-100">
+            {notifications.map((notif, index) => (
+              <li
+                key={index}
+                className="flex items-start gap-3 px-4 py-3 hover:bg-red-50 transition-all"
+              >
+                <div className="text-xl">{notif.icon}</div>
+                <div className="flex-1">
+                  <p className="text-sm text-gray-800">{notif.message}</p>
+                  <p className="text-xs text-red-400 mt-1">{notif.time}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          {/* Footer */}
+          <div className="px-4 py-2 border-t border-red-100 text-right bg-white rounded-b-2xl">
+            <button
+              onClick={() => setShowNotifications(false)}
+              className="text-sm text-red-500 hover:underline font-medium"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Menú Mobile */}
       {menuOpen && (

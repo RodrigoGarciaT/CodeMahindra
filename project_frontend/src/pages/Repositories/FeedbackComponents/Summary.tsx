@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Bot, Zap, Brain, Sparkles, Activity, ChevronRight, MessageSquare, Cpu } from "lucide-react"
+import { Zap, Brain, Sparkles, Activity, ChevronRight, MessageSquare, Cpu } from "lucide-react"
 
 type Props = {
-  summary: string
+  summary: string;
+  botImage: string;
 }
 
-export default function Summary({ summary }: Props) {
+export default function Summary({ summary, botImage }: Props) {
   const [visibleText, setVisibleText] = useState("")
   const [isTyping, setIsTyping] = useState(true)
   const [progress, setProgress] = useState(0)
@@ -76,7 +77,7 @@ export default function Summary({ summary }: Props) {
         {/* Bot Avatar Section */}
         <div className="relative flex flex-col items-center">
           {/* Status indicators */}
-          <div className="flex gap-1 mb-3">
+          <div className="flex gap-1 mb-3 mt-10">
             <motion.div
               className="w-2 h-2 bg-green-400 rounded-full"
               animate={{ opacity: [0.3, 1, 0.3] }}
@@ -123,8 +124,13 @@ export default function Summary({ summary }: Props) {
             />
 
             {/* Bot Icon */}
-            <div className="relative w-20 h-20 bg-gradient-to-br from-slate-700 to-slate-800 rounded-2xl flex items-center justify-center border border-red-500/30 shadow-lg">
-              <Bot className="w-10 h-10 text-red-400" />
+            <div className="relative w-28 h-28 bg-gradient-to-br from-slate-700 to-slate-800 rounded-2xl flex items-center justify-center border border-red-500/30 shadow-lg">
+              <img
+                src={botImage}
+                alt="Bot Avatar"
+                className="absolute h-28 w-auto object-cover"
+                style={{ transform: "translateY(0%)" }} // solo se ve de la mitad para arriba
+              />
 
               {/* Processing indicator */}
               {isTyping && (

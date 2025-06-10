@@ -17,6 +17,7 @@ import Summary from "../../FeedbackComponents/Summary";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import { motion } from "framer-motion";
+import botImage from '@/images/robot_male_1.svg'
 
 type Resource = {
   title: string;
@@ -96,6 +97,28 @@ export default function CommitFeedback() {
 
   const [data, setData] = useState<CommitFeedbackData | null>(null);
   const navigate = useNavigate();
+  const [botImageUrl, setBotImageUrl] = useState(botImage); // por defecto el actual
+
+  useEffect(() => {
+    const fetchEquippedBot = async () => {
+      try {
+        const employeeId = localStorage.getItem("user_id");
+        if (!employeeId) return;
+
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/bots/employee/${employeeId}/equipped`);
+        if (!res.ok) return;
+
+        const data = await res.json();
+        if (data.image) {
+          setBotImageUrl(data.image); // asegúrate que la propiedad sea `image`
+        }
+      } catch (error) {
+        console.error("Error loading equipped bot:", error);
+      }
+    };
+
+    fetchEquippedBot();
+  }, []);
 
   useEffect(() => {
     const fetchCommitDetails = async () => {
@@ -124,8 +147,8 @@ export default function CommitFeedback() {
           resources: Array.isArray(raw.recommended_resources) ? raw.recommended_resources : [],
           avatar: raw.info.avatar,
           stats: raw.stats,
-          files: raw.files,
-          file_tree: raw.file_tree,
+          files: Array.isArray(raw.files) ? raw.files : [],
+          file_tree: Array.isArray(raw.file_tree) ? raw.file_tree : [],
           status: raw.status,
           feedback: Array.isArray(raw.feedback) ? raw.feedback : [],
         };
@@ -185,7 +208,7 @@ export default function CommitFeedback() {
           <p className="text-gray-400 text-sm">Generated overview of the commit</p>
         </div>
       </div>
-      <Summary summary={data.summary} />
+      <Summary summary={data.summary} botImage={botImageUrl}/>
 
 
       <div className="flex items-center gap-4 mb-3 mt-10">
@@ -200,7 +223,7 @@ export default function CommitFeedback() {
           <p className="text-gray-400 text-sm">Dive into code changes and insights</p>
         </div>
       </div>
-      <DetailsSection files={data.files} fileTree={data.file_tree} stats={data.stats} feedback={data.feedback}/>
+      <DetailsSection files={data.files} fileTree={data.file_tree} stats={data.stats} feedback={data.feedback} botImage={botImageUrl}/>
       
 
       <div className="flex items-center gap-4 mb-3 mt-10">
