@@ -127,7 +127,7 @@ const FileTreeNavigator = ({ treeData, onSelectFile }: Props) => {
     const isOpen = expanded[fullPath]
     const isHovered = hoveredPath === fullPath
     const status = node.status || "modified"
-    const config = statusConfig[status]
+    const config = statusConfig[status] || statusConfig["modified"]
 
     if (node.type === "folder") {
       return (
