@@ -71,10 +71,16 @@ export default function LandingPage() {
 
   // Array of images for the carousel
   const carouselImages = [
-      "laptop.png",
-      "Laptop2.png",
-      "Laptop3.png",
-      "fondo.jpg"
+      "ss/ss1.png",
+      "ss/ss2.png",
+      "ss/ss10.png",
+      "ss/ss3.png",
+      "ss/ss4.png",
+      "ss/ss5.png",
+      "ss/ss6.png",
+      "ss/ss7.png",
+      "ss/ss8.png",
+      "ss/ss9.png",
   ]
 
   const goToNextImage = () => {
