@@ -17,7 +17,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: test_db
+          POSTGRES_DB: mahindra_test
         ports:
           - 5432:5432
         options: >-
@@ -38,12 +38,19 @@ jobs:
       working-directory: ./backend
       run: |
         python -m pip install --upgrade pip
-        pip install pytest pytest-cov fastapi[all] sqlalchemy psycopg2-binary
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    - name: Set up test database
+      working-directory: ./backend
+      run: |
+        if [ -f CodeMahindra.sql ]; then
+          PGPASSWORD=postgres psql -h localhost -U postgres -d mahindra_test -f CodeMahindra.sql
+        fi
 
     - name: Run tests
       working-directory: ./backend
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+        PYTHONPATH: ${PYTHONPATH}:${GITHUB_WORKSPACE}/backend
       run: |
-        pytest tests/ -v
+        python -m pytest tests/ -v
